@@ -1,13 +1,14 @@
 TODO:
 * libagdb
-  - set up compressed stream
-  - libfdata_compressed_block_read_element_data
   - set up uncompressed stream
 * agdbinfo
 * add python bindings
 * add dpkg files
 * add macosx files
 * update manuals
+
+20140417
+* worked on format
 
 20140415
 * Initial version based on libmdmp

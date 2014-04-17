@@ -53,6 +53,18 @@ struct libagdb_io_handle
 	 */
 	uint32_t uncompressed_data_size;
 
+	/* The database type
+	 */
+	uint32_t database_type;
+
+	/* The volume information entry sizes
+	 */
+	uint32_t volume_information_entry_size;
+
+	/* The file information entry sizes
+	 */
+	uint32_t file_information_entry_size;
+
 	/* Value to indicate if abort was signalled
 	 */
 	int abort;
@@ -79,6 +91,14 @@ int libagdb_io_handle_read_compressed_blocks(
      libagdb_io_handle_t *io_handle,
      libbfio_handle_t *file_io_handle,
      libfdata_list_t *compressed_blocks_list,
+     libcerror_error_t **error );
+
+int libagdb_io_handle_read_uncompressed_file_header(
+     libagdb_io_handle_t *io_handle,
+     libfdata_stream_t *uncompressed_data_stream,
+     libbfio_handle_t *file_io_handle,
+     off64_t *volumes_information_offset,
+     uint32_t *number_of_volumes,
      libcerror_error_t **error );
 
 #if defined( __cplusplus )

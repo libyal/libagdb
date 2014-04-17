@@ -32,58 +32,6 @@
 
 #define INFO_HANDLE_NOTIFY_STREAM	stdout
 
-/* Returns a string with the stream type description
- */
-const char *info_handle_get_stream_type(
-             uint32_t stream_type )
-{
-	switch( stream_type )
-	{
-		case 0:
-			return( "UnusedStream" );
-		case 1:
-			return( "ReservedStream0" );
-		case 2:
-			return( "ReservedStream1" );
-		case 3:
-			return( "ThreadListStream" );
-		case 4:
-			return( "ModuleListStream" );
-		case 5:
-			return( "MemoryListStream" );
-		case 6:
-			return( "ExceptionStream" );
-		case 7:
-			return( "SystemInfoStream" );
-		case 8:
-			return( "ThreadExListStream" );
-		case 9:
-			return( "Memory64ListStream" );
-		case 10:
-			return( "CommentStreamA" );
-		case 11:
-			return( "CommentStreamW" );
-		case 12:
-			return( "HandleDataStream" );
-		case 13:
-			return( "FunctionTableStream" );
-		case 14:
-			return( "UnloadedModuleListStream" );
-		case 15:
-			return( "MiscInfoStream" );
-		case 16:
-			return( "MemoryInfoListStream" );
-		case 17:
-			return( "ThreadInfoListStream" );
-		case 18:
-			return( "HandleOperationListStream" );
-
-		default:
-			break;
-	}
-	return( "UNKNOWN" );
-}
-
 /* Creates an info handle
  * Make sure the value info_handle is referencing, is set to NULL
  * Returns 1 if successful or -1 on error
@@ -391,13 +339,11 @@ int info_handle_file_fprint(
      info_handle_t *info_handle,
      libcerror_error_t **error )
 {
-	libagdb_stream_t *stream = NULL;
-	static char *function    = "info_handle_file_fprint";
-	off64_t start_offset     = 0;
-	size64_t size            = 0;
-	uint32_t stream_type     = 0;
-	int number_of_streams    = 0;
-	int stream_index         = 0;
+	libagdb_volume_information_t *volume_information = NULL;
+	libcstring_system_character_t *value_string      = NULL;
+	static char *function                            = "info_handle_file_fprint";
+	int number_of_volumes                            = 0;
+	int volume_index                                 = 0;
 
 	if( info_handle == NULL )
 	{
@@ -410,148 +356,118 @@ int info_handle_file_fprint(
 
 		return( -1 );
 	}
-	if( libagdb_file_get_number_of_streams(
-	     info_handle->input_file,
-	     &number_of_streams,
-	     error ) != 1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve number of streams.",
-		 function );
-
-		goto on_error;
-	}
 	fprintf(
 	 info_handle->notify_stream,
 	 "Windows SuperFetch database file information:\n" );
 
 	fprintf(
 	 info_handle->notify_stream,
-	 "\tNumber of streams\t: %d\n",
-	 number_of_streams );
+	 "\n" );
+
+	fprintf(
+	 info_handle->notify_stream,
+	 "Volumes:\n" );
+
+	if( libagdb_file_get_number_of_volumes(
+	     info_handle->input_file,
+	     &number_of_volumes,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve number of volumes.",
+		 function );
+
+		goto on_error;
+	}
+	fprintf(
+	 info_handle->notify_stream,
+	 "\tNumber of volumes\t\t: %d\n",
+	 number_of_volumes );
 
 	fprintf(
 	 info_handle->notify_stream,
 	 "\n" );
 
-	if( number_of_streams > 0 )
+	for( volume_index = 0;
+	     volume_index < number_of_volumes;
+	     volume_index++ )
 	{
-		for( stream_index = 0;
-		     stream_index < number_of_streams;
-		     stream_index++ )
+		if( libagdb_file_get_volume_information(
+		     info_handle->input_file,
+		     volume_index,
+		     &volume_information,
+		     error ) != 1 )
 		{
-			fprintf(
-			 info_handle->notify_stream,
-			 "Stream: %d\n",
-			 stream_index );
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve volume information.",
+			 function );
 
-			if( libagdb_file_get_stream(
-			     info_handle->input_file,
-			     stream_index,
-			     &stream,
-			     error ) != 1 )
-			{
-				libcerror_error_set(
-				 error,
-				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-				 "%s: unable to retrieve stream: %d.",
-				 function,
-				 stream_index );
-
-				goto on_error;
-			}
-			if( libagdb_stream_get_type(
-			     stream,
-			     &stream_type,
-			     error ) != 1 )
-			{
-				libcerror_error_set(
-				 error,
-				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-				 "%s: unable to retrieve stream: %d type.",
-				 function,
-				 stream_index );
-
-				goto on_error;
-			}
-			fprintf(
-			 info_handle->notify_stream,
-			 "\tType\t\t\t: %s (%" PRIu32 ")\n",
-			 info_handle_get_stream_type(
-			  stream_type ),
-			 stream_type );
-
-			if( libagdb_stream_get_start_offset(
-			     stream,
-			     &start_offset,
-			     error ) != 1 )
-			{
-				libcerror_error_set(
-				 error,
-				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-				 "%s: unable to retrieve stream: %d start offset.",
-				 function,
-				 stream_index );
-
-				goto on_error;
-			}
-			fprintf(
-			 info_handle->notify_stream,
-			 "\tStart offset\t\t: 0x%08" PRIx64 "\n",
-			 start_offset );
-
-			if( libagdb_stream_get_size(
-			     stream,
-			     &size,
-			     error ) != 1 )
-			{
-				libcerror_error_set(
-				 error,
-				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-				 "%s: unable to retrieve stream: %d size.",
-				 function,
-				 stream_index );
-
-				goto on_error;
-			}
-			fprintf(
-			 info_handle->notify_stream,
-			 "\tSize\t\t\t: %" PRIu64 "\n",
-			 size );
-
-			if( libagdb_stream_free(
-			     &stream,
-			     error ) != 1 )
-			{
-				libcerror_error_set(
-				 error,
-				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
-				 "%s: unable to free stream.",
-				 function );
-
-				goto on_error;
-			}
-			fprintf(
-			 info_handle->notify_stream,
-			 "\n" );
+			return( -1 );
 		}
+		fprintf(
+		 info_handle->notify_stream,
+		 "Volume information:\n" );
+
+/* TODO
+		if( libagdb_volume_information_get_serial_number(
+		     volume_information,
+		     &value_32bit,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve serial number.",
+			 function );
+
+			goto on_error;
+		}
+		fprintf(
+		 info_handle->notify_stream,
+		 "\tSerial number\t\t\t: 0x%08" PRIx32 "\n",
+		 value_32bit );
+*/
+
+		if( libagdb_volume_information_free(
+		     &volume_information,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+			 "%s: unable to free volume information.",
+			 function );
+
+			goto on_error;
+		}
+		fprintf(
+		 info_handle->notify_stream,
+		 "\n" );
+
+/* TODO */
+		break;
 	}
 	return( 1 );
 
 on_error:
-	if( stream != NULL )
+	if( volume_information != NULL )
 	{
-		libagdb_stream_free(
-		 &stream,
+		libagdb_volume_information_free(
+		 &volume_information,
 		 NULL );
+	}
+	if( value_string != NULL )
+	{
+		memory_free(
+		 value_string );
 	}
 	return( -1 );
 }

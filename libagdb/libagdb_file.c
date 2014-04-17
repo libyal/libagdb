@@ -23,16 +23,20 @@
 #include <memory.h>
 #include <types.h>
 
+#include "libagdb_compressed_block.h"
+#include "libagdb_compressed_blocks_stream.h"
 #include "libagdb_debug.h"
 #include "libagdb_definitions.h"
 #include "libagdb_io_handle.h"
 #include "libagdb_file.h"
 #include "libagdb_libbfio.h"
+#include "libagdb_libcdata.h"
 #include "libagdb_libcerror.h"
 #include "libagdb_libcnotify.h"
 #include "libagdb_libcstring.h"
 #include "libagdb_libfcache.h"
 #include "libagdb_libfdata.h"
+#include "libagdb_volume_information.h"
 
 /* Creates a file
  * Make sure the value file is referencing, is set to NULL
@@ -98,6 +102,20 @@ int libagdb_file_initialize(
 
 		return( -1 );
 	}
+	if( libcdata_array_initialize(
+	     &( internal_file->volumes_array ),
+	     0,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+		 "%s: unable to create volumes array.",
+		 function );
+
+		goto on_error;
+	}
 	if( libagdb_io_handle_initialize(
 	     &( internal_file->io_handle ),
 	     error ) != 1 )
@@ -111,39 +129,6 @@ int libagdb_file_initialize(
 
 		goto on_error;
 	}
-	if( libfdata_list_initialize(
-	     &( internal_file->compressed_blocks_list ),
-	     (intptr_t *) internal_file->io_handle,
-	     NULL,
-	     NULL,
-	     (int (*)(intptr_t *, intptr_t *, libfdata_list_element_t *, libfcache_cache_t *, int, off64_t, size64_t, uint32_t, uint8_t, libcerror_error_t **)) &libfdata_compressed_block_read_element_data,
-	     NULL,
-	     LIBFDATA_FLAG_DATA_HANDLE_NON_MANAGED,
-	     error ) != 1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-		 "%s: unable to create compressed blocks list.",
-		 function );
-
-		goto on_error;
-	}
-	if( libfcache_cache_initialize(
-	     &( internal_file->compressed_blocks_cache ),
-	     LIBAGDB_MAXIMUM_CACHE_ENTRIES_COMPRESSED_BLOCKS,
-	     error ) != 1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-		 "%s: unable to create compressed blocks cache.",
-		 function );
-
-		goto on_error;
-	}
 	*file = (libagdb_file_t *) internal_file;
 
 	return( 1 );
@@ -151,16 +136,11 @@ int libagdb_file_initialize(
 on_error:
 	if( internal_file != NULL )
 	{
-		if( internal_file->compressed_blocks_list != NULL )
+		if( internal_file->volumes_array != NULL )
 		{
-			libfdata_list_free(
-			 &( internal_file->compressed_blocks_list ),
-			 NULL );
-		}
-		if( internal_file->io_handle != NULL )
-		{
-			libagdb_io_handle_free(
-			 &( internal_file->io_handle ),
+			libcdata_array_free(
+			 &( internal_file->volumes_array ),
+			 NULL,
 			 NULL );
 		}
 		memory_free(
@@ -213,28 +193,64 @@ int libagdb_file_free(
 		}
 		*file = NULL;
 
-		if( libfcache_cache_free(
-		     &( internal_file->compressed_blocks_cache ),
-		     error ) != 1 )
+		if( internal_file->compressed_blocks_cache != NULL )
 		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
-			 "%s: unable to free compressed blocks cache.",
-			 function );
+			if( libfcache_cache_free(
+			     &( internal_file->compressed_blocks_cache ),
+			     error ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+				 "%s: unable to free compressed blocks cache.",
+				 function );
 
-			result = -1;
+				result = -1;
+			}
 		}
-		if( libfdata_list_free(
-		     &( internal_file->compressed_blocks_list ),
+		if( internal_file->compressed_blocks_list != NULL )
+		{
+			if( libfdata_list_free(
+			     &( internal_file->compressed_blocks_list ),
+			     error ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+				 "%s: unable to free compressed blocks list.",
+				 function );
+
+				result = -1;
+			}
+		}
+		if( internal_file->uncompressed_data_stream != NULL )
+		{
+			if( libfdata_stream_free(
+			     &( internal_file->uncompressed_data_stream ),
+			     error ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+				 "%s: unable to free uncompressed data strea,.",
+				 function );
+
+				result = -1;
+			}
+		}
+		if( libcdata_array_free(
+		     &( internal_file->volumes_array ),
+		     (int (*)(intptr_t **, libcerror_error_t **)) &libagdb_internal_volume_information_free,
 		     error ) != 1 )
 		{
 			libcerror_error_set(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
-			 "%s: unable to free compressed blocks list.",
+			 "%s: unable to free volumes array.",
 			 function );
 
 			result = -1;
@@ -820,28 +836,17 @@ int libagdb_file_close(
 
 		result = -1;
 	}
-	if( libfdata_list_empty(
-	     internal_file->compressed_blocks_list,
+	if( libcdata_array_resize(
+	     internal_file->volumes_array,
+	     0,
+	     (int (*)(intptr_t **, libcerror_error_t **)) &libagdb_internal_volume_information_free,
 	     error ) != 1 )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
-		 "%s: unable to empty compressed blocks list.",
-		 function );
-
-		result = -1;
-	}
-	if( libfcache_cache_empty(
-	     internal_file->compressed_blocks_cache,
-	     error ) != 1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
-		 "%s: unable to empty compressed blocks cache.",
+		 LIBCERROR_RUNTIME_ERROR_RESIZE_FAILED,
+		 "%s: unable to resize volumes array.",
 		 function );
 
 		result = -1;
@@ -857,7 +862,13 @@ int libagdb_file_open_read(
      libbfio_handle_t *file_io_handle,
      libcerror_error_t **error )
 {
-	static char *function = "libagdb_file_open_read";
+	libagdb_volume_information_t *volume_information = NULL;
+	static char *function                            = "libagdb_file_open_read";
+	off64_t volumes_information_offset               = 0;
+	ssize64_t read_count                             = 0;
+	uint32_t number_of_volumes                       = 0;
+	uint32_t volume_index                            = 0;
+	int entry_index                                  = 0;
 
 	if( internal_file == NULL )
 	{
@@ -881,6 +892,28 @@ int libagdb_file_open_read(
 
 		return( -1 );
 	}
+	if( internal_file->compressed_blocks_list != NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
+		 "%s: invalid file - compressed blocks list value already set.",
+		 function );
+
+		return( -1 );
+	}
+	if( internal_file->compressed_blocks_cache != NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
+		 "%s: invalid file - compressed blocks cache value already set.",
+		 function );
+
+		return( -1 );
+	}
 	if( internal_file->io_handle->abort != 0 )
 	{
 		internal_file->io_handle->abort = 0;
@@ -889,7 +922,7 @@ int libagdb_file_open_read(
 	if( libcnotify_verbose != 0 )
 	{
 		libcnotify_printf(
-		 "Reading compressed file header:\n" );
+		 "Reading file header:\n" );
 	}
 #endif
 	if( libagdb_io_handle_read_compressed_file_header(
@@ -908,6 +941,25 @@ int libagdb_file_open_read(
 	}
 	if( internal_file->io_handle->file_type != LIBFWNT_FILE_TYPE_UNCOMPRESSED )
 	{
+		if( libfdata_list_initialize(
+		     &( internal_file->compressed_blocks_list ),
+		     (intptr_t *) internal_file->io_handle,
+		     NULL,
+		     NULL,
+		     (int (*)(intptr_t *, intptr_t *, libfdata_list_element_t *, libfcache_cache_t *, int, off64_t, size64_t, uint32_t, uint8_t, libcerror_error_t **)) &libagdb_compressed_block_read_element_data,
+		     NULL,
+		     LIBFDATA_FLAG_DATA_HANDLE_NON_MANAGED,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+			 "%s: unable to create compressed blocks list.",
+			 function );
+
+			goto on_error;
+		}
 #if defined( HAVE_DEBUG_OUTPUT )
 		if( libcnotify_verbose != 0 )
 		{
@@ -930,19 +982,239 @@ int libagdb_file_open_read(
 
 			goto on_error;
 		}
-/* TODO set up compressed stream */
+		if( libfcache_cache_initialize(
+		     &( internal_file->compressed_blocks_cache ),
+		     LIBAGDB_MAXIMUM_CACHE_ENTRIES_COMPRESSED_BLOCKS,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+			 "%s: unable to create compressed blocks cache.",
+			 function );
+
+			goto on_error;
+		}
+		if( libagdb_compressed_blocks_stream_initialize(
+		     &( internal_file->uncompressed_data_stream ),
+		     internal_file->compressed_blocks_list,
+		     internal_file->compressed_blocks_cache,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+			 "%s: unable to create compressed blocks stream.",
+			 function );
+
+			goto on_error;
+		}
 	}
 	else
 	{
 /* TODO set up uncompressed stream */
 	}
+	if( libagdb_io_handle_read_uncompressed_file_header(
+	     internal_file->io_handle,
+	     internal_file->uncompressed_data_stream,
+	     file_io_handle,
+	     &volumes_information_offset,
+	     &number_of_volumes,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_IO,
+		 LIBCERROR_IO_ERROR_READ_FAILED,
+		 "%s: unable to read file header.",
+		 function );
+
+		goto on_error;
+	}
+	for( volume_index = 0;
+	     volume_index < number_of_volumes;
+	     volume_index++ )
+	{
+		if( libagdb_volume_information_initialize(
+		     &volume_information,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+			 "%s: unable to create volume: %" PRIu32 " information.",
+			 function,
+			 volume_index );
+
+			goto on_error;
+		}
+		read_count = libagdb_volume_information_read(
+		              volume_information,
+		              internal_file->uncompressed_data_stream,
+		              internal_file->file_io_handle,
+		              internal_file->io_handle,
+		              volumes_information_offset,
+		              volume_index,
+		              error );
+
+		if( read_count == -1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_IO,
+			 LIBCERROR_IO_ERROR_READ_FAILED,
+			 "%s: unable to read volume: %" PRIu32 " information.",
+			 function,
+			 volume_index );
+
+			goto on_error;
+		}
+		volumes_information_offset += read_count;
+
+		if( libcdata_array_append_entry(
+		     internal_file->volumes_array,
+		     &entry_index,
+		     (intptr_t *) volume_information,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_APPEND_FAILED,
+			 "%s: unable to append volume: %" PRIu32 " information to array.",
+			 function,
+			 volume_index );
+
+			goto on_error;
+		}
+		volume_information = NULL;
+	}
 	return( 1 );
 
 on_error:
-	libfdata_list_empty(
-	 internal_file->compressed_blocks_list,
-	 NULL );
-
+	if( volume_information != NULL )
+	{
+		libagdb_internal_volume_information_free(
+		 (libagdb_internal_volume_information_t **) &volume_information,
+		 NULL );
+	}
+	if( internal_file->uncompressed_data_stream != NULL )
+	{
+		libfdata_stream_free(
+		 &( internal_file->uncompressed_data_stream ),
+		 NULL );
+	}
+	if( internal_file->compressed_blocks_cache != NULL )
+	{
+		libfcache_cache_free(
+		 &( internal_file->compressed_blocks_cache ),
+		 NULL );
+	}
+	if( internal_file->compressed_blocks_list != NULL )
+	{
+		libfdata_list_free(
+		 &( internal_file->compressed_blocks_list ),
+		 NULL );
+	}
 	return( -1 );
+}
+
+/* Retrieves the number of volumes
+ * Returns 1 if successful or -1 on error
+ */
+int libagdb_file_get_number_of_volumes(
+     libagdb_file_t *file,
+     int *number_of_volumes,
+     libcerror_error_t **error )
+{
+	libagdb_internal_file_t *internal_file = NULL;
+	static char *function                  = "libagdb_file_get_number_of_volumes";
+
+	if( file == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid file.",
+		 function );
+
+		return( -1 );
+	}
+	internal_file = (libagdb_internal_file_t *) file;
+
+	if( libcdata_array_get_number_of_entries(
+	     internal_file->volumes_array,
+	     number_of_volumes,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve number of volumes.",
+		 function );
+
+		return( -1 );
+	}
+	return( 1 );
+}
+
+/* Retrieves a specific volume information
+ * Returns 1 if successful or -1 on error
+ */
+int libagdb_file_get_volume_information(
+     libagdb_file_t *file,
+     int volume_index,
+     libagdb_volume_information_t **volume_information,
+     libcerror_error_t **error )
+{
+	libagdb_internal_file_t *internal_file = NULL;
+	static char *function                  = "libagdb_file_get_volume_information";
+
+	if( file == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid file.",
+		 function );
+
+		return( -1 );
+	}
+	internal_file = (libagdb_internal_file_t *) file;
+
+	if( internal_file->io_handle == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 "%s: invalid internal file - missing file information.",
+		 function );
+
+		return( -1 );
+	}
+	if( libcdata_array_get_entry_by_index(
+	     internal_file->volumes_array,
+	     volume_index,
+	     (intptr_t **) volume_information,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve volume: %d information.",
+		 function,
+		 volume_index );
+
+		return( -1 );
+	}
+	return( 1 );
 }
 

@@ -28,6 +28,7 @@
 #include "libagdb_extern.h"
 #include "libagdb_io_handle.h"
 #include "libagdb_libbfio.h"
+#include "libagdb_libcdata.h"
 #include "libagdb_libcerror.h"
 #include "libagdb_libfcache.h"
 #include "libagdb_libfdata.h"
@@ -64,6 +65,14 @@ struct libagdb_internal_file
 	/* The compressed blocks cache
 	 */
 	libfcache_cache_t *compressed_blocks_cache;
+
+	/* The uncompressed data stream
+	 */
+	libfdata_stream_t *uncompressed_data_stream;
+
+	/* The volumes array
+	 */
+	libcdata_array_t *volumes_array;
 };
 
 LIBAGDB_EXTERN \
@@ -112,6 +121,19 @@ int libagdb_file_close(
 int libagdb_file_open_read(
      libagdb_internal_file_t *internal_file,
      libbfio_handle_t *file_io_handle,
+     libcerror_error_t **error );
+
+LIBAGDB_EXTERN \
+int libagdb_file_get_number_of_volumes(
+     libagdb_file_t *file,
+     int *number_of_volumes,
+     libcerror_error_t **error );
+
+LIBAGDB_EXTERN \
+int libagdb_file_get_volume_information(
+     libagdb_file_t *file,
+     int volume_index,
+     libagdb_volume_information_t **volume_information,
      libcerror_error_t **error );
 
 #if defined( __cplusplus )

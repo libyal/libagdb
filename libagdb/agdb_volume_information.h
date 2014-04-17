@@ -1,5 +1,5 @@
 /*
- * The file header definition of a Windows SuperFetch database file
+ * The volume information definitions of a Windows SuperFetch database file
  *
  * Copyright (C) 2014, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -19,8 +19,8 @@
  * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#if !defined( _AGDB_FILE_HEADER_H )
-#define _AGDB_FILE_HEADER_H
+#if !defined( _AGDB_VOLUME_INFORMATION_H )
+#define _AGDB_VOLUME_INFORMATION_H
 
 #include <common.h>
 #include <types.h>
@@ -29,39 +29,14 @@
 extern "C" {
 #endif
 
-typedef struct agdb_file_header agdb_file_header_t;
+typedef struct agdb_volume_information_56 agdb_volume_information_56_t;
 
-struct agdb_file_header
+struct agdb_volume_information_56
 {
 	/* Unknown
-	 * Consists of 4 bytes
+	 * Consists of 8 bytes
 	 */
-	uint8_t unknown1[ 4 ];
-
-	/* The data size
-	 * Consists of 4 bytes
-	 */
-	uint8_t data_size[ 4 ];
-
-	/* The header size
-	 * Consists of 4 bytes
-	 */
-	uint8_t header_size[ 4 ];
-
-	/* The database type
-	 * Consists of 4 bytes
-	 */
-	uint8_t database_type[ 4 ];
-
-	/* The database parameters
-	 * Consists of 36 bytes
-	 */
-	uint8_t database_parameters[ 36 ];
-
-	/* The number of volumes
-	 * Consists of 4 bytes
-	 */
-	uint8_t number_of_volumes[ 4 ];
+	uint8_t unknown1[ 8 ];
 
 	/* The number of files
 	 * Consists of 4 bytes
@@ -71,12 +46,22 @@ struct agdb_file_header
 	/* Unknown
 	 * Consists of 4 bytes
 	 */
-	uint8_t unknown3[ 4 ];
+	uint8_t unknown2[ 4 ];
 
-	/* The number of executables
+	/* Unknown
+	 * Consists of 8 bytes
+	 */
+	uint8_t unknown3[ 8 ];
+
+	/* The (volume) creation time
+	 * Consists of 8 bytes
+	 */
+	uint8_t creation_time[ 8 ];
+
+	/* The (volume) serial number
 	 * Consists of 4 bytes
 	 */
-	uint8_t number_of_executables[ 4 ];
+	uint8_t serial_number[ 4 ];
 
 	/* Unknown
 	 * Consists of 4 bytes
@@ -87,6 +72,21 @@ struct agdb_file_header
 	 * Consists of 4 bytes
 	 */
 	uint8_t unknown5[ 4 ];
+
+	/* The (volume) device path number of characters
+	 * Consists of 2 bytes
+	 */
+	uint8_t device_path_number_of_characters[ 2 ];
+
+	/* Unknown
+	 * Consists of 2 bytes
+	 */
+	uint8_t unknown6[ 2 ];
+
+	/* Unknown
+	 * Consists of 8 bytes
+	 */
+	uint8_t unknown7[ 8 ];
 };
 
 #if defined( __cplusplus )

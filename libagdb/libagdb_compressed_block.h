@@ -1,5 +1,5 @@
 /*
- * Section descriptor functions
+ * Compressed block functions
  *
  * Copyright (c) 2014, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -19,12 +19,13 @@
  * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#if !defined( _LIBAGDB_STREAM_DESCRIPTOR_H )
-#define _LIBAGDB_STREAM_DESCRIPTOR_H
+#if !defined( _LIBAGDB_COMPRESSED_BLOCK_H )
+#define _LIBAGDB_COMPRESSED_BLOCK_H
 
 #include <common.h>
 #include <types.h>
 
+#include "libagdb_io_handle.h"
 #include "libagdb_libcerror.h"
 #include "libagdb_libfdata.h"
 
@@ -32,31 +33,38 @@
 extern "C" {
 #endif
 
-typedef struct libagdb_stream_descriptor libagdb_stream_descriptor_t;
+typedef struct libagdb_compressed_block libagdb_compressed_block_t;
 
-struct libagdb_stream_descriptor
+struct libagdb_compressed_block
 {
-	/* The type
+	/* The data
 	 */
-	uint32_t type;
+	uint8_t *data;
 
-	/* The data stream
+	/* The data size
 	 */
-	libfdata_stream_t *data_stream;
+	size_t data_size;
 };
 
-int libagdb_stream_descriptor_initialize(
-     libagdb_stream_descriptor_t **stream_descriptor,
+int libagdb_compressed_block_initialize(
+     libagdb_compressed_block_t **compressed_block,
+     size_t data_size,
      libcerror_error_t **error );
 
-int libagdb_stream_descriptor_free(
-     libagdb_stream_descriptor_t **stream_descriptor,
+int libagdb_compressed_block_free(
+     libagdb_compressed_block_t **compressed_block,
      libcerror_error_t **error );
 
-int libagdb_stream_descriptor_set_data_range(
-     libagdb_stream_descriptor_t *stream_descriptor,
-     off64_t data_offset,
-     size64_t data_size,
+int libagdb_compressed_block_read_element_data(
+     libagdb_io_handle_t *io_handle,
+     libbfio_handle_t *file_io_handle,
+     libfdata_list_element_t *element,
+     libfcache_cache_t *cache,
+     int element_file_index,
+     off64_t compressed_block_offset,
+     size64_t compressed_block_size,
+     uint32_t compressed_block_flags,
+     uint8_t read_flags,
      libcerror_error_t **error );
 
 #if defined( __cplusplus )

@@ -326,11 +326,11 @@ int libagdb_check_file_signature_file_io_handle(
 {
 	uint8_t signature[ 8 ];
 
-	static char *function         = "libagdb_check_file_signature_file_io_handle";
-	size64_t file_size            = 0;
-	ssize_t read_count            = 0;
-	uint32_t uncompress_data_size = 0;
-	int file_io_handle_is_open    = 0;
+	static char *function           = "libagdb_check_file_signature_file_io_handle";
+	size64_t file_size              = 0;
+	ssize_t read_count              = 0;
+	uint32_t uncompressed_data_size = 0;
+	int file_io_handle_is_open      = 0;
 
 	if( file_io_handle == NULL )
 	{
@@ -447,8 +447,8 @@ int libagdb_check_file_signature_file_io_handle(
 
 		return( -1 );
 	}
-	byte_stream_copy_to_uint16_little_endian(
-	 &( file_header_data[ 4 ] ),
+	byte_stream_copy_to_uint32_little_endian(
+	 &( signature[ 4 ] ),
 	 uncompressed_data_size );
 
 /* TODO improve detection */

@@ -252,133 +252,36 @@ int libagdb_file_close(
      libagdb_file_t *file,
      libagdb_error_t **error );
 
-/* Retrieves the number of streams
+/* Retrieves the number of volumes
  * Returns 1 if successful or -1 on error
  */
 LIBAGDB_EXTERN \
-int libagdb_file_get_number_of_streams(
+int libagdb_file_get_number_of_volumes(
      libagdb_file_t *file,
-     int *number_of_streams,
+     int *number_of_volumes,
      libagdb_error_t **error );
 
-/* Retrieves a specific stream
+/* Retrieves a specific volume information
  * Returns 1 if successful or -1 on error
  */
 LIBAGDB_EXTERN \
-int libagdb_file_get_stream(
+int libagdb_file_get_volume_information(
      libagdb_file_t *file,
-     int stream_index,
-     libagdb_stream_t **stream,
-     libagdb_error_t **error );
-
-/* Retrieves a specific stream by type
- * Returns 1 if successful, 0 if no such stream or -1 on error
- */
-LIBAGDB_EXTERN \
-int libagdb_file_get_stream_by_type(
-     libagdb_file_t *file,
-     uint32_t stream_type,
-     libagdb_stream_t **stream,
+     int volume_index,
+     libagdb_volume_information_t **volume_information,
      libagdb_error_t **error );
 
 /* -------------------------------------------------------------------------
- * Stream functions
+ * Volume information functions
  * ------------------------------------------------------------------------- */
 
-/* Frees a stream
+/* Frees a volume information
  * Returns 1 if successful or -1 on error
  */
 LIBAGDB_EXTERN \
-int libagdb_stream_free(
-     libagdb_stream_t **stream,
+int libagdb_volume_information_free(
+     libagdb_volume_information_t **volume_information,
      libagdb_error_t **error );
-
-/* Retrieves the type
- * Returns 1 if successful or -1 on error
- */
-LIBAGDB_EXTERN \
-int libagdb_stream_get_type(
-     libagdb_stream_t *stream,
-     uint32_t *type,
-     libagdb_error_t **error );
-
-/* Reads data at the current offset into a buffer
- * Returns the number of bytes read or -1 on error
- */
-LIBAGDB_EXTERN \
-ssize_t libagdb_stream_read_buffer(
-         libagdb_stream_t *stream,
-         void *buffer,
-         size_t buffer_size,
-         libagdb_error_t **error );
-
-/* Reads data at a specific offset into a buffer
- * Returns the number of bytes read or -1 on error
- */
-LIBAGDB_EXTERN \
-ssize_t libagdb_stream_read_buffer_at_offset(
-         libagdb_stream_t *stream,
-         void *buffer,
-         size_t buffer_size,
-         off64_t offset,
-         libagdb_error_t **error );
-
-/* Seeks a certain offset of the data
- * Returns the offset if seek is successful or -1 on error
- */
-LIBAGDB_EXTERN \
-off64_t libagdb_stream_seek_offset(
-         libagdb_stream_t *stream,
-         off64_t offset,
-         int whence,
-         libagdb_error_t **error );
-
-/* Retrieves the (current) offset
- * Returns 1 if successful or -1 on error
- */
-LIBAGDB_EXTERN \
-int libagdb_stream_get_offset(
-     libagdb_stream_t *stream,
-     off64_t *offset,
-     libagdb_error_t **error );
-
-/* Retrieves the size
- * Returns 1 if successful or -1 on error
- */
-LIBAGDB_EXTERN \
-int libagdb_stream_get_size(
-     libagdb_stream_t *stream,
-     size64_t *size,
-     libagdb_error_t **error );
-
-/* Retrieves the start offset
- * Returns 1 if successful or -1 on error
- */
-LIBAGDB_EXTERN \
-int libagdb_stream_get_start_offset(
-     libagdb_stream_t *stream,
-     off64_t *start_offset,
-     libagdb_error_t **error );
-
-/* Retrieves the virtual address
- * Returns 1 if successful or -1 on error
- */
-LIBAGDB_EXTERN \
-int libagdb_stream_get_virtual_address(
-     libagdb_stream_t *stream,
-     uint32_t *virtual_address,
-     libagdb_error_t **error );
-
-#if defined( LIBAGDB_HAVE_BFIO )
-/* Retrieves the stream data file io handle
- * Returns 1 if successful or -1 on error
- */
-LIBAGDB_EXTERN \
-int libagdb_stream_get_data_file_io_handle(
-     libagdb_stream_t *stream,
-     libbfio_handle_t **file_io_handle,
-     libagdb_error_t **error );
-#endif
 
 #if defined( __cplusplus )
 }
