@@ -190,6 +190,7 @@ int libagdb_io_handle_read_compressed_file_header(
 	uint8_t file_header_data[ 8 ];
 
 	static char *function = "libagdb_io_handle_read_compressed_file_header";
+	uint32_t value_32bit  = 0;
 	ssize_t read_count    = 0;
 
 	if( io_handle == NULL )
@@ -274,21 +275,25 @@ int libagdb_io_handle_read_compressed_file_header(
 	     agdb_mem_file_signature_vista,
 	     4 ) == 0 )
 	{
-		io_handle->file_type = LIBFWNT_FILE_TYPE_COMPRESSED_VISTA;
+		io_handle->file_type               = LIBFWNT_FILE_TYPE_COMPRESSED_VISTA;
+		io_handle->uncompressed_block_size = 4096;
 	}
 	else if( memory_compare(
 	          file_header_data,
 	          agdb_mem_file_signature_win7,
 	          4 ) == 0 )
 	{
-		io_handle->file_type = LIBFWNT_FILE_TYPE_COMPRESSED_WINDOWS7;
+		io_handle->file_type               = LIBFWNT_FILE_TYPE_COMPRESSED_WINDOWS7;
+		io_handle->uncompressed_block_size = 65536;
 	}
 	else if( memory_compare(
 	          file_header_data,
 	          agdb_mam_file_signature_win8,
 	          4 ) == 0 )
 	{
-		io_handle->file_type = LIBFWNT_FILE_TYPE_COMPRESSED_WINDOWS8;
+		io_handle->file_type               = LIBFWNT_FILE_TYPE_COMPRESSED_WINDOWS8;
+/* TODO implement */
+		io_handle->uncompressed_block_size = 0;
 	}
 	else
 	{
@@ -325,19 +330,24 @@ int libagdb_io_handle_read_compressed_file_header(
 	 || ( io_handle->file_type == LIBFWNT_FILE_TYPE_COMPRESSED_WINDOWS7 ) )
 	{
 		byte_stream_copy_to_uint32_little_endian(
+		 &( file_header_data[ 0 ] ),
+		 value_32bit );
+
+		byte_stream_copy_to_uint32_little_endian(
 		 &( file_header_data[ 4 ] ),
 		 io_handle->uncompressed_data_size );
 
 		if( io_handle->file_type == LIBFWNT_FILE_TYPE_UNCOMPRESSED )
 		{
 /* TODO improve detection */
-			if( io_handle->file_size != (size64_t) io_handle->uncompressed_data_size )
+			if( ( value_32bit != 0x0000000eUL )
+			 || ( io_handle->file_size != (size64_t) io_handle->uncompressed_data_size ) )
 			{
 				libcerror_error_set(
 				 error,
 				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 				 LIBCERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
-				 "%s: invalid uncompressed data size.",
+				 "%s: invalid signature.",
 				 function );
 
 				return( -1 );
@@ -376,6 +386,7 @@ int libagdb_io_handle_read_compressed_blocks(
 
 	static char *function            = "libagdb_io_handle_read_compressed_blocks";
 	off64_t file_offset              = 0;
+	size_t read_size                 = 0;
 	ssize_t read_count               = 0;
 	uint32_t compressed_block_size   = 0;
 	uint32_t uncompressed_data_size  = 0;
@@ -410,14 +421,21 @@ int libagdb_io_handle_read_compressed_blocks(
 
 		return( -1 );
 	}
-	if( ( io_handle->file_type != LIBFWNT_FILE_TYPE_COMPRESSED_VISTA )
-	 || ( io_handle->file_type != LIBFWNT_FILE_TYPE_COMPRESSED_WINDOWS7 ) )
+	if( io_handle->file_type == LIBFWNT_FILE_TYPE_COMPRESSED_VISTA )
 	{
 		file_offset = 8;
+		read_size   = 2;
 	}
-	else if( io_handle->file_type != LIBFWNT_FILE_TYPE_COMPRESSED_WINDOWS8 )
+	else if( io_handle->file_type == LIBFWNT_FILE_TYPE_COMPRESSED_WINDOWS7 )
 	{
+		file_offset = 8;
+		read_size   = 4;
+	}
+	else if( io_handle->file_type == LIBFWNT_FILE_TYPE_COMPRESSED_WINDOWS8 )
+	{
+/* TODO implement */
 		file_offset = 4;
+		read_size   = 4;
 	}
 	uncompressed_data_size = io_handle->uncompressed_data_size;
 
@@ -452,10 +470,10 @@ int libagdb_io_handle_read_compressed_blocks(
 		read_count = libbfio_handle_read_buffer(
 		              file_io_handle,
 		              compressed_block_data,
-		              4,
+		              read_size,
 		              error );
 
-		if( read_count != (ssize_t) 4 )
+		if( read_count != (ssize_t) read_size )
 		{
 			libcerror_error_set(
 			 error,
@@ -466,12 +484,35 @@ int libagdb_io_handle_read_compressed_blocks(
 
 			return( -1 );
 		}
-		file_offset += 4;
+		if( io_handle->file_type == LIBFWNT_FILE_TYPE_COMPRESSED_VISTA )
+		{
+			byte_stream_copy_to_uint16_little_endian(
+			 compressed_block_data,
+			 compressed_block_size );
 
-		byte_stream_copy_to_uint32_little_endian(
-		 compressed_block_data,
-		 compressed_block_size );
+			compressed_block_size &= 0x0fff;
+			compressed_block_size += 3;
+		}
+		else if( io_handle->file_type == LIBFWNT_FILE_TYPE_COMPRESSED_WINDOWS7 )
+		{
+			byte_stream_copy_to_uint32_little_endian(
+			 compressed_block_data,
+			 compressed_block_size );
 
+			file_offset += 4;
+		}
+		else if( io_handle->file_type == LIBFWNT_FILE_TYPE_COMPRESSED_WINDOWS8 )
+		{
+/* TODO implement */
+		}
+		if( uncompressed_data_size < io_handle->uncompressed_block_size )
+		{
+			uncompressed_block_size = uncompressed_data_size;
+		}
+		else
+		{
+			uncompressed_block_size = io_handle->uncompressed_block_size;
+		}
 #if defined( HAVE_DEBUG_OUTPUT )
 		if( libcnotify_verbose != 0 )
 		{
@@ -482,12 +523,6 @@ int libagdb_io_handle_read_compressed_blocks(
 			 compressed_block_size );
 		}
 #endif
-		uncompressed_block_size = 65536;
-
-		if( uncompressed_block_size > uncompressed_data_size )
-		{
-			uncompressed_block_size = uncompressed_data_size;
-		}
 		if( libfdata_list_append_element_with_mapped_size(
 		     compressed_blocks_list,
 		     &element_index,
@@ -539,18 +574,18 @@ int libagdb_io_handle_read_uncompressed_file_header(
      libbfio_handle_t *file_io_handle,
      off64_t *volumes_information_offset,
      uint32_t *number_of_volumes,
+     uint32_t *number_of_executables,
      libcerror_error_t **error )
 {
 	agdb_file_header_t file_header_data;
 
-	static char *function           = "libagdb_io_handle_read_uncompressed_file_header";
-	size64_t data_stream_size       = 0;
-	ssize_t read_count              = 0;
-	uint32_t alignment_padding_size = 0;
-	uint32_t data_size              = 0;
+	static char *function     = "libagdb_io_handle_read_uncompressed_file_header";
+	size64_t data_stream_size = 0;
+	ssize_t read_count        = 0;
+	uint32_t data_size        = 0;
 
 #if defined( HAVE_DEBUG_OUTPUT )
-	uint32_t value_32bit            = 0;
+	uint32_t value_32bit      = 0;
 #endif
 
 	if( io_handle == NULL )
@@ -571,6 +606,28 @@ int libagdb_io_handle_read_uncompressed_file_header(
 		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid volumes information offset.",
+		 function );
+
+		return( -1 );
+	}
+	if( number_of_volumes == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid number of volumes.",
+		 function );
+
+		return( -1 );
+	}
+	if( number_of_executables == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid number of executables.",
 		 function );
 
 		return( -1 );
@@ -626,7 +683,7 @@ int libagdb_io_handle_read_uncompressed_file_header(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_IO,
 		 LIBCERROR_IO_ERROR_READ_FAILED,
-		 "%s: unable to readfile header data.",
+		 "%s: unable to read file header data.",
 		 function );
 
 		return( -1 );
@@ -676,8 +733,24 @@ int libagdb_io_handle_read_uncompressed_file_header(
 	 io_handle->file_information_entry_size );
 
 	byte_stream_copy_to_uint32_little_endian(
+	 &( file_header_data.database_parameters[ 8 ] ),
+	 io_handle->executable_information_entry_size );
+
+	byte_stream_copy_to_uint32_little_endian(
+	 &( file_header_data.database_parameters[ 12 ] ),
+	 io_handle->file_information_sub_entry_type1_size );
+
+	byte_stream_copy_to_uint32_little_endian(
+	 &( file_header_data.database_parameters[ 16 ] ),
+	 io_handle->file_information_sub_entry_type2_size );
+
+	byte_stream_copy_to_uint32_little_endian(
 	 file_header_data.number_of_volumes,
 	 *number_of_volumes );
+
+	byte_stream_copy_to_uint32_little_endian(
+	 file_header_data.number_of_executables,
+	 *number_of_executables );
 
 #if defined( HAVE_DEBUG_OUTPUT )
 	if( libcnotify_verbose != 0 )
@@ -706,7 +779,7 @@ int libagdb_io_handle_read_uncompressed_file_header(
 		 io_handle->database_type );
 
 		libcnotify_printf(
-		 "%s: database parameters:\t: ",
+		 "%s: database parameters\t: ",
 		 function );
 
 		byte_stream_copy_to_uint32_little_endian(
@@ -793,13 +866,10 @@ int libagdb_io_handle_read_uncompressed_file_header(
 		 function,
 		 value_32bit );
 
-		byte_stream_copy_to_uint32_little_endian(
-		 file_header_data.number_of_executables,
-		 value_32bit );
 		libcnotify_printf(
 		 "%s: number of executables\t: %" PRIu32 "\n",
 		 function,
-		 value_32bit );
+		 *number_of_executables );
 
 		byte_stream_copy_to_uint32_little_endian(
 		 file_header_data.unknown4,
@@ -821,64 +891,98 @@ int libagdb_io_handle_read_uncompressed_file_header(
 		 "\n" );
 	}
 #endif
-	alignment_padding_size = (size_t) ( *volumes_information_offset % 8 );
+	return( 1 );
+}
 
-	if( alignment_padding_size != 0 )
-	{
-		alignment_padding_size = 8 - alignment_padding_size;
-/* Read and print the alignment padding
+/* Reads data from the current offset into a buffer
+ * Callback for the uncompressed block stream
+ * Returns the number of bytes read or -1 on error
  */
-		*volumes_information_offset += alignment_padding_size;
-	}
-
-#ifdef TODO
-/* TODO testing */
-uint8_t buffer[ 512 ];
-size_t read_size = 0;
-data_size -= 512;
-while( data_size > 0 )
+ssize_t libagdb_io_handle_read_segment_data(
+         intptr_t *data_handle LIBAGDB_ATTRIBUTE_UNUSED,
+         intptr_t *file_io_handle,
+         int segment_index,
+         int segment_file_index LIBAGDB_ATTRIBUTE_UNUSED,
+         uint8_t *segment_data,
+         size_t segment_data_size,
+         uint32_t segment_flags LIBAGDB_ATTRIBUTE_UNUSED,
+         uint8_t read_flags LIBAGDB_ATTRIBUTE_UNUSED,
+         libcerror_error_t **error )
 {
-	read_size = 512;
+	static char *function = "libagdb_io_handle_read_segment_data";
+	ssize_t read_count    = 0;
 
-	if( read_size > data_size )
+	LIBAGDB_UNREFERENCED_PARAMETER( data_handle )
+	LIBAGDB_UNREFERENCED_PARAMETER( segment_file_index )
+	LIBAGDB_UNREFERENCED_PARAMETER( segment_flags )
+	LIBAGDB_UNREFERENCED_PARAMETER( read_flags )
+
+	if( segment_data_size > (size64_t) SSIZE_MAX )
 	{
-		read_size = data_size;
-	}
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_OUT_OF_BOUNDS,
+		 "%s: invalid segment data size value out of bounds.",
+		 function );
 
-	read_count = libfdata_stream_read_buffer(
-	              uncompressed_data_stream,
-	              (intptr_t *) file_io_handle,
-	              buffer,
-	              read_size,
-	              0,
+		return( -1 );
+	}
+	read_count = libbfio_handle_read_buffer(
+	              (libbfio_handle_t *) file_io_handle,
+	              segment_data,
+	              segment_data_size,
 	              error );
 
-	if( read_count == -1 )
+	if( read_count != (ssize_t) segment_data_size )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_IO,
 		 LIBCERROR_IO_ERROR_READ_FAILED,
-		 "%s: unable to readfile header data.",
-		 function );
+		 "%s: unable to read segment: %d data.",
+		 function,
+		 segment_index );
 
 		return( -1 );
 	}
-#if defined( HAVE_DEBUG_OUTPUT )
-	if( libcnotify_verbose != 0 )
-	{
-		libcnotify_printf(
-		 "%s: file header data:\n",
-		 function );
-		libcnotify_print_data(
-		 buffer,
-		 read_size,
-		 0 );
-	}
-#endif
-	data_size -= read_count;
+	return( read_count );
 }
-#endif /* TODO */
-	return( 1 );
+
+/* Seeks a certain offset of the data
+ * Callback for the uncompressed block stream
+ * Returns the offset if seek is successful or -1 on error
+ */
+off64_t libagdb_io_handle_seek_segment_offset(
+         intptr_t *data_handle LIBAGDB_ATTRIBUTE_UNUSED,
+         intptr_t *file_io_handle,
+         int segment_index,
+         int segment_file_index LIBAGDB_ATTRIBUTE_UNUSED,
+         off64_t segment_offset,
+         libcerror_error_t **error )
+{
+	static char *function = "libagdb_io_handle_seek_segment_offset";
+
+	LIBAGDB_UNREFERENCED_PARAMETER( data_handle )
+	LIBAGDB_UNREFERENCED_PARAMETER( segment_file_index )
+
+	if( libbfio_handle_seek_offset(
+	     (libbfio_handle_t *) file_io_handle,
+	     segment_offset,
+	     SEEK_SET,
+	     error ) == -1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_IO,
+		 LIBCERROR_IO_ERROR_SEEK_FAILED,
+		 "%s: unable to seek segment: %d offset: %" PRIi64 ".",
+		 function,
+		 segment_index,
+		 segment_offset );
+
+		return( -1 );
+	}
+	return( segment_offset );
 }
 

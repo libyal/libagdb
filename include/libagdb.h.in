@@ -271,16 +271,56 @@ int libagdb_file_get_volume_information(
      libagdb_volume_information_t **volume_information,
      libagdb_error_t **error );
 
+/* Retrieves the number of executables
+ * Returns 1 if successful or -1 on error
+ */
+LIBAGDB_EXTERN \
+int libagdb_file_get_number_of_executables(
+     libagdb_file_t *file,
+     int *number_of_executables,
+     libagdb_error_t **error );
+
+/* Retrieves a specific executable information
+ * Returns 1 if successful or -1 on error
+ */
+LIBAGDB_EXTERN \
+int libagdb_file_get_executable_information(
+     libagdb_file_t *file,
+     int executable_index,
+     libagdb_executable_information_t **executable_information,
+     libagdb_error_t **error );
+
 /* -------------------------------------------------------------------------
  * Volume information functions
  * ------------------------------------------------------------------------- */
 
-/* Frees a volume information
+/* Frees volume information
  * Returns 1 if successful or -1 on error
  */
 LIBAGDB_EXTERN \
 int libagdb_volume_information_free(
      libagdb_volume_information_t **volume_information,
+     libagdb_error_t **error );
+
+/* Retrieves the serial number
+ * Returns 1 if successful or -1 on error
+ */
+LIBAGDB_EXTERN \
+int libagdb_volume_information_get_serial_number(
+     libagdb_volume_information_t *volume_information,
+     uint32_t *serial_number,
+     libagdb_error_t **error );
+
+/* -------------------------------------------------------------------------
+ * Executable information functions
+ * ------------------------------------------------------------------------- */
+
+/* Frees executable information
+ * Returns 1 if successful or -1 on error
+ */
+LIBAGDB_EXTERN \
+int libagdb_executable_information_free(
+     libagdb_executable_information_t **executable_information,
      libagdb_error_t **error );
 
 #if defined( __cplusplus )

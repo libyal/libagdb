@@ -342,6 +342,7 @@ int info_handle_file_fprint(
 	libagdb_volume_information_t *volume_information = NULL;
 	libcstring_system_character_t *value_string      = NULL;
 	static char *function                            = "info_handle_file_fprint";
+	uint32_t value_32bit                             = 0;
 	int number_of_volumes                            = 0;
 	int volume_index                                 = 0;
 
@@ -414,7 +415,6 @@ int info_handle_file_fprint(
 		 info_handle->notify_stream,
 		 "Volume information:\n" );
 
-/* TODO
 		if( libagdb_volume_information_get_serial_number(
 		     volume_information,
 		     &value_32bit,
@@ -433,7 +433,6 @@ int info_handle_file_fprint(
 		 info_handle->notify_stream,
 		 "\tSerial number\t\t\t: 0x%08" PRIx32 "\n",
 		 value_32bit );
-*/
 
 		if( libagdb_volume_information_free(
 		     &volume_information,

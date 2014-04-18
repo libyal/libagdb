@@ -27,6 +27,7 @@
 #include "libagdb_compressed_blocks_stream.h"
 #include "libagdb_debug.h"
 #include "libagdb_definitions.h"
+#include "libagdb_executable_information.h"
 #include "libagdb_io_handle.h"
 #include "libagdb_file.h"
 #include "libagdb_libbfio.h"
@@ -116,6 +117,20 @@ int libagdb_file_initialize(
 
 		goto on_error;
 	}
+	if( libcdata_array_initialize(
+	     &( internal_file->executables_array ),
+	     0,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+		 "%s: unable to create executables array.",
+		 function );
+
+		goto on_error;
+	}
 	if( libagdb_io_handle_initialize(
 	     &( internal_file->io_handle ),
 	     error ) != 1 )
@@ -136,6 +151,13 @@ int libagdb_file_initialize(
 on_error:
 	if( internal_file != NULL )
 	{
+		if( internal_file->executables_array != NULL )
+		{
+			libcdata_array_free(
+			 &( internal_file->executables_array ),
+			 NULL,
+			 NULL );
+		}
 		if( internal_file->volumes_array != NULL )
 		{
 			libcdata_array_free(
@@ -251,6 +273,20 @@ int libagdb_file_free(
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
 			 "%s: unable to free volumes array.",
+			 function );
+
+			result = -1;
+		}
+		if( libcdata_array_free(
+		     &( internal_file->executables_array ),
+		     (int (*)(intptr_t **, libcerror_error_t **)) &libagdb_internal_executable_information_free,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+			 "%s: unable to free executables array.",
 			 function );
 
 			result = -1;
@@ -851,6 +887,21 @@ int libagdb_file_close(
 
 		result = -1;
 	}
+	if( libcdata_array_resize(
+	     internal_file->executables_array,
+	     0,
+	     (int (*)(intptr_t **, libcerror_error_t **)) &libagdb_internal_executable_information_free,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_RESIZE_FAILED,
+		 "%s: unable to resize executables array.",
+		 function );
+
+		result = -1;
+	}
 	return( result );
 }
 
@@ -862,13 +913,18 @@ int libagdb_file_open_read(
      libbfio_handle_t *file_io_handle,
      libcerror_error_t **error )
 {
-	libagdb_volume_information_t *volume_information = NULL;
-	static char *function                            = "libagdb_file_open_read";
-	off64_t volumes_information_offset               = 0;
-	ssize64_t read_count                             = 0;
-	uint32_t number_of_volumes                       = 0;
-	uint32_t volume_index                            = 0;
-	int entry_index                                  = 0;
+	libagdb_executable_information_t *executable_information = NULL;
+	libagdb_volume_information_t *volume_information         = NULL;
+	static char *function                                    = "libagdb_file_open_read";
+	off64_t file_offset                                      = 0;
+	ssize64_t read_count                                     = 0;
+	uint32_t alignment_padding_size                          = 0;
+	uint32_t executable_index                                = 0;
+	uint32_t number_of_executables                           = 0;
+	uint32_t number_of_volumes                               = 0;
+	uint32_t volume_index                                    = 0;
+	int entry_index                                          = 0;
+	int segment_index                                        = 0;
 
 	if( internal_file == NULL )
 	{
@@ -1014,14 +1070,53 @@ int libagdb_file_open_read(
 	}
 	else
 	{
-/* TODO set up uncompressed stream */
+		if( libfdata_stream_initialize(
+		     &( internal_file->uncompressed_data_stream ),
+		     NULL,
+		     NULL,
+		     NULL,
+		     NULL,
+		     (ssize_t (*)(intptr_t *, intptr_t *, int, int, uint8_t *, size_t, uint32_t, uint8_t, libcerror_error_t **)) &libagdb_io_handle_read_segment_data,
+		     NULL,
+		     (off64_t (*)(intptr_t *, intptr_t *, int, int, off64_t, libcerror_error_t **)) &libagdb_io_handle_seek_segment_offset,
+		     0,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+			 "%s: unable to create uncompressed data stream.",
+			 function );
+
+			goto on_error;
+		}
+		if( libfdata_stream_append_segment(
+		     internal_file->uncompressed_data_stream,
+		     &segment_index,
+		     0,
+		     0,
+		     (size64_t) internal_file->io_handle->uncompressed_data_size,
+		     0,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_APPEND_FAILED,
+			 "%s: unable to append uncompressed data stream segment: 0.",
+			 function );
+
+			goto on_error;
+		}
 	}
 	if( libagdb_io_handle_read_uncompressed_file_header(
 	     internal_file->io_handle,
 	     internal_file->uncompressed_data_stream,
 	     file_io_handle,
-	     &volumes_information_offset,
+	     &file_offset,
 	     &number_of_volumes,
+	     &number_of_executables,
 	     error ) != 1 )
 	{
 		libcerror_error_set(
@@ -1037,6 +1132,15 @@ int libagdb_file_open_read(
 	     volume_index < number_of_volumes;
 	     volume_index++ )
 	{
+		alignment_padding_size = (size_t) ( file_offset % 8 );
+
+		if( alignment_padding_size != 0 )
+		{
+			alignment_padding_size = 8 - alignment_padding_size;
+/* Read and print the alignment padding
+*/
+			file_offset += alignment_padding_size;
+		}
 		if( libagdb_volume_information_initialize(
 		     &volume_information,
 		     error ) != 1 )
@@ -1056,7 +1160,7 @@ int libagdb_file_open_read(
 		              internal_file->uncompressed_data_stream,
 		              internal_file->file_io_handle,
 		              internal_file->io_handle,
-		              volumes_information_offset,
+		              file_offset,
 		              volume_index,
 		              error );
 
@@ -1072,7 +1176,7 @@ int libagdb_file_open_read(
 
 			goto on_error;
 		}
-		volumes_information_offset += read_count;
+		file_offset += read_count;
 
 		if( libcdata_array_append_entry(
 		     internal_file->volumes_array,
@@ -1092,9 +1196,74 @@ int libagdb_file_open_read(
 		}
 		volume_information = NULL;
 	}
+	for( executable_index = 0;
+	     executable_index < number_of_executables;
+	     executable_index++ )
+	{
+		if( libagdb_executable_information_initialize(
+		     &executable_information,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+			 "%s: unable to create executable: %" PRIu32 " information.",
+			 function,
+			 executable_index );
+
+			goto on_error;
+		}
+		read_count = libagdb_executable_information_read(
+		              executable_information,
+		              internal_file->uncompressed_data_stream,
+		              internal_file->file_io_handle,
+		              internal_file->io_handle,
+		              file_offset,
+		              executable_index,
+		              error );
+
+		if( read_count == -1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_IO,
+			 LIBCERROR_IO_ERROR_READ_FAILED,
+			 "%s: unable to read executable: %" PRIu32 " information.",
+			 function,
+			 executable_index );
+
+			goto on_error;
+		}
+		file_offset += read_count;
+
+		if( libcdata_array_append_entry(
+		     internal_file->executables_array,
+		     &entry_index,
+		     (intptr_t *) executable_information,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_APPEND_FAILED,
+			 "%s: unable to append executable: %" PRIu32 " information to array.",
+			 function,
+			 executable_index );
+
+			goto on_error;
+		}
+		executable_information = NULL;
+	}
 	return( 1 );
 
 on_error:
+	if( executable_information != NULL )
+	{
+		libagdb_internal_executable_information_free(
+		 (libagdb_internal_executable_information_t **) &executable_information,
+		 NULL );
+	}
 	if( volume_information != NULL )
 	{
 		libagdb_internal_volume_information_free(
@@ -1212,6 +1381,102 @@ int libagdb_file_get_volume_information(
 		 "%s: unable to retrieve volume: %d information.",
 		 function,
 		 volume_index );
+
+		return( -1 );
+	}
+	return( 1 );
+}
+
+/* Retrieves the number of executables
+ * Returns 1 if successful or -1 on error
+ */
+int libagdb_file_get_number_of_executables(
+     libagdb_file_t *file,
+     int *number_of_executables,
+     libcerror_error_t **error )
+{
+	libagdb_internal_file_t *internal_file = NULL;
+	static char *function                  = "libagdb_file_get_number_of_executables";
+
+	if( file == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid file.",
+		 function );
+
+		return( -1 );
+	}
+	internal_file = (libagdb_internal_file_t *) file;
+
+	if( libcdata_array_get_number_of_entries(
+	     internal_file->executables_array,
+	     number_of_executables,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve number of executables.",
+		 function );
+
+		return( -1 );
+	}
+	return( 1 );
+}
+
+/* Retrieves a specific executable information
+ * Returns 1 if successful or -1 on error
+ */
+int libagdb_file_get_executable_information(
+     libagdb_file_t *file,
+     int executable_index,
+     libagdb_executable_information_t **executable_information,
+     libcerror_error_t **error )
+{
+	libagdb_internal_file_t *internal_file = NULL;
+	static char *function                  = "libagdb_file_get_executable_information";
+
+	if( file == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid file.",
+		 function );
+
+		return( -1 );
+	}
+	internal_file = (libagdb_internal_file_t *) file;
+
+	if( internal_file->io_handle == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 "%s: invalid internal file - missing file information.",
+		 function );
+
+		return( -1 );
+	}
+	if( libcdata_array_get_entry_by_index(
+	     internal_file->executables_array,
+	     executable_index,
+	     (intptr_t **) executable_information,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve executable: %d information.",
+		 function,
+		 executable_index );
 
 		return( -1 );
 	}

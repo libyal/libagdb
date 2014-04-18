@@ -1,11 +1,17 @@
 TODO:
-* libagdb
-  - set up uncompressed stream
+* API / info handle add
+  - volume device path
+  - volume creation time
 * agdbinfo
 * add python bindings
 * add dpkg files
 * add macosx files
 * update manuals
+
+20140418
+* worked on lznt1 compressed database file support
+* worked on uncompressed databae file support
+* worked on format
 
 20140417
 * worked on format

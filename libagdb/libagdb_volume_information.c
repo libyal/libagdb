@@ -380,6 +380,14 @@ ssize64_t libagdb_volume_information_read(
 	 ( (agdb_volume_information_56_t *) volume_information_data )->number_of_files,
 	 number_of_files );
 
+	byte_stream_copy_to_uint64_little_endian(
+	 ( (agdb_volume_information_56_t *) volume_information_data )->creation_time,
+	 internal_volume_information->creation_time );
+
+	byte_stream_copy_to_uint32_little_endian(
+	 ( (agdb_volume_information_56_t *) volume_information_data )->serial_number,
+	 internal_volume_information->serial_number );
+
 	byte_stream_copy_to_uint16_little_endian(
 	 ( (agdb_volume_information_56_t *) volume_information_data )->device_path_number_of_characters,
 	 device_path_size );
@@ -400,18 +408,13 @@ ssize64_t libagdb_volume_information_read(
 
 			goto on_error;
 		}
-		byte_stream_copy_to_uint64_little_endian(
+		byte_stream_copy_to_uint32_little_endian(
 		 ( (agdb_volume_information_56_t *) volume_information_data )->unknown1,
-		 value_64bit );
+		 value_32bit );
 		libcnotify_printf(
-		 "%s: unknown1\t\t\t\t: 0x%08" PRIx64 "\n",
+		 "%s: unknown1\t\t\t\t: 0x%08" PRIx32 "\n",
 		 function,
-		 value_64bit );
-
-		libcnotify_printf(
-		 "%s: number of files\t\t\t: %" PRIu32 "\n",
-		 function,
-		 number_of_files );
+		 value_32bit );
 
 		byte_stream_copy_to_uint32_little_endian(
 		 ( (agdb_volume_information_56_t *) volume_information_data )->unknown2,
@@ -421,11 +424,24 @@ ssize64_t libagdb_volume_information_read(
 		 function,
 		 value_32bit );
 
-		byte_stream_copy_to_uint64_little_endian(
+		libcnotify_printf(
+		 "%s: number of files\t\t\t: %" PRIu32 "\n",
+		 function,
+		 number_of_files );
+
+		byte_stream_copy_to_uint32_little_endian(
 		 ( (agdb_volume_information_56_t *) volume_information_data )->unknown3,
+		 value_32bit );
+		libcnotify_printf(
+		 "%s: unknown3\t\t\t\t: 0x%08" PRIx32 "\n",
+		 function,
+		 value_32bit );
+
+		byte_stream_copy_to_uint64_little_endian(
+		 ( (agdb_volume_information_56_t *) volume_information_data )->unknown4,
 		 value_64bit );
 		libcnotify_printf(
-		 "%s: unknown3\t\t\t\t: 0x%08" PRIx64 "\n",
+		 "%s: unknown4\t\t\t\t: 0x%08" PRIx64 "\n",
 		 function,
 		 value_64bit );
 
@@ -476,21 +492,10 @@ ssize64_t libagdb_volume_information_read(
 		 function,
 		 filetime_string );
 
-		byte_stream_copy_to_uint32_little_endian(
-		 ( (agdb_volume_information_56_t *) volume_information_data )->serial_number,
-		 value_32bit );
 		libcnotify_printf(
-		 "%s: serial number\t\t\t: 0x%08" PRIx32 "\n",
+		 "%s: serial number\t\t\t\t: 0x%08" PRIx32 "\n",
 		 function,
-		 value_32bit );
-
-		byte_stream_copy_to_uint32_little_endian(
-		 ( (agdb_volume_information_56_t *) volume_information_data )->unknown4,
-		 value_32bit );
-		libcnotify_printf(
-		 "%s: unknown4\t\t\t\t: 0x%08" PRIx32 "\n",
-		 function,
-		 value_32bit );
+		 internal_volume_information->serial_number );
 
 		byte_stream_copy_to_uint32_little_endian(
 		 ( (agdb_volume_information_56_t *) volume_information_data )->unknown5,
@@ -500,24 +505,32 @@ ssize64_t libagdb_volume_information_read(
 		 function,
 		 value_32bit );
 
+		byte_stream_copy_to_uint32_little_endian(
+		 ( (agdb_volume_information_56_t *) volume_information_data )->unknown6,
+		 value_32bit );
+		libcnotify_printf(
+		 "%s: unknown6\t\t\t\t: 0x%08" PRIx32 "\n",
+		 function,
+		 value_32bit );
+
 		libcnotify_printf(
 		 "%s: device path number of characters\t: %" PRIu16 "\n",
 		 function,
 		 device_path_size );
 
 		byte_stream_copy_to_uint16_little_endian(
-		 ( (agdb_volume_information_56_t *) volume_information_data )->unknown6,
+		 ( (agdb_volume_information_56_t *) volume_information_data )->unknown7,
 		 value_16bit );
 		libcnotify_printf(
-		 "%s: unknown6\t\t\t\t: 0x%04" PRIx16 "\n",
+		 "%s: unknown7\t\t\t\t: 0x%04" PRIx16 "\n",
 		 function,
 		 value_16bit );
 
 		byte_stream_copy_to_uint64_little_endian(
-		 ( (agdb_volume_information_56_t *) volume_information_data )->unknown7,
+		 ( (agdb_volume_information_56_t *) volume_information_data )->unknown8,
 		 value_64bit );
 		libcnotify_printf(
-		 "%s: unknown7\t\t\t\t: 0x%08" PRIx64 "\n",
+		 "%s: unknown8\t\t\t\t: 0x%08" PRIx64 "\n",
 		 function,
 		 value_64bit );
 
@@ -797,6 +810,46 @@ on_error:
 		 volume_information_data );
 	}
 	return( -1 );
+}
+
+/* Retrieves the creation time
+ * Returns 1 if successful or -1 on error
+ */
+int libagdb_volume_information_get_creation_time(
+     libagdb_volume_information_t *volume_information,
+     uint64_t *creation_time,
+     libcerror_error_t **error )
+{
+	libagdb_internal_volume_information_t *internal_volume_information = NULL;
+	static char *function                                              = "libagdb_volume_information_get_creation_time";
+
+	if( volume_information == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid volume information.",
+		 function );
+
+		return( -1 );
+	}
+	internal_volume_information = (libagdb_internal_volume_information_t *) volume_information;
+
+	if( creation_time == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid creation time.",
+		 function );
+
+		return( -1 );
+	}
+	*creation_time = internal_volume_information->creation_time;
+
+	return( 1 );
 }
 
 /* Retrieves the serial number

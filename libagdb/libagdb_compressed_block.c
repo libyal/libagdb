@@ -193,6 +193,7 @@ int libagdb_compressed_block_read_element_data(
 	static char *function                        = "libagdb_compressed_block_read_element_data";
 	size64_t uncompressed_size                   = 0;
 	ssize_t read_count                           = 0;
+	int result                                   = 0;
 
 	LIBAGDB_UNREFERENCED_PARAMETER( element_file_index )
 	LIBAGDB_UNREFERENCED_PARAMETER( read_flags )
@@ -204,6 +205,19 @@ int libagdb_compressed_block_read_element_data(
 		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid IO handle.",
+		 function );
+
+		return( -1 );
+	}
+	if( ( io_handle->file_type != LIBFWNT_FILE_TYPE_COMPRESSED_VISTA )
+	 && ( io_handle->file_type != LIBFWNT_FILE_TYPE_COMPRESSED_WINDOWS7 )
+	 && ( io_handle->file_type != LIBFWNT_FILE_TYPE_COMPRESSED_WINDOWS8 ) )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
+		 "%s: invalid IO handle - unsupported file type.",
 		 function );
 
 		return( -1 );
@@ -246,7 +260,7 @@ int libagdb_compressed_block_read_element_data(
 		goto on_error;
 	}
 	if( ( uncompressed_size == (size64_t) 0 )
-	 || ( uncompressed_size > (size64_t) 65536 ) )
+	 || ( uncompressed_size > (size64_t) io_handle->uncompressed_block_size ) )
 	{
 		libcerror_error_set(
 		 error,
@@ -331,12 +345,29 @@ int libagdb_compressed_block_read_element_data(
 	}
 	compressed_block->data_size = (size_t) uncompressed_size;
 
-	if( libfwnt_lzxpress_huffman_decompress(
-	     compressed_data,
-	     (size_t) compressed_block_size,
-	     compressed_block->data,
-	     &( compressed_block->data_size ),
-	     error ) != 1 )
+	if( io_handle->file_type == LIBFWNT_FILE_TYPE_COMPRESSED_VISTA )
+	{
+		result = libfwnt_lznt1_decompress(
+		          compressed_data,
+		          (size_t) compressed_block_size,
+		          compressed_block->data,
+		          &( compressed_block->data_size ),
+		          error );
+	}
+	else if( io_handle->file_type == LIBFWNT_FILE_TYPE_COMPRESSED_WINDOWS7 )
+	{
+		result = libfwnt_lzxpress_huffman_decompress(
+		          compressed_data,
+		          (size_t) compressed_block_size,
+		          compressed_block->data,
+		          &( compressed_block->data_size ),
+		          error );
+	}
+	else if( io_handle->file_type == LIBFWNT_FILE_TYPE_COMPRESSED_WINDOWS8 )
+	{
+/* TODO implement */
+	}
+	if( result != 1 )
 	{
 		libcerror_error_set(
 		 error,
@@ -352,6 +383,18 @@ int libagdb_compressed_block_read_element_data(
 
 	compressed_data = NULL;
 
+#if defined( HAVE_DEBUG_OUTPUT )
+	if( libcnotify_verbose != 0 )
+	{
+		libcnotify_printf(
+		 "%s: uncompressed data:\n",
+		 function );
+		libcnotify_print_data(
+		 compressed_block->data,
+		 compressed_block->data_size,
+		 LIBCNOTIFY_PRINT_DATA_FLAG_GROUP_DATA );
+	}
+#endif
 	if( libfdata_list_element_set_element_value(
 	     element,
 	     (intptr_t *) file_io_handle,

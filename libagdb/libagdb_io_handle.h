@@ -49,6 +49,10 @@ struct libagdb_io_handle
 	 */
 	size64_t file_size;
 
+	/* The uncompressed block size
+	 */
+	uint32_t uncompressed_block_size;
+
 	/* The uncompressed data size
 	 */
 	uint32_t uncompressed_data_size;
@@ -57,13 +61,25 @@ struct libagdb_io_handle
 	 */
 	uint32_t database_type;
 
-	/* The volume information entry sizes
+	/* The volume information entry size
 	 */
 	uint32_t volume_information_entry_size;
 
-	/* The file information entry sizes
+	/* The file information entry size
 	 */
 	uint32_t file_information_entry_size;
+
+	/* The executable information entry size
+	 */
+	uint32_t executable_information_entry_size;
+
+	/* The file information sub entry type 1 size
+	 */
+	uint32_t file_information_sub_entry_type1_size;
+
+	/* The file information sub entry type 2 size
+	 */
+	uint32_t file_information_sub_entry_type2_size;
 
 	/* Value to indicate if abort was signalled
 	 */
@@ -99,7 +115,27 @@ int libagdb_io_handle_read_uncompressed_file_header(
      libbfio_handle_t *file_io_handle,
      off64_t *volumes_information_offset,
      uint32_t *number_of_volumes,
+     uint32_t *number_of_executables,
      libcerror_error_t **error );
+
+ssize_t libagdb_io_handle_read_segment_data(
+         intptr_t *data_handle,
+         intptr_t *file_io_handle,
+         int segment_index,
+         int segment_file_index,
+         uint8_t *segment_data,
+         size_t segment_data_size,
+         uint32_t segment_flags,
+         uint8_t read_flags,
+         libcerror_error_t **error );
+
+off64_t libagdb_io_handle_seek_segment_offset(
+         intptr_t *data_handle,
+         intptr_t *file_io_handle,
+         int segment_index,
+         int segment_file_index,
+         off64_t segment_offset,
+         libcerror_error_t **error );
 
 #if defined( __cplusplus )
 }

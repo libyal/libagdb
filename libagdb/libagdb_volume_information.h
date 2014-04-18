@@ -85,6 +85,12 @@ ssize64_t libagdb_volume_information_read(
            libcerror_error_t **error );
 
 LIBAGDB_EXTERN \
+int libagdb_volume_information_get_creation_time(
+     libagdb_volume_information_t *volume_information,
+     uint64_t *creation_time,
+     libcerror_error_t **error );
+
+LIBAGDB_EXTERN \
 int libagdb_volume_information_get_serial_number(
      libagdb_volume_information_t *volume_information,
      uint32_t *serial_number,

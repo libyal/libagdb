@@ -1,5 +1,5 @@
 /*
- * The volume information definitions of a Windows SuperFetch database file
+ * The executable information definitions of a Windows SuperFetch database file
  *
  * Copyright (C) 2014, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -19,8 +19,8 @@
  * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#if !defined( _AGDB_VOLUME_INFORMATION_H )
-#define _AGDB_VOLUME_INFORMATION_H
+#if !defined( _AGDB_EXECUTABLE_INFORMATION_H )
+#define _AGDB_EXECUTABLE_INFORMATION_H
 
 #include <common.h>
 #include <types.h>
@@ -29,9 +29,9 @@
 extern "C" {
 #endif
 
-typedef struct agdb_volume_information_56 agdb_volume_information_56_t;
+typedef struct agdb_executable_information_100 agdb_executable_information_100_t;
 
-struct agdb_volume_information_56
+struct agdb_executable_information_100
 {
 	/* Unknown
 	 * Consists of 4 bytes
@@ -43,55 +43,95 @@ struct agdb_volume_information_56
 	 */
 	uint8_t unknown2[ 4 ];
 
-	/* The number of files
-	 * Consists of 4 bytes
-	 */
-	uint8_t number_of_files[ 4 ];
-
 	/* Unknown
 	 * Consists of 4 bytes
 	 */
 	uint8_t unknown3[ 4 ];
 
 	/* Unknown
-	 * Consists of 8 bytes
-	 */
-	uint8_t unknown4[ 8 ];
-
-	/* The (volume) creation time
-	 * Consists of 8 bytes
-	 */
-	uint8_t creation_time[ 8 ];
-
-	/* The (volume) serial number
 	 * Consists of 4 bytes
 	 */
-	uint8_t serial_number[ 4 ];
+	uint8_t unknown4[ 4 ];
 
 	/* Unknown
-	 * Consists of 4 bytes
+	 * Consists of 12 bytes
 	 */
-	uint8_t unknown5[ 4 ];
+	uint8_t unknown5[ 12 ];
 
 	/* Unknown
 	 * Consists of 4 bytes
 	 */
 	uint8_t unknown6[ 4 ];
 
-	/* The (volume) device path number of characters
-	 * Consists of 2 bytes
+	/* Unknown
+	 * Consists of 4 bytes
 	 */
-	uint8_t device_path_number_of_characters[ 2 ];
+	uint8_t unknown7[ 4 ];
 
 	/* Unknown
-	 * Consists of 2 bytes
+	 * Consists of 4 bytes
 	 */
-	uint8_t unknown7[ 2 ];
+	uint8_t unknown8[ 4 ];
 
 	/* Unknown
-	 * Consists of 8 bytes
+	 * Consists of 4 bytes
 	 */
-	uint8_t unknown8[ 8 ];
+	uint8_t unknown9[ 4 ];
+
+	/* Unknown
+	 * Consists of 16 bytes
+	 */
+	uint8_t unknown10[ 16 ];
+
+	/* Unknown
+	 * Consists of 4 bytes
+	 */
+	uint8_t unknown11[ 4 ];
+
+	/* Unknown
+	 * Consists of 4 bytes
+	 */
+	uint8_t unknown12[ 4 ];
+
+	/* Unknown
+	 * Consists of 4 bytes
+	 */
+	uint8_t unknown13[ 4 ];
+
+	/* Unknown
+	 * Consists of 4 bytes
+	 */
+	uint8_t unknown14[ 4 ];
+
+	/* Unknown
+	 * Consists of 4 bytes
+	 */
+	uint8_t unknown15[ 4 ];
+
+	/* Unknown
+	 * Consists of 4 bytes
+	 */
+	uint8_t unknown16[ 4 ];
+
+	/* Unknown
+	 * Consists of 4 bytes
+	 */
+	uint8_t unknown17[ 4 ];
+
+	/* Unknown
+	 * Consists of 4 bytes
+	 */
+	uint8_t unknown18[ 4 ];
+
+	/* Unknown
+	 * Consists of 4 bytes
+	 */
+	uint8_t unknown19[ 4 ];
+
+	/* Unknown
+	 * Consists of 4 bytes
+	 */
+	uint8_t unknown20[ 4 ];
 };
 
 #if defined( __cplusplus )
