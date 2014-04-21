@@ -19,8 +19,8 @@
  * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#if !defined( _LIBMDMB_LIBCDATA_H )
-#define _LIBMDMB_LIBCDATA_H
+#if !defined( _LIBAGDB_LIBCDATA_H )
+#define _LIBAGDB_LIBCDATA_H
 
 #include <common.h>
 
