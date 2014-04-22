@@ -339,12 +339,15 @@ int info_handle_file_fprint(
      info_handle_t *info_handle,
      libcerror_error_t **error )
 {
-	libagdb_volume_information_t *volume_information = NULL;
-	libcstring_system_character_t *value_string      = NULL;
-	static char *function                            = "info_handle_file_fprint";
-	uint32_t value_32bit                             = 0;
-	int number_of_volumes                            = 0;
-	int volume_index                                 = 0;
+	libagdb_executable_information_t *executable_information = NULL;
+	libagdb_volume_information_t *volume_information         = NULL;
+	libcstring_system_character_t *value_string              = NULL;
+	static char *function                                    = "info_handle_file_fprint";
+	uint32_t value_32bit                                     = 0;
+	int executable_index                                     = 0;
+	int number_of_executables                                = 0;
+	int number_of_volumes                                    = 0;
+	int volume_index                                         = 0;
 
 	if( info_handle == NULL )
 	{
@@ -360,14 +363,6 @@ int info_handle_file_fprint(
 	fprintf(
 	 info_handle->notify_stream,
 	 "Windows SuperFetch database file information:\n" );
-
-	fprintf(
-	 info_handle->notify_stream,
-	 "\n" );
-
-	fprintf(
-	 info_handle->notify_stream,
-	 "Volumes:\n" );
 
 	if( libagdb_file_get_number_of_volumes(
 	     info_handle->input_file,
@@ -388,75 +383,161 @@ int info_handle_file_fprint(
 	 "\tNumber of volumes\t\t: %d\n",
 	 number_of_volumes );
 
+	if( libagdb_file_get_number_of_executables(
+	     info_handle->input_file,
+	     &number_of_executables,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve number of executables.",
+		 function );
+
+		goto on_error;
+	}
+	fprintf(
+	 info_handle->notify_stream,
+	 "\tNumber of executables\t\t: %d\n",
+	 number_of_executables );
+
 	fprintf(
 	 info_handle->notify_stream,
 	 "\n" );
 
-	for( volume_index = 0;
-	     volume_index < number_of_volumes;
-	     volume_index++ )
+	if( number_of_volumes > 0 )
 	{
-		if( libagdb_file_get_volume_information(
-		     info_handle->input_file,
-		     volume_index,
-		     &volume_information,
-		     error ) != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-			 "%s: unable to retrieve volume information.",
-			 function );
-
-			return( -1 );
-		}
 		fprintf(
 		 info_handle->notify_stream,
-		 "Volume information:\n" );
+		 "Volumes:\n" );
 
-		if( libagdb_volume_information_get_serial_number(
-		     volume_information,
-		     &value_32bit,
-		     error ) != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-			 "%s: unable to retrieve serial number.",
-			 function );
-
-			goto on_error;
-		}
-		fprintf(
-		 info_handle->notify_stream,
-		 "\tSerial number\t\t\t: 0x%08" PRIx32 "\n",
-		 value_32bit );
-
-		if( libagdb_volume_information_free(
-		     &volume_information,
-		     error ) != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
-			 "%s: unable to free volume information.",
-			 function );
-
-			goto on_error;
-		}
 		fprintf(
 		 info_handle->notify_stream,
 		 "\n" );
 
+		for( volume_index = 0;
+		     volume_index < number_of_volumes;
+		     volume_index++ )
+		{
+			if( libagdb_file_get_volume_information(
+			     info_handle->input_file,
+			     volume_index,
+			     &volume_information,
+			     error ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+				 "%s: unable to retrieve volume information.",
+				 function );
+
+				return( -1 );
+			}
+			fprintf(
+			 info_handle->notify_stream,
+			 "Volume information:\n" );
+
+			if( libagdb_volume_information_get_serial_number(
+			     volume_information,
+			     &value_32bit,
+			     error ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+				 "%s: unable to retrieve serial number.",
+				 function );
+
+				goto on_error;
+			}
+			fprintf(
+			 info_handle->notify_stream,
+			 "\tSerial number\t\t\t: 0x%08" PRIx32 "\n",
+			 value_32bit );
+
 /* TODO */
-		break;
+			if( libagdb_volume_information_free(
+			     &volume_information,
+			     error ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+				 "%s: unable to free volume information.",
+				 function );
+
+				goto on_error;
+			}
+			fprintf(
+			 info_handle->notify_stream,
+			 "\n" );
+		}
+	}
+	if( number_of_executables > 0 )
+	{
+		fprintf(
+		 info_handle->notify_stream,
+		 "Executables:\n" );
+
+		fprintf(
+		 info_handle->notify_stream,
+		 "\n" );
+
+		for( executable_index = 0;
+		     executable_index < number_of_executables;
+		     executable_index++ )
+		{
+			if( libagdb_file_get_executable_information(
+			     info_handle->input_file,
+			     executable_index,
+			     &executable_information,
+			     error ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+				 "%s: unable to retrieve executable information.",
+				 function );
+
+				return( -1 );
+			}
+			fprintf(
+			 info_handle->notify_stream,
+			 "Executable information:\n" );
+
+/* TODO */
+			if( libagdb_executable_information_free(
+			     &executable_information,
+			     error ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+				 "%s: unable to free executable information.",
+				 function );
+
+				goto on_error;
+			}
+			fprintf(
+			 info_handle->notify_stream,
+			 "\n" );
+		}
 	}
 	return( 1 );
 
 on_error:
+	if( executable_information != NULL )
+	{
+		libagdb_executable_information_free(
+		 &executable_information,
+		 NULL );
+	}
 	if( volume_information != NULL )
 	{
 		libagdb_volume_information_free(

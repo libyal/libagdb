@@ -913,12 +913,14 @@ int libagdb_file_open_read(
      libbfio_handle_t *file_io_handle,
      libcerror_error_t **error )
 {
+	uint8_t alignment_padding_data[ 8 ];
+
 	libagdb_executable_information_t *executable_information = NULL;
 	libagdb_volume_information_t *volume_information         = NULL;
 	static char *function                                    = "libagdb_file_open_read";
 	off64_t file_offset                                      = 0;
 	ssize64_t read_count                                     = 0;
-	uint32_t alignment_padding_size                          = 0;
+	size_t alignment_padding_size                            = 0;
 	uint32_t executable_index                                = 0;
 	uint32_t number_of_executables                           = 0;
 	uint32_t number_of_volumes                               = 0;
@@ -1137,9 +1139,48 @@ int libagdb_file_open_read(
 		if( alignment_padding_size != 0 )
 		{
 			alignment_padding_size = 8 - alignment_padding_size;
-/* Read and print the alignment padding
-*/
-			file_offset += alignment_padding_size;
+#if defined( HAVE_DEBUG_OUTPUT )
+			if( libcnotify_verbose != 0 )
+			{
+				libcnotify_printf(
+				 "%s: alignment padding size\t\t: %" PRIzd "\n",
+				 function,
+				 alignment_padding_size );
+			}
+#endif
+			read_count = libfdata_stream_read_buffer(
+			              internal_file->uncompressed_data_stream,
+			              (intptr_t *) internal_file->file_io_handle,
+			              alignment_padding_data,
+			              alignment_padding_size,
+			              0,
+			              error );
+
+			if( read_count != (ssize_t) alignment_padding_size )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_IO,
+				 LIBCERROR_IO_ERROR_READ_FAILED,
+				 "%s: unable to read alignment padding data.",
+				 function );
+
+				goto on_error;
+			}
+			file_offset += read_count;
+
+#if defined( HAVE_DEBUG_OUTPUT )
+			if( libcnotify_verbose != 0 )
+			{
+				libcnotify_printf(
+				 "%s: alignment padding data:\n",
+				 function );
+				libcnotify_print_data(
+				 alignment_padding_data,
+				 alignment_padding_size,
+				 0 );
+			}
+#endif
 		}
 		if( libagdb_volume_information_initialize(
 		     &volume_information,
