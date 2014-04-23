@@ -215,11 +215,15 @@ ssize64_t libagdb_volume_information_read(
            uint32_t volume_index,
            libcerror_error_t **error )
 {
+	uint8_t alignment_padding_data[ 8 ];
+
 	libagdb_file_information_t *file_information                       = NULL;
 	libagdb_internal_volume_information_t *internal_volume_information = NULL;
 	uint8_t *volume_information_data                                   = NULL;
 	static char *function                                              = "libagdb_volume_information_read";
 	ssize64_t total_read_count                                         = 0;
+	size_t alignment_padding_size                                      = 0;
+	size_t alignment_size                                              = 0;
 	ssize_t read_count                                                 = 0;
 	uint32_t file_index                                                = 0;
 	uint32_t number_of_files                                           = 0;
@@ -350,6 +354,7 @@ ssize64_t libagdb_volume_information_read(
 		goto on_error;
 	}
 	total_read_count += read_count;
+	file_offset      += read_count;
 
 #if defined( HAVE_DEBUG_OUTPUT )
 	if( libcnotify_verbose != 0 )
@@ -364,8 +369,15 @@ ssize64_t libagdb_volume_information_read(
 		 0 );
 	}
 #endif
-	if( ( io_handle->volume_information_entry_size != 56 )
-	 && ( io_handle->volume_information_entry_size != 72 ) )
+	if( io_handle->volume_information_entry_size == 56 )
+	{
+		alignment_size = 4;
+	}
+	else if( io_handle->volume_information_entry_size == 72 )
+	{
+		alignment_size = 8;
+	}
+	else
 	{
 		libcerror_error_set(
 		 error,
@@ -413,7 +425,6 @@ ssize64_t libagdb_volume_information_read(
 		 ( (agdb_volume_information_72_t *) volume_information_data )->device_path_number_of_characters,
 		 device_path_size );
 	}
-
 #if defined( HAVE_DEBUG_OUTPUT )
 	if( libcnotify_verbose != 0 )
 	{
@@ -716,6 +727,7 @@ ssize64_t libagdb_volume_information_read(
 			goto on_error;
 		}
 		total_read_count += read_count;
+		file_offset      += read_count;
 
 #if defined( HAVE_DEBUG_OUTPUT )
 		if( libcnotify_verbose != 0 )
@@ -827,9 +839,59 @@ ssize64_t libagdb_volume_information_read(
 			value_string = NULL;
 		}
 #endif
-	}
-	file_offset += total_read_count;
+		alignment_padding_size = (size_t) ( file_offset % alignment_size );
 
+		if( alignment_padding_size != 0 )
+		{
+			alignment_padding_size = alignment_size - alignment_padding_size;
+
+#if defined( HAVE_DEBUG_OUTPUT )
+			if( libcnotify_verbose != 0 )
+			{
+				libcnotify_printf(
+				 "%s: alignment padding size\t\t\t: %" PRIzd "\n",
+				 function,
+				 alignment_padding_size );
+			}
+#endif
+			read_count = libfdata_stream_read_buffer(
+			              uncompressed_data_stream,
+			              (intptr_t *) file_io_handle,
+			              alignment_padding_data,
+			              alignment_padding_size,
+			              0,
+			              error );
+
+			if( read_count != (ssize_t) alignment_padding_size )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_IO,
+				 LIBCERROR_IO_ERROR_READ_FAILED,
+				 "%s: unable to read file: %" PRIu32 " alignment padding data.",
+				 function,
+				 file_index );
+
+				goto on_error;
+			}
+			total_read_count += read_count;
+			file_offset      += read_count;
+
+#if defined( HAVE_DEBUG_OUTPUT )
+			if( libcnotify_verbose != 0 )
+			{
+				libcnotify_printf(
+				 "%s: file: %" PRIu32 " alignment padding data:\n",
+				 function,
+				 file_index );
+				libcnotify_print_data(
+				 alignment_padding_data,
+				 alignment_padding_size,
+				 0 );
+			}
+#endif
+		}
+	}
 	for( file_index = 0;
 	     file_index < number_of_files;
 	     file_index++ )
@@ -869,8 +931,8 @@ ssize64_t libagdb_volume_information_read(
 
 			goto on_error;
 		}
-		file_offset      += read_count;
 		total_read_count += read_count;
+		file_offset      += read_count;
 
 		if( libcdata_array_append_entry(
 		     internal_volume_information->files_array,
@@ -1188,3 +1250,111 @@ int libagdb_volume_information_get_utf16_device_path(
 	}
 	return( 1 );
 }
+
+/* Retrieves the number of files
+ * Returns 1 if successful or -1 on error
+ */
+int libagdb_volume_information_get_number_of_files(
+     libagdb_volume_information_t *volume_information,
+     int *number_of_files,
+     libcerror_error_t **error )
+{
+	libagdb_internal_volume_information_t *internal_volume_information = NULL;
+	static char *function                                              = "libagdb_volume_information_get_number_of_files";
+
+	if( volume_information == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid volume information.",
+		 function );
+
+		return( -1 );
+	}
+	internal_volume_information = (libagdb_internal_volume_information_t *) volume_information;
+
+	if( libcdata_array_get_number_of_entries(
+	     internal_volume_information->files_array,
+	     number_of_files,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve number of files.",
+		 function );
+
+		return( -1 );
+	}
+	return( 1 );
+}
+
+/* Retrieves a specific file information
+ * Returns 1 if successful or -1 on error
+ */
+int libagdb_volume_information_get_file_information(
+     libagdb_volume_information_t *volume_information,
+     int file_index,
+     libagdb_file_information_t **file_information,
+     libcerror_error_t **error )
+{
+	libagdb_internal_volume_information_t *internal_volume_information = NULL;
+	static char *function                                              = "libagdb_volume_information_get_file_information";
+
+	if( volume_information == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid volume information.",
+		 function );
+
+		return( -1 );
+	}
+	internal_volume_information = (libagdb_internal_volume_information_t *) volume_information;
+
+	if( file_information == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid file information.",
+		 function );
+
+		return( -1 );
+	}
+	if( *file_information != NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
+		 "%s: invalid file information value already set.",
+		 function );
+
+		return( -1 );
+	}
+	if( libcdata_array_get_entry_by_index(
+	     internal_volume_information->files_array,
+	     file_index,
+	     (intptr_t **) file_information,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve file: %d information.",
+		 function,
+		 file_index );
+
+		return( -1 );
+	}
+	return( 1 );
+}
+

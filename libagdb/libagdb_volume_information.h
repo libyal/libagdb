@@ -122,6 +122,19 @@ int libagdb_volume_information_get_utf16_device_path(
      size_t utf16_string_size,
      libcerror_error_t **error );
 
+LIBAGDB_EXTERN \
+int libagdb_volume_information_get_number_of_files(
+     libagdb_volume_information_t *volume_information,
+     int *number_of_files,
+     libcerror_error_t **error );
+
+LIBAGDB_EXTERN \
+int libagdb_volume_information_get_file_information(
+     libagdb_volume_information_t *volume_information,
+     int file_index,
+     libagdb_file_information_t **file_information,
+     libcerror_error_t **error );
+
 #if defined( __cplusplus )
 }
 #endif

@@ -343,6 +343,7 @@ int info_handle_file_fprint(
 	libcstring_system_character_t filetime_string[ 48 ];
 
 	libagdb_executable_information_t *executable_information = NULL;
+	libagdb_file_information_t *file_information             = NULL;
 	libagdb_volume_information_t *volume_information         = NULL;
 	libcstring_system_character_t *value_string              = NULL;
 	libfdatetime_filetime_t *filetime                        = NULL;
@@ -351,7 +352,9 @@ int info_handle_file_fprint(
 	uint64_t value_64bit                                     = 0;
 	uint32_t value_32bit                                     = 0;
 	int executable_index                                     = 0;
+	int file_index                                           = 0;
 	int number_of_executables                                = 0;
+	int number_of_files                                      = 0;
 	int number_of_volumes                                    = 0;
 	int result                                               = 0;
 	int volume_index                                         = 0;
@@ -589,6 +592,150 @@ int info_handle_file_fprint(
 		 "\tSerial number\t\t\t: 0x%08" PRIx32 "\n",
 		 value_32bit );
 
+		fprintf(
+		 info_handle->notify_stream,
+		 "\n" );
+
+		fprintf(
+		 info_handle->notify_stream,
+		 "Files:\n" );
+
+		if( libagdb_volume_information_get_number_of_files(
+		     volume_information,
+		     &number_of_files,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve number of files.",
+			 function );
+
+			goto on_error;
+		}
+		fprintf(
+		 info_handle->notify_stream,
+		 "\tNumber of files\t\t\t: %d\n",
+		 number_of_files );
+
+		fprintf(
+		 info_handle->notify_stream,
+		 "\n" );
+
+		for( file_index = 0;
+		     file_index < number_of_files;
+		     file_index++ )
+		{
+			if( libagdb_volume_information_get_file_information(
+			     volume_information,
+			     file_index,
+			     &file_information,
+			     error ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+				 "%s: unable to retrieve file information.",
+				 function );
+
+				return( -1 );
+			}
+			fprintf(
+			 info_handle->notify_stream,
+			 "File: %d information:\n",
+			 file_index + 1 );
+
+#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+			result = libagdb_file_information_get_utf16_path_size(
+				  file_information,
+				  &value_string_size,
+				  error );
+#else
+			result = libagdb_file_information_get_utf8_path_size(
+				  file_information,
+				  &value_string_size,
+				  error );
+#endif
+			if( result != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+				 "%s: unable to retrieve path size.",
+				 function );
+
+				goto on_error;
+			}
+			if( value_string_size > 0 )
+			{
+				value_string = libcstring_system_string_allocate(
+						value_string_size );
+
+				if( value_string == NULL )
+				{
+					libcerror_error_set(
+					 error,
+					 LIBCERROR_ERROR_DOMAIN_MEMORY,
+					 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
+					 "%s: unable to create value string.",
+					 function );
+
+					goto on_error;
+				}
+#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+				result = libagdb_file_information_get_utf16_path(
+					  file_information,
+					  (uint16_t *) value_string,
+					  value_string_size,
+					  error );
+#else
+				result = libagdb_file_information_get_utf8_path(
+					  file_information,
+					  (uint8_t *) value_string,
+					  value_string_size,
+					  error );
+#endif
+				if( result != 1 )
+				{
+					libcerror_error_set(
+					 error,
+					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+					 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+					 "%s: unable to retrieve path.",
+					 function );
+
+					goto on_error;
+				}
+				fprintf(
+				 info_handle->notify_stream,
+				 "\tPath\t\t\t\t: %" PRIs_LIBCSTRING_SYSTEM "\n",
+				 value_string );
+
+				memory_free(
+				 value_string );
+
+				value_string = NULL;
+			}
+			if( libagdb_file_information_free(
+			     &file_information,
+			     error ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+				 "%s: unable to free file information.",
+				 function );
+
+				goto on_error;
+			}
+			fprintf(
+			 info_handle->notify_stream,
+			 "\n" );
+		}
 		if( libagdb_volume_information_free(
 		     &volume_information,
 		     error ) != 1 )
@@ -657,7 +804,78 @@ int info_handle_file_fprint(
 		 "Executable: %d information:\n",
 		 executable_index + 1 );
 
-/* TODO executable name */
+#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+		result = libagdb_executable_information_get_utf16_filename_size(
+			  executable_information,
+			  &value_string_size,
+			  error );
+#else
+		result = libagdb_executable_information_get_utf8_filename_size(
+			  executable_information,
+			  &value_string_size,
+			  error );
+#endif
+		if( result != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve filename size.",
+			 function );
+
+			goto on_error;
+		}
+		if( value_string_size > 0 )
+		{
+			value_string = libcstring_system_string_allocate(
+					value_string_size );
+
+			if( value_string == NULL )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_MEMORY,
+				 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
+				 "%s: unable to create value string.",
+				 function );
+
+				goto on_error;
+			}
+#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+			result = libagdb_executable_information_get_utf16_filename(
+				  executable_information,
+				  (uint16_t *) value_string,
+				  value_string_size,
+				  error );
+#else
+			result = libagdb_executable_information_get_utf8_filename(
+				  executable_information,
+				  (uint8_t *) value_string,
+				  value_string_size,
+				  error );
+#endif
+			if( result != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+				 "%s: unable to retrieve filename.",
+				 function );
+
+				goto on_error;
+			}
+			fprintf(
+			 info_handle->notify_stream,
+			 "\tFilename\t\t\t: %" PRIs_LIBCSTRING_SYSTEM "\n",
+			 value_string );
+
+			memory_free(
+			 value_string );
+
+			value_string = NULL;
+		}
 		if( libagdb_executable_information_free(
 		     &executable_information,
 		     error ) != 1 )

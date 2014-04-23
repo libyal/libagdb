@@ -47,7 +47,12 @@ struct agdb_file_header
 	 * Consists of 4 bytes
 	 */
 	uint8_t header_size[ 4 ];
+};
 
+typedef struct agdb_database_header agdb_database_header_t;
+
+struct agdb_database_header
+{
 	/* The database type
 	 * Consists of 4 bytes
 	 */

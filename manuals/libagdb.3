@@ -76,7 +76,7 @@ Available when compiled with wide character string support:
 Available when compiled with libbfio support:
 .Ft int
 .Fn libagdb_file_open_file_io_handle "libagdb_file_t *file, libbfio_handle_t *file_io_handle, int access_flags, libagdb_error_t **error"
-.PP
+.Pp
 Volume information functions
 .Ft int
 .Fn libagdb_volume_information_free "libagdb_volume_information_t **volume_information, libagdb_error_t **error"
@@ -92,10 +92,34 @@ Volume information functions
 .Fn libagdb_volume_information_get_utf16_device_path_size "libagdb_volume_information_t *volume_information, size_t *utf16_string_size, libagdb_error_t **error"
 .Ft int
 .Fn libagdb_volume_information_get_utf16_device_path "libagdb_volume_information_t *volume_information, uint16_t *utf16_string, size_t utf16_string_size, libagdb_error_t **error"
-.PP
+.Ft int
+.Fn libagdb_volume_information_get_number_of_files "libagdb_volume_information_t *volume_information, int *number_of_files, libagdb_error_t **error"
+.Ft int
+.Fn libagdb_volume_information_get_file_information "libagdb_volume_information_t *volume_information, int file_index, libagdb_file_information_t **file_information, libagdb_error_t **error"
+.Pp
+File information functions
+.Ft int
+.Fn libagdb_file_information_free "libagdb_file_information_t **file_information, libagdb_error_t **error"
+.Ft int
+.Fn libagdb_file_information_get_utf8_path_size "libagdb_file_information_t *file_information, size_t *utf8_string_size, libagdb_error_t **error"
+.Ft int
+.Fn libagdb_file_information_get_utf8_path "libagdb_file_information_t *file_information, uint8_t *utf8_string, size_t utf8_string_size, libagdb_error_t **error"
+.Ft int
+.Fn libagdb_file_information_get_utf16_path_size "libagdb_file_information_t *file_information, size_t *utf16_string_size, libagdb_error_t **error"
+.Ft int
+.Fn libagdb_file_information_get_utf16_path "libagdb_file_information_t *file_information, uint16_t *utf16_string, size_t utf16_string_size, libagdb_error_t **error"
+.Pp
 Executable information functions
 .Ft int
 .Fn libagdb_executable_information_free "libagdb_executable_information_t **executable_information, libagdb_error_t **error"
+.Ft int
+.Fn libagdb_executable_information_get_utf8_filename_size "libagdb_executable_information_t *executable_information, size_t *utf8_string_size, libagdb_error_t **error"
+.Ft int
+.Fn libagdb_executable_information_get_utf8_filename "libagdb_executable_information_t *executable_information, uint8_t *utf8_string, size_t utf8_string_size, libagdb_error_t **error"
+.Ft int
+.Fn libagdb_executable_information_get_utf16_filename_size "libagdb_executable_information_t *executable_information, size_t *utf16_string_size, libagdb_error_t **error"
+.Ft int
+.Fn libagdb_executable_information_get_utf16_filename "libagdb_executable_information_t *executable_information, uint16_t *utf16_string, size_t utf16_string_size, libagdb_error_t **error"
 .Sh DESCRIPTION
 The
 .Fn libagdb_get_version

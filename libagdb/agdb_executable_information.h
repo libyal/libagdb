@@ -29,6 +29,126 @@
 extern "C" {
 #endif
 
+typedef struct agdb_executable_information_60 agdb_executable_information_60_t;
+
+struct agdb_executable_information_60
+{
+	/* Unknown
+	 * Consists of 4 bytes
+	 */
+	uint8_t unknown1[ 4 ];
+
+	/* Unknown
+	 * Consists of 4 bytes
+	 */
+	uint8_t unknown2[ 4 ];
+
+	/* Unknown
+	 * Consists of 4 bytes
+	 */
+	uint8_t unknown3[ 4 ];
+
+	/* Unknown
+	 * Consists of 4 bytes
+	 */
+	uint8_t unknown4[ 4 ];
+
+	/* Unknown
+	 * Consists of 4 bytes
+	 */
+	uint8_t unknown5[ 4 ];
+
+	/* Unknown
+	 * Consists of 8 bytes
+	 */
+	uint8_t unknown6[ 8 ];
+
+	/* Unknown
+	 * Consists of 4 bytes
+	 */
+	uint8_t unknown7[ 4 ];
+
+	/* Unknown
+	 * Consists of 4 bytes
+	 */
+	uint8_t unknown8[ 4 ];
+
+	/* Unknown
+	 * Consists of 4 bytes
+	 */
+	uint8_t unknown9[ 4 ];
+
+	/* Unknown
+	 * Consists of 4 bytes
+	 */
+	uint8_t unknown10[ 4 ];
+
+	/* Unknown
+	 * Consists of 16 bytes
+	 */
+	uint8_t unknown11[ 16 ];
+};
+
+typedef struct agdb_executable_information_88 agdb_executable_information_88_t;
+
+struct agdb_executable_information_88
+{
+	/* Unknown
+	 * Consists of 8 bytes
+	 */
+	uint8_t unknown1[ 8 ];
+
+	/* Unknown
+	 * Consists of 8 bytes
+	 */
+	uint8_t unknown2[ 8 ];
+
+	/* Unknown
+	 * Consists of 4 bytes
+	 */
+	uint8_t unknown3[ 4 ];
+
+	/* Unknown
+	 * Consists of 4 bytes
+	 */
+	uint8_t unknown4[ 4 ];
+
+	/* Unknown
+	 * Consists of 8 bytes
+	 */
+	uint8_t unknown5[ 8 ];
+
+	/* Unknown
+	 * Consists of 16 bytes
+	 */
+	uint8_t unknown6[ 16 ];
+
+	/* Unknown
+	 * Consists of 4 bytes
+	 */
+	uint8_t unknown7[ 4 ];
+
+	/* Unknown
+	 * Consists of 4 bytes
+	 */
+	uint8_t unknown8[ 4 ];
+
+	/* Unknown
+	 * Consists of 8 bytes
+	 */
+	uint8_t unknown9[ 8 ];
+
+	/* Unknown
+	 * Consists of 8 bytes
+	 */
+	uint8_t unknown10[ 8 ];
+
+	/* Unknown
+	 * Consists of 16 bytes
+	 */
+	uint8_t unknown11[ 16 ];
+};
+
 typedef struct agdb_executable_information_100 agdb_executable_information_100_t;
 
 struct agdb_executable_information_100
@@ -68,10 +188,10 @@ struct agdb_executable_information_100
 	 */
 	uint8_t unknown7[ 4 ];
 
-	/* Unknown
+	/* The prefetch hash
 	 * Consists of 4 bytes
 	 */
-	uint8_t unknown8[ 4 ];
+	uint8_t prefetch_hash[ 4 ];
 
 	/* Unknown
 	 * Consists of 4 bytes
@@ -81,7 +201,7 @@ struct agdb_executable_information_100
 	/* Unknown
 	 * Consists of 16 bytes
 	 */
-	uint8_t unknown10[ 16 ];
+	uint8_t executable_name[ 16 ];
 
 	/* Unknown
 	 * Consists of 4 bytes
@@ -132,6 +252,111 @@ struct agdb_executable_information_100
 	 * Consists of 4 bytes
 	 */
 	uint8_t unknown20[ 4 ];
+};
+
+typedef struct agdb_executable_information_144 agdb_executable_information_144_t;
+
+struct agdb_executable_information_144
+{
+	/* Unknown
+	 * Consists of 8 bytes
+	 */
+	uint8_t unknown1[ 8 ];
+
+	/* Unknown
+	 * Consists of 8 bytes
+	 */
+	uint8_t unknown2[ 8 ];
+
+	/* Unknown
+	 * Consists of 4 bytes
+	 */
+	uint8_t unknown3[ 4 ];
+
+	/* Unknown
+	 * Consists of 4 bytes
+	 */
+	uint8_t unknown4[ 4 ];
+
+	/* Unknown
+	 * Consists of 24 bytes
+	 */
+	uint8_t unknown5[ 24 ];
+
+	/* Unknown
+	 * Consists of 4 bytes
+	 */
+	uint8_t unknown6[ 4 ];
+
+	/* Unknown
+	 * Consists of 4 bytes
+	 */
+	uint8_t unknown7[ 4 ];
+
+	/* The prefetch hash
+	 * Consists of 8 bytes
+	 */
+	uint8_t prefetch_hash[ 8 ];
+
+	/* Unknown
+	 * Consists of 8 bytes
+	 */
+	uint8_t unknown9[ 8 ];
+
+	/* Unknown
+	 * Consists of 16 bytes
+	 */
+	uint8_t executable_name[ 16 ];
+
+	/* Unknown
+	 * Consists of 8 bytes
+	 */
+	uint8_t unknown11[ 8 ];
+
+	/* Unknown
+	 * Consists of 8 bytes
+	 */
+	uint8_t unknown12[ 8 ];
+
+	/* Unknown
+	 * Consists of 4 bytes
+	 */
+	uint8_t unknown13[ 4 ];
+
+	/* Unknown
+	 * Consists of 4 bytes
+	 */
+	uint8_t unknown14[ 4 ];
+
+	/* Unknown
+	 * Consists of 4 bytes
+	 */
+	uint8_t unknown15[ 4 ];
+
+	/* Unknown
+	 * Consists of 4 bytes
+	 */
+	uint8_t unknown16[ 4 ];
+
+	/* Unknown
+	 * Consists of 4 bytes
+	 */
+	uint8_t unknown17[ 4 ];
+
+	/* Unknown
+	 * Consists of 4 bytes
+	 */
+	uint8_t unknown18[ 4 ];
+
+	/* Unknown
+	 * Consists of 8 bytes
+	 */
+	uint8_t unknown19[ 8 ];
+
+	/* Unknown
+	 * Consists of 8 bytes
+	 */
+	uint8_t unknown20[ 8 ];
 };
 
 #if defined( __cplusplus )

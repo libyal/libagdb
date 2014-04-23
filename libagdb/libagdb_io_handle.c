@@ -579,13 +579,16 @@ int libagdb_io_handle_read_uncompressed_file_header(
 {
 	agdb_file_header_t file_header_data;
 
-	static char *function     = "libagdb_io_handle_read_uncompressed_file_header";
-	size64_t data_stream_size = 0;
-	ssize_t read_count        = 0;
-	uint32_t data_size        = 0;
+	uint8_t *database_header_data = NULL;
+	static char *function         = "libagdb_io_handle_read_uncompressed_file_header";
+	size64_t data_stream_size     = 0;
+	size_t database_header_size   = 0;
+	ssize_t read_count            = 0;
+	uint32_t data_size            = 0;
+	uint32_t header_size          = 0;
 
 #if defined( HAVE_DEBUG_OUTPUT )
-	uint32_t value_32bit      = 0;
+	uint32_t value_32bit          = 0;
 #endif
 
 	if( io_handle == NULL )
@@ -718,39 +721,7 @@ int libagdb_io_handle_read_uncompressed_file_header(
 	}
 	byte_stream_copy_to_uint32_little_endian(
 	 file_header_data.header_size,
-	 *volumes_information_offset );
-
-	byte_stream_copy_to_uint32_little_endian(
-	 file_header_data.database_type,
-	 io_handle->database_type );
-
-	byte_stream_copy_to_uint32_little_endian(
-	 &( file_header_data.database_parameters[ 0 ] ),
-	 io_handle->volume_information_entry_size );
-
-	byte_stream_copy_to_uint32_little_endian(
-	 &( file_header_data.database_parameters[ 4 ] ),
-	 io_handle->file_information_entry_size );
-
-	byte_stream_copy_to_uint32_little_endian(
-	 &( file_header_data.database_parameters[ 8 ] ),
-	 io_handle->executable_information_entry_size );
-
-	byte_stream_copy_to_uint32_little_endian(
-	 &( file_header_data.database_parameters[ 12 ] ),
-	 io_handle->file_information_sub_entry_type1_size );
-
-	byte_stream_copy_to_uint32_little_endian(
-	 &( file_header_data.database_parameters[ 16 ] ),
-	 io_handle->file_information_sub_entry_type2_size );
-
-	byte_stream_copy_to_uint32_little_endian(
-	 file_header_data.number_of_volumes,
-	 *number_of_volumes );
-
-	byte_stream_copy_to_uint32_little_endian(
-	 file_header_data.number_of_executables,
-	 *number_of_executables );
+	 header_size );
 
 #if defined( HAVE_DEBUG_OUTPUT )
 	if( libcnotify_verbose != 0 )
@@ -771,8 +742,95 @@ int libagdb_io_handle_read_uncompressed_file_header(
 		libcnotify_printf(
 		 "%s: header size\t\t: %" PRIi64 "\n",
 		 function,
-		 *volumes_information_offset );
+		 header_size );
 
+		libcnotify_printf(
+		 "\n" );
+	}
+#endif
+/* TODO bounds check */
+	database_header_size = header_size - sizeof( agdb_file_header_t );
+
+	database_header_data = (uint8_t *) memory_allocate(
+	                                    sizeof( uint8_t ) * database_header_size );
+
+	if( database_header_data == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_MEMORY,
+		 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
+		 "%s: unable to create database header data.",
+		 function );
+
+		goto on_error;
+	}
+	read_count = libfdata_stream_read_buffer(
+	              uncompressed_data_stream,
+	              (intptr_t *) file_io_handle,
+	              database_header_data,
+	              database_header_size,
+	              0,
+	              error );
+
+	if( read_count != (ssize_t) database_header_size )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_IO,
+		 LIBCERROR_IO_ERROR_READ_FAILED,
+		 "%s: unable to read database header data.",
+		 function );
+
+		return( -1 );
+	}
+#if defined( HAVE_DEBUG_OUTPUT )
+	if( libcnotify_verbose != 0 )
+	{
+		libcnotify_printf(
+		 "%s: database header data:\n",
+		 function );
+		libcnotify_print_data(
+	         database_header_data,
+	         database_header_size,
+		 0 );
+	}
+#endif
+	byte_stream_copy_to_uint32_little_endian(
+	 ( (agdb_database_header_t *) database_header_data )->database_type,
+	 io_handle->database_type );
+
+	byte_stream_copy_to_uint32_little_endian(
+	 &( ( (agdb_database_header_t *) database_header_data )->database_parameters[ 0 ] ),
+	 io_handle->volume_information_entry_size );
+
+	byte_stream_copy_to_uint32_little_endian(
+	 &( ( (agdb_database_header_t *) database_header_data )->database_parameters[ 4 ] ),
+	 io_handle->file_information_entry_size );
+
+	byte_stream_copy_to_uint32_little_endian(
+	 &( ( (agdb_database_header_t *) database_header_data )->database_parameters[ 8 ] ),
+	 io_handle->executable_information_entry_size );
+
+	byte_stream_copy_to_uint32_little_endian(
+	 &( ( (agdb_database_header_t *) database_header_data )->database_parameters[ 12 ] ),
+	 io_handle->file_information_sub_entry_type1_size );
+
+	byte_stream_copy_to_uint32_little_endian(
+	 &( ( (agdb_database_header_t *) database_header_data )->database_parameters[ 16 ] ),
+	 io_handle->file_information_sub_entry_type2_size );
+
+	byte_stream_copy_to_uint32_little_endian(
+	 ( (agdb_database_header_t *) database_header_data )->number_of_volumes,
+	 *number_of_volumes );
+
+	byte_stream_copy_to_uint32_little_endian(
+	 ( (agdb_database_header_t *) database_header_data )->number_of_executables,
+	 *number_of_executables );
+
+#if defined( HAVE_DEBUG_OUTPUT )
+	if( libcnotify_verbose != 0 )
+	{
 		libcnotify_printf(
 		 "%s: database type\t\t: %" PRIu32 "\n",
 		 function,
@@ -783,63 +841,63 @@ int libagdb_io_handle_read_uncompressed_file_header(
 		 function );
 
 		byte_stream_copy_to_uint32_little_endian(
-		 &( file_header_data.database_parameters[ 0 ] ),
+		 &( ( (agdb_database_header_t *) database_header_data )->database_parameters[ 0 ] ),
 		 value_32bit );
 		libcnotify_printf(
 		 "%" PRIu32 ", ",
 		 value_32bit );
 
 		byte_stream_copy_to_uint32_little_endian(
-		 &( file_header_data.database_parameters[ 4 ] ),
+		 &( ( (agdb_database_header_t *) database_header_data )->database_parameters[ 4 ] ),
 		 value_32bit );
 		libcnotify_printf(
 		 "%" PRIu32 ", ",
 		 value_32bit );
 
 		byte_stream_copy_to_uint32_little_endian(
-		 &( file_header_data.database_parameters[ 8 ] ),
+		 &( ( (agdb_database_header_t *) database_header_data )->database_parameters[ 8 ] ),
 		 value_32bit );
 		libcnotify_printf(
 		 "%" PRIu32 ", ",
 		 value_32bit );
 
 		byte_stream_copy_to_uint32_little_endian(
-		 &( file_header_data.database_parameters[ 12 ] ),
+		 &( ( (agdb_database_header_t *) database_header_data )->database_parameters[ 12 ] ),
 		 value_32bit );
 		libcnotify_printf(
 		 "%" PRIu32 ", ",
 		 value_32bit );
 
 		byte_stream_copy_to_uint32_little_endian(
-		 &( file_header_data.database_parameters[ 16 ] ),
+		 &( ( (agdb_database_header_t *) database_header_data )->database_parameters[ 16 ] ),
 		 value_32bit );
 		libcnotify_printf(
 		 "%" PRIu32 ", ",
 		 value_32bit );
 
 		byte_stream_copy_to_uint32_little_endian(
-		 &( file_header_data.database_parameters[ 20 ] ),
+		 &( ( (agdb_database_header_t *) database_header_data )->database_parameters[ 20 ] ),
 		 value_32bit );
 		libcnotify_printf(
 		 "%" PRIu32 ", ",
 		 value_32bit );
 
 		byte_stream_copy_to_uint32_little_endian(
-		 &( file_header_data.database_parameters[ 24 ] ),
+		 &( ( (agdb_database_header_t *) database_header_data )->database_parameters[ 24 ] ),
 		 value_32bit );
 		libcnotify_printf(
 		 "%" PRIu32 ", ",
 		 value_32bit );
 
 		byte_stream_copy_to_uint32_little_endian(
-		 &( file_header_data.database_parameters[ 28 ] ),
+		 &( ( (agdb_database_header_t *) database_header_data )->database_parameters[ 28 ] ),
 		 value_32bit );
 		libcnotify_printf(
 		 "%" PRIu32 ", ",
 		 value_32bit );
 
 		byte_stream_copy_to_uint32_little_endian(
-		 &( file_header_data.database_parameters[ 32 ] ),
+		 &( ( (agdb_database_header_t *) database_header_data )->database_parameters[ 32 ] ),
 		 value_32bit );
 		libcnotify_printf(
 		 "%" PRIu32 "\n",
@@ -851,7 +909,7 @@ int libagdb_io_handle_read_uncompressed_file_header(
 		 *number_of_volumes );
 
 		byte_stream_copy_to_uint32_little_endian(
-		 file_header_data.number_of_files,
+		 ( (agdb_database_header_t *) database_header_data )->number_of_files,
 		 value_32bit );
 		libcnotify_printf(
 		 "%s: number of files\t: %" PRIu32 "\n",
@@ -859,7 +917,7 @@ int libagdb_io_handle_read_uncompressed_file_header(
 		 value_32bit );
 
 		byte_stream_copy_to_uint32_little_endian(
-		 file_header_data.unknown3,
+		 ( (agdb_database_header_t *) database_header_data )->unknown3,
 		 value_32bit );
 		libcnotify_printf(
 		 "%s: unknown3\t\t: %" PRIu32 "\n",
@@ -872,7 +930,7 @@ int libagdb_io_handle_read_uncompressed_file_header(
 		 *number_of_executables );
 
 		byte_stream_copy_to_uint32_little_endian(
-		 file_header_data.unknown4,
+		 ( (agdb_database_header_t *) database_header_data )->unknown4,
 		 value_32bit );
 		libcnotify_printf(
 		 "%s: unknown4\t\t: %" PRIu32 "\n",
@@ -880,7 +938,7 @@ int libagdb_io_handle_read_uncompressed_file_header(
 		 value_32bit );
 
 		byte_stream_copy_to_uint32_little_endian(
-		 file_header_data.unknown5,
+		 ( (agdb_database_header_t *) database_header_data )->unknown5,
 		 value_32bit );
 		libcnotify_printf(
 		 "%s: unknown5\t\t: %" PRIu32 "\n",
@@ -891,7 +949,22 @@ int libagdb_io_handle_read_uncompressed_file_header(
 		 "\n" );
 	}
 #endif
+	memory_free(
+	 database_header_data );
+
+	database_header_data = NULL;
+
+	*volumes_information_offset = header_size;
+
 	return( 1 );
+
+on_error:
+	if( database_header_data != NULL )
+	{
+		memory_free(
+		 database_header_data );
+	}
+	return( -1 );
 }
 
 /* Reads data from the current offset into a buffer

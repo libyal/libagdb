@@ -260,7 +260,7 @@ ssize_t libagdb_compressed_blocks_stream_data_handle_read_segment_data(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_MEMORY,
 		 LIBCERROR_MEMORY_ERROR_COPY_FAILED,
-		 "%s: unable to copy data run data.",
+		 "%s: unable to copy compressed block data.",
 		 function );
 
 		return( -1 );

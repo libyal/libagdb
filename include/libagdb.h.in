@@ -362,6 +362,79 @@ int libagdb_volume_information_get_utf16_device_path(
      size_t utf16_string_size,
      libagdb_error_t **error );
 
+/* Retrieves the number of files
+ * Returns 1 if successful or -1 on error
+ */
+LIBAGDB_EXTERN \
+int libagdb_volume_information_get_number_of_files(
+     libagdb_volume_information_t *volume_information,
+     int *number_of_files,
+     libagdb_error_t **error );
+
+/* Retrieves a specific file information
+ * Returns 1 if successful or -1 on error
+ */
+LIBAGDB_EXTERN \
+int libagdb_volume_information_get_file_information(
+     libagdb_volume_information_t *volume_information,
+     int file_index,
+     libagdb_file_information_t **file_information,
+     libagdb_error_t **error );
+
+/* -------------------------------------------------------------------------
+ * File information functions
+ * ------------------------------------------------------------------------- */
+
+/* Frees file information
+ * Returns 1 if successful or -1 on error
+ */
+LIBAGDB_EXTERN \
+int libagdb_file_information_free(
+     libagdb_file_information_t **file_information,
+     libagdb_error_t **error );
+
+/* Retrieves the size of the UTF-8 encoded path
+ * The returned size includes the end of string character
+ * Returns 1 if successful or -1 on error
+ */
+LIBAGDB_EXTERN \
+int libagdb_file_information_get_utf8_path_size(
+     libagdb_file_information_t *file_information,
+     size_t *utf8_string_size,
+     libagdb_error_t **error );
+
+/* Retrieves the UTF-8 encoded path
+ * The size should include the end of string character
+ * Returns 1 if successful or -1 on error
+ */
+LIBAGDB_EXTERN \
+int libagdb_file_information_get_utf8_path(
+     libagdb_file_information_t *file_information,
+     uint8_t *utf8_string,
+     size_t utf8_string_size,
+     libagdb_error_t **error );
+
+/* Retrieves the size of the UTF-16 encoded path
+ * The returned size includes the end of string character
+ * Returns 1 if successful or -1 on error
+ */
+LIBAGDB_EXTERN \
+int libagdb_file_information_get_utf16_path_size(
+     libagdb_file_information_t *file_information,
+     size_t *utf16_string_size,
+     libagdb_error_t **error );
+
+/* Retrieves the UTF-16 encoded path
+ * The size should include the end of string character
+ * Returns 1 if successful or -1 on error
+ */
+LIBAGDB_EXTERN \
+int libagdb_file_information_get_utf16_path(
+     libagdb_file_information_t *file_information,
+     uint16_t *utf16_string,
+     size_t utf16_string_size,
+     libagdb_error_t **error );
+
 /* -------------------------------------------------------------------------
  * Executable information functions
  * ------------------------------------------------------------------------- */
@@ -372,6 +445,48 @@ int libagdb_volume_information_get_utf16_device_path(
 LIBAGDB_EXTERN \
 int libagdb_executable_information_free(
      libagdb_executable_information_t **executable_information,
+     libagdb_error_t **error );
+
+/* Retrieves the size of the UTF-8 encoded filename
+ * The returned size includes the end of string character
+ * Returns 1 if successful or -1 on error
+ */
+LIBAGDB_EXTERN \
+int libagdb_executable_information_get_utf8_filename_size(
+     libagdb_executable_information_t *executable_information,
+     size_t *utf8_string_size,
+     libagdb_error_t **error );
+
+/* Retrieves the UTF-8 encoded filename
+ * The size should include the end of string character
+ * Returns 1 if successful or -1 on error
+ */
+LIBAGDB_EXTERN \
+int libagdb_executable_information_get_utf8_filename(
+     libagdb_executable_information_t *executable_information,
+     uint8_t *utf8_string,
+     size_t utf8_string_size,
+     libagdb_error_t **error );
+
+/* Retrieves the size of the UTF-16 encoded filename
+ * The returned size includes the end of string character
+ * Returns 1 if successful or -1 on error
+ */
+LIBAGDB_EXTERN \
+int libagdb_executable_information_get_utf16_filename_size(
+     libagdb_executable_information_t *executable_information,
+     size_t *utf16_string_size,
+     libagdb_error_t **error );
+
+/* Retrieves the UTF-16 encoded filename
+ * The size should include the end of string character
+ * Returns 1 if successful or -1 on error
+ */
+LIBAGDB_EXTERN \
+int libagdb_executable_information_get_utf16_filename(
+     libagdb_executable_information_t *executable_information,
+     uint16_t *utf16_string,
+     size_t utf16_string_size,
      libagdb_error_t **error );
 
 #if defined( __cplusplus )

@@ -1398,13 +1398,24 @@ int libagdb_file_get_volume_information(
 	}
 	internal_file = (libagdb_internal_file_t *) file;
 
-	if( internal_file->io_handle == NULL )
+	if( volume_information == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid volume information.",
+		 function );
+
+		return( -1 );
+	}
+	if( *volume_information != NULL )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid internal file - missing file information.",
+		 LIBCERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
+		 "%s: invalid volume information value already set.",
 		 function );
 
 		return( -1 );
@@ -1494,13 +1505,24 @@ int libagdb_file_get_executable_information(
 	}
 	internal_file = (libagdb_internal_file_t *) file;
 
-	if( internal_file->io_handle == NULL )
+	if( executable_information == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid executable information.",
+		 function );
+
+		return( -1 );
+	}
+	if( *executable_information != NULL )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid internal file - missing file information.",
+		 LIBCERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
+		 "%s: invalid executable information value already set.",
 		 function );
 
 		return( -1 );

@@ -42,7 +42,7 @@ struct libagdb_internal_executable_information
 {
 	/* The (executable) filename
 	 */
-	uint8_t *filename;
+	uint8_t filename[ 16 ];
 
 	/* The (executable) filename size
 	 */
@@ -70,6 +70,32 @@ ssize_t libagdb_executable_information_read(
          off64_t executable_offset,
          uint32_t executable_index,
          libcerror_error_t **error );
+
+LIBAGDB_EXTERN \
+int libagdb_executable_information_get_utf8_filename_size(
+     libagdb_executable_information_t *executable_information,
+     size_t *utf8_string_size,
+     libcerror_error_t **error );
+
+LIBAGDB_EXTERN \
+int libagdb_executable_information_get_utf8_filename(
+     libagdb_executable_information_t *executable_information,
+     uint8_t *utf8_string,
+     size_t utf8_string_size,
+     libcerror_error_t **error );
+
+LIBAGDB_EXTERN \
+int libagdb_executable_information_get_utf16_filename_size(
+     libagdb_executable_information_t *executable_information,
+     size_t *utf16_string_size,
+     libcerror_error_t **error );
+
+LIBAGDB_EXTERN \
+int libagdb_executable_information_get_utf16_filename(
+     libagdb_executable_information_t *executable_information,
+     uint16_t *utf16_string,
+     size_t utf16_string_size,
+     libcerror_error_t **error );
 
 #if defined( __cplusplus )
 }

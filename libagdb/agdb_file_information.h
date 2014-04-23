@@ -234,6 +234,61 @@ struct agdb_file_information_56
 	uint8_t unknown9[ 8 ];
 };
 
+typedef struct agdb_file_information_64 agdb_file_information_64_t;
+
+struct agdb_file_information_64
+{
+	/* Unknown
+	 * Consists of 8 bytes
+	 */
+	uint8_t unknown1[ 8 ];
+
+	/* The name hash
+	 * Consists of 8 bytes
+	 */
+	uint8_t name_hash[ 8 ];
+
+	/* The number of entries
+	 * Consists of 4 bytes
+	 */
+	uint8_t number_of_entries[ 4 ];
+
+	/* The flags
+	 * Consists of 4 bytes
+	 */
+	uint8_t flags[ 4 ];
+
+	/* Unknown
+	 * Consists of 8 bytes
+	 */
+	uint8_t unknown4a[ 8 ];
+
+	/* Unknown
+	 * Consists of 8 bytes
+	 */
+	uint8_t unknown4b[ 8 ];
+
+	/* Unknown
+	 * Consists of 8 bytes
+	 */
+	uint8_t unknown5[ 8 ];
+
+	/* The (file) path number of characters
+	 * Consists of 4 bytes
+	 */
+	uint8_t path_number_of_characters[ 4 ];
+
+	/* Unknown
+	 * Consists of 4 bytes
+	 */
+	uint8_t unknown6[ 4 ];
+
+	/* Unknown
+	 * Consists of 8 bytes
+	 */
+	uint8_t unknown7[ 8 ];
+};
+
 typedef struct agdb_file_information_72 agdb_file_information_72_t;
 
 struct agdb_file_information_72
@@ -382,6 +437,96 @@ struct agdb_file_information_88
 	 * Consists of 8 bytes
 	 */
 	uint8_t unknown10[ 8 ];
+};
+
+typedef struct agdb_file_information_112 agdb_file_information_112_t;
+
+struct agdb_file_information_112
+{
+	/* Unknown
+	 * Consists of 8 bytes
+	 */
+	uint8_t unknown1[ 8 ];
+
+	/* The name hash
+	 * Consists of 8 bytes
+	 */
+	uint8_t name_hash[ 8 ];
+
+	/* The number of entries
+	 * Consists of 4 bytes
+	 */
+	uint8_t number_of_entries[ 4 ];
+
+	/* The flags
+	 * Consists of 4 bytes
+	 */
+	uint8_t flags[ 4 ];
+
+	/* Unknown
+	 * Consists of 8 bytes
+	 */
+	uint8_t unknown4a[ 8 ];
+
+	/* Unknown
+	 * Consists of 8 bytes
+	 */
+	uint8_t unknown4b[ 8 ];
+
+	/* Unknown
+	 * Consists of 8 bytes
+	 */
+	uint8_t unknown5[ 8 ];
+
+	/* The (file) path number of characters
+	 * Consists of 4 bytes
+	 */
+	uint8_t path_number_of_characters[ 4 ];
+
+	/* Unknown
+	 * Consists of 4 bytes
+	 */
+	uint8_t unknown6[ 4 ];
+
+	/* Unknown
+	 * Consists of 8 bytes
+	 */
+	uint8_t unknown7[ 8 ];
+
+	/* Unknown
+	 * Consists of 4 bytes
+	 */
+	uint8_t unknown8a[ 4 ];
+
+	/* Unknown
+	 * Consists of 4 bytes
+	 */
+	uint8_t unknown8b[ 4 ];
+
+	/* Unknown
+	 * Consists of 8 bytes
+	 */
+	uint8_t unknown9[ 8 ];
+
+	/* Unknown
+	 * Consists of 8 bytes
+	 */
+	uint8_t unknown10[ 8 ];
+
+	/* Unknown
+	 * Consists of 8 bytes
+	 */
+	uint8_t unknown11[ 8 ];
+
+	/* Unknown
+	 * Consists of 8 bytes
+	 */
+	uint8_t unknown12[ 8 ];
+
+	/* Unknown
+	 * Consists of 8 bytes
+	 */
+	uint8_t unknown13[ 8 ];
 };
 
 #if defined( __cplusplus )

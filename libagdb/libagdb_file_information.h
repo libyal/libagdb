@@ -71,6 +71,32 @@ ssize_t libagdb_file_information_read(
          uint32_t file_index,
          libcerror_error_t **error );
 
+LIBAGDB_EXTERN \
+int libagdb_file_information_get_utf8_path_size(
+     libagdb_file_information_t *file_information,
+     size_t *utf8_string_size,
+     libcerror_error_t **error );
+
+LIBAGDB_EXTERN \
+int libagdb_file_information_get_utf8_path(
+     libagdb_file_information_t *file_information,
+     uint8_t *utf8_string,
+     size_t utf8_string_size,
+     libcerror_error_t **error );
+
+LIBAGDB_EXTERN \
+int libagdb_file_information_get_utf16_path_size(
+     libagdb_file_information_t *file_information,
+     size_t *utf16_string_size,
+     libcerror_error_t **error );
+
+LIBAGDB_EXTERN \
+int libagdb_file_information_get_utf16_path(
+     libagdb_file_information_t *file_information,
+     uint16_t *utf16_string,
+     size_t utf16_string_size,
+     libcerror_error_t **error );
+
 #if defined( __cplusplus )
 }
 #endif

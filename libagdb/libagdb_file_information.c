@@ -198,7 +198,7 @@ ssize_t libagdb_file_information_read(
 	uint32_t number_of_entries                                     = 0;
 	uint32_t path_size                                             = 0;
 	uint32_t sub_entry_data_size                                   = 0;
-	uint16_t test_value                                            = 0;
+	uint8_t mode                                                   = 0;
 
 #if defined( HAVE_DEBUG_OUTPUT )
 	libcstring_system_character_t *value_string                    = NULL;
@@ -321,6 +321,7 @@ ssize_t libagdb_file_information_read(
 		goto on_error;
 	}
 	total_read_count += read_count;
+	file_offset      += read_count;
 
 #if defined( HAVE_DEBUG_OUTPUT )
 	if( libcnotify_verbose != 0 )
@@ -335,11 +336,22 @@ ssize_t libagdb_file_information_read(
 		 0 );
 	}
 #endif
-	if( ( io_handle->file_information_entry_size != 36 )
-	 && ( io_handle->file_information_entry_size != 52 )
-	 && ( io_handle->file_information_entry_size != 56 )
-	 && ( io_handle->file_information_entry_size != 72 )
-	 && ( io_handle->file_information_entry_size != 88 ) )
+	if( ( io_handle->file_information_entry_size == 36 )
+	 || ( io_handle->file_information_entry_size == 52 )
+	 || ( io_handle->file_information_entry_size == 56 )
+	 || ( io_handle->file_information_entry_size == 72 ) )
+	{
+		mode           = 32;
+		alignment_size = 4;
+	}
+	else if( ( io_handle->file_information_entry_size == 64 )
+	      || ( io_handle->file_information_entry_size == 88 )
+	      || ( io_handle->file_information_entry_size == 112 ) )
+	{
+		mode           = 64;
+		alignment_size = 8;
+	}
+	else
 	{
 		libcerror_error_set(
 		 error,
@@ -351,10 +363,8 @@ ssize_t libagdb_file_information_read(
 
 		return( -1 );
 	}
-	if( io_handle->file_information_entry_size <= 72 )
+	if( mode == 32 )
 	{
-		alignment_size = 4;
-
 		byte_stream_copy_to_uint32_little_endian(
 		 ( (agdb_file_information_36_t *) file_information_data )->number_of_entries,
 		 number_of_entries );
@@ -367,35 +377,33 @@ ssize_t libagdb_file_information_read(
 		 ( (agdb_file_information_36_t *) file_information_data )->path_number_of_characters,
 		 path_size );
 	}
-	else if( io_handle->file_information_entry_size == 88 )
+	else if( mode == 64 )
 	{
-		alignment_size = 8;
-
 		byte_stream_copy_to_uint32_little_endian(
-		 ( (agdb_file_information_88_t *) file_information_data )->number_of_entries,
+		 ( (agdb_file_information_64_t *) file_information_data )->number_of_entries,
 		 number_of_entries );
 
 		byte_stream_copy_to_uint32_little_endian(
-		 ( (agdb_file_information_88_t *) file_information_data )->flags,
+		 ( (agdb_file_information_64_t *) file_information_data )->flags,
 		 flags );
 
 		byte_stream_copy_to_uint32_little_endian(
-		 ( (agdb_file_information_88_t *) file_information_data )->path_number_of_characters,
+		 ( (agdb_file_information_64_t *) file_information_data )->path_number_of_characters,
 		 path_size );
 	}
 #if defined( HAVE_DEBUG_OUTPUT )
 	if( libcnotify_verbose != 0 )
 	{
-		if( io_handle->file_information_entry_size <= 72 )
+		if( mode == 32 )
 		{
 			byte_stream_copy_to_uint32_little_endian(
 			 ( (agdb_file_information_36_t *) file_information_data )->unknown1,
 			 value_64bit );
 		}
-		else if( io_handle->file_information_entry_size == 88 )
+		else if( mode == 64 )
 		{
 			byte_stream_copy_to_uint64_little_endian(
-			 ( (agdb_file_information_88_t *) file_information_data )->unknown1,
+			 ( (agdb_file_information_64_t *) file_information_data )->unknown1,
 			 value_64bit );
 		}
 		libcnotify_printf(
@@ -403,16 +411,16 @@ ssize_t libagdb_file_information_read(
 		 function,
 		 value_64bit );
 
-		if( io_handle->file_information_entry_size <= 72 )
+		if( mode == 32 )
 		{
 			byte_stream_copy_to_uint32_little_endian(
 			 ( (agdb_file_information_36_t *) file_information_data )->name_hash,
 			 value_64bit );
 		}
-		else if( io_handle->file_information_entry_size == 88 )
+		else if( mode == 64 )
 		{
 			byte_stream_copy_to_uint64_little_endian(
-			 ( (agdb_file_information_88_t *) file_information_data )->name_hash,
+			 ( (agdb_file_information_64_t *) file_information_data )->name_hash,
 			 value_64bit );
 		}
 		libcnotify_printf(
@@ -430,16 +438,16 @@ ssize_t libagdb_file_information_read(
 		 function,
 		 flags );
 
-		if( io_handle->file_information_entry_size <= 72 )
+		if( mode == 32 )
 		{
 			byte_stream_copy_to_uint32_little_endian(
 			 ( (agdb_file_information_36_t *) file_information_data )->unknown4a,
 			 value_64bit );
 		}
-		else if( io_handle->file_information_entry_size == 88 )
+		else if( mode == 64 )
 		{
 			byte_stream_copy_to_uint64_little_endian(
-			 ( (agdb_file_information_88_t *) file_information_data )->unknown4a,
+			 ( (agdb_file_information_64_t *) file_information_data )->unknown4a,
 			 value_64bit );
 		}
 		libcnotify_printf(
@@ -467,16 +475,16 @@ ssize_t libagdb_file_information_read(
 		}
 		else
 		{
-			if( io_handle->file_information_entry_size <= 72 )
+			if( mode == 32 )
 			{
 				byte_stream_copy_to_uint32_little_endian(
 				 ( (agdb_file_information_36_t *) file_information_data )->unknown4b,
 				 value_64bit );
 			}
-			else if( io_handle->file_information_entry_size == 88 )
+			else if( mode == 64 )
 			{
 				byte_stream_copy_to_uint64_little_endian(
-				 ( (agdb_file_information_88_t *) file_information_data )->unknown4b,
+				 ( (agdb_file_information_64_t *) file_information_data )->unknown4b,
 				 value_64bit );
 			}
 			libcnotify_printf(
@@ -504,16 +512,16 @@ ssize_t libagdb_file_information_read(
 		}
 		else
 		{
-			if( io_handle->file_information_entry_size <= 72 )
+			if( mode == 32 )
 			{
 				byte_stream_copy_to_uint32_little_endian(
 				 ( (agdb_file_information_36_t *) file_information_data )->unknown5,
 				 value_64bit );
 			}
-			else if( io_handle->file_information_entry_size == 88 )
+			else if( mode == 64 )
 			{
 				byte_stream_copy_to_uint64_little_endian(
-				 ( (agdb_file_information_88_t *) file_information_data )->unknown5,
+				 ( (agdb_file_information_64_t *) file_information_data )->unknown5,
 				 value_64bit );
 			}
 			libcnotify_printf(
@@ -528,10 +536,10 @@ ssize_t libagdb_file_information_read(
 		 path_size >> 2,
 		 path_size & 0x00000001UL );
 
-		if( io_handle->file_information_entry_size == 88 )
+		if( mode == 64 )
 		{
 			byte_stream_copy_to_uint32_little_endian(
-			 ( (agdb_file_information_88_t *) file_information_data )->unknown6,
+			 ( (agdb_file_information_64_t *) file_information_data )->unknown6,
 			 value_32bit );
 			libcnotify_printf(
 			 "%s: unknown6\t\t\t\t\t: 0x%08" PRIx32 "\n",
@@ -550,13 +558,13 @@ ssize_t libagdb_file_information_read(
 		}
 		else if( io_handle->file_information_entry_size >= 56 )
 		{
-			if( io_handle->file_information_entry_size <= 72 )
+			if( mode == 32 )
 			{
 				byte_stream_copy_to_uint64_little_endian(
 				 ( (agdb_file_information_56_t *) file_information_data )->unknown7,
 				 value_64bit );
 			}
-			else if( io_handle->file_information_entry_size == 88 )
+			else if( mode == 64 )
 			{
 				byte_stream_copy_to_uint64_little_endian(
 				 ( (agdb_file_information_88_t *) file_information_data )->unknown7,
@@ -573,13 +581,9 @@ ssize_t libagdb_file_information_read(
 			 ( (agdb_file_information_52_t *) file_information_data )->unknown8,
 			 value_16bit );
 			libcnotify_printf(
-			 "%s: unknown8\t\t\t\t\t: 0x%04" PRIx16 " (size: %" PRIu16 ", lower bit: 0x%02" PRIx16 ")\n",
+			 "%s: unknown8\t\t\t\t\t: 0x%04" PRIx16 "\n",
 			 function,
-			 value_16bit,
-			 value_16bit >> 1,
-			 value_16bit & 0x0001 );
-
-			test_value = value_16bit >> 1;
+			 value_16bit );
 
 			byte_stream_copy_to_uint16_little_endian(
 			 ( (agdb_file_information_52_t *) file_information_data )->unknown9,
@@ -621,15 +625,16 @@ ssize_t libagdb_file_information_read(
 			 function,
 			 value_32bit );
 		}
-		else if( io_handle->file_information_entry_size >= 56 )
+		else if( ( io_handle->file_information_entry_size == 56 )
+		      || ( io_handle->file_information_entry_size >= 72 ) )
 		{
-			if( io_handle->file_information_entry_size <= 72 )
+			if( mode == 32 )
 			{
 				byte_stream_copy_to_uint32_little_endian(
 				 ( (agdb_file_information_56_t *) file_information_data )->unknown8a,
 				 value_32bit );
 			}
-			else if( io_handle->file_information_entry_size == 88 )
+			else if( mode == 64 )
 			{
 				byte_stream_copy_to_uint32_little_endian(
 				 ( (agdb_file_information_88_t *) file_information_data )->unknown8a,
@@ -640,13 +645,13 @@ ssize_t libagdb_file_information_read(
 			 function,
 			 value_32bit );
 
-			if( io_handle->file_information_entry_size <= 72 )
+			if( mode == 32 )
 			{
 				byte_stream_copy_to_uint32_little_endian(
 				 ( (agdb_file_information_56_t *) file_information_data )->unknown8b,
 				 value_32bit );
 			}
-			else if( io_handle->file_information_entry_size == 88 )
+			else if( mode == 64 )
 			{
 				byte_stream_copy_to_uint32_little_endian(
 				 ( (agdb_file_information_88_t *) file_information_data )->unknown8b,
@@ -657,13 +662,13 @@ ssize_t libagdb_file_information_read(
 			 function,
 			 value_32bit );
 
-			if( io_handle->file_information_entry_size <= 72 )
+			if( mode == 32 )
 			{
 				byte_stream_copy_to_uint64_little_endian(
 				 ( (agdb_file_information_56_t *) file_information_data )->unknown9,
 				 value_64bit );
 			}
-			else if( io_handle->file_information_entry_size == 88 )
+			else if( mode == 64 )
 			{
 				byte_stream_copy_to_uint64_little_endian(
 				 ( (agdb_file_information_88_t *) file_information_data )->unknown9,
@@ -676,13 +681,13 @@ ssize_t libagdb_file_information_read(
 		}
 		if( io_handle->file_information_entry_size >= 72 )
 		{
-			if( io_handle->file_information_entry_size == 72 )
+			if( mode == 32 )
 			{
 				byte_stream_copy_to_uint64_little_endian(
 				 ( (agdb_file_information_72_t *) file_information_data )->unknown10,
 				 value_64bit );
 			}
-			else if( io_handle->file_information_entry_size == 88 )
+			else if( mode == 64 )
 			{
 				byte_stream_copy_to_uint64_little_endian(
 				 ( (agdb_file_information_88_t *) file_information_data )->unknown10,
@@ -703,6 +708,32 @@ ssize_t libagdb_file_information_read(
 			 function,
 			 value_64bit );
 		}
+		else if( io_handle->file_information_entry_size == 112 )
+		{
+			byte_stream_copy_to_uint64_little_endian(
+			 ( (agdb_file_information_112_t *) file_information_data )->unknown11,
+			 value_64bit );
+			libcnotify_printf(
+			 "%s: unknown11\t\t\t\t: 0x%08" PRIx64 "\n",
+			 function,
+			 value_64bit );
+
+			byte_stream_copy_to_uint64_little_endian(
+			 ( (agdb_file_information_112_t *) file_information_data )->unknown12,
+			 value_64bit );
+			libcnotify_printf(
+			 "%s: unknown12\t\t\t\t: 0x%08" PRIx64 "\n",
+			 function,
+			 value_64bit );
+
+			byte_stream_copy_to_uint64_little_endian(
+			 ( (agdb_file_information_112_t *) file_information_data )->unknown13,
+			 value_64bit );
+			libcnotify_printf(
+			 "%s: unknown13\t\t\t\t: 0x%08" PRIx64 "\n",
+			 function,
+			 value_64bit );
+		}
 		libcnotify_printf(
 		 "\n" );
 	}
@@ -711,9 +742,6 @@ ssize_t libagdb_file_information_read(
 	 file_information_data );
 
 	file_information_data = NULL;
-
-/* TODO bounds check */
-	test_value -= read_count;
 
 	if( path_size != 0 )
 	{
@@ -758,7 +786,7 @@ ssize_t libagdb_file_information_read(
 			goto on_error;
 		}
 		total_read_count += read_count;
-		test_value       -= read_count;
+		file_offset      += read_count;
 
 #if defined( HAVE_DEBUG_OUTPUT )
 		if( libcnotify_verbose != 0 )
@@ -870,8 +898,6 @@ ssize_t libagdb_file_information_read(
 			value_string = NULL;
 		}
 #endif
-		file_offset += total_read_count;
-
 		alignment_padding_size = (size_t) ( file_offset % alignment_size );
 
 		if( alignment_padding_size != 0 )
@@ -908,6 +934,7 @@ ssize_t libagdb_file_information_read(
 				goto on_error;
 			}
 			total_read_count += read_count;
+			file_offset      += read_count;
 
 #if defined( HAVE_DEBUG_OUTPUT )
 			if( libcnotify_verbose != 0 )
@@ -941,6 +968,7 @@ ssize_t libagdb_file_information_read(
 		}
 		if( ( io_handle->file_information_sub_entry_type2_size != 16 )
 		 && ( io_handle->file_information_sub_entry_type2_size != 20 )
+		 && ( io_handle->file_information_sub_entry_type2_size != 24 )
 		 && ( io_handle->file_information_sub_entry_type2_size != 32 ) )
 		{
 			libcerror_error_set(
@@ -953,18 +981,8 @@ ssize_t libagdb_file_information_read(
 
 			return( -1 );
 		}
-fprintf( stderr, "X: %d\n", test_value );
+		sub_entry_data_size = io_handle->file_information_sub_entry_type1_size;
 
-		test_value /= number_of_entries;
-
-		if( test_value != io_handle->file_information_sub_entry_type2_size )
-		{
-			sub_entry_data_size = io_handle->file_information_sub_entry_type1_size;
-		}
-		else
-		{
-			sub_entry_data_size = io_handle->file_information_sub_entry_type2_size;
-		}
 		for( entry_index = 0;
 		     entry_index < number_of_entries;
 		     entry_index++ )
@@ -983,14 +1001,14 @@ fprintf( stderr, "X: %d\n", test_value );
 				 error,
 				 LIBCERROR_ERROR_DOMAIN_IO,
 				 LIBCERROR_IO_ERROR_READ_FAILED,
-				 "%s: unable to read file: %" PRIu32 " information.",
+				 "%s: unable to read sub entry: %" PRIu32 " data.",
 				 function,
-				 file_index );
+				 entry_index );
 
 				goto on_error;
 			}
-			file_offset      += read_count;
 			total_read_count += read_count;
+			file_offset      += read_count;
 
 #if defined( HAVE_DEBUG_OUTPUT )
 			if( libcnotify_verbose != 0 )
@@ -1032,5 +1050,185 @@ on_error:
 		 file_information_data );
 	}
 	return( -1 );
+}
+
+/* Retrieves the size of the UTF-8 encoded path
+ * The returned size includes the end of string character
+ * Returns 1 if successful or -1 on error
+ */
+int libagdb_file_information_get_utf8_path_size(
+     libagdb_file_information_t *file_information,
+     size_t *utf8_string_size,
+     libcerror_error_t **error )
+{
+	libagdb_internal_file_information_t *internal_file_information = NULL;
+	static char *function                                          = "libagdb_file_information_get_utf8_path_size";
+
+	if( file_information == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid file information.",
+		 function );
+
+		return( -1 );
+	}
+	internal_file_information = (libagdb_internal_file_information_t *) file_information;
+
+	if( libuna_utf8_string_size_from_utf16_stream(
+	     internal_file_information->path,
+	     internal_file_information->path_size,
+	     LIBUNA_ENDIAN_LITTLE,
+	     utf8_string_size,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve path UTF-8 string size.",
+		 function );
+
+		return( -1 );
+	}
+	return( 1 );
+}
+
+/* Retrieves the UTF-8 encoded path
+ * The size should include the end of string character
+ * Returns 1 if successful or -1 on error
+ */
+int libagdb_file_information_get_utf8_path(
+     libagdb_file_information_t *file_information,
+     uint8_t *utf8_string,
+     size_t utf8_string_size,
+     libcerror_error_t **error )
+{
+	libagdb_internal_file_information_t *internal_file_information = NULL;
+	static char *function                                          = "libagdb_file_information_get_utf8_path";
+
+	if( file_information == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid file information.",
+		 function );
+
+		return( -1 );
+	}
+	internal_file_information = (libagdb_internal_file_information_t *) file_information;
+
+	if( libuna_utf8_string_copy_from_utf16_stream(
+	     utf8_string,
+	     utf8_string_size,
+	     internal_file_information->path,
+	     internal_file_information->path_size,
+	     LIBUNA_ENDIAN_LITTLE,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_COPY_FAILED,
+		 "%s: unable to copy path to UTF-8 string.",
+		 function );
+
+		return( -1 );
+	}
+	return( 1 );
+}
+
+/* Retrieves the size of the UTF-16 encoded path
+ * The returned size includes the end of string character
+ * Returns 1 if successful or -1 on error
+ */
+int libagdb_file_information_get_utf16_path_size(
+     libagdb_file_information_t *file_information,
+     size_t *utf16_string_size,
+     libcerror_error_t **error )
+{
+	libagdb_internal_file_information_t *internal_file_information = NULL;
+	static char *function                                          = "libagdb_file_information_get_utf16_path_size";
+
+	if( file_information == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid file information.",
+		 function );
+
+		return( -1 );
+	}
+	internal_file_information = (libagdb_internal_file_information_t *) file_information;
+
+	if( libuna_utf16_string_size_from_utf16_stream(
+	     internal_file_information->path,
+	     internal_file_information->path_size,
+	     LIBUNA_ENDIAN_LITTLE,
+	     utf16_string_size,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve path UTF-16 string size.",
+		 function );
+
+		return( -1 );
+	}
+	return( 1 );
+}
+
+/* Retrieves the UTF-16 encoded path
+ * The size should include the end of string character
+ * Returns 1 if successful or -1 on error
+ */
+int libagdb_file_information_get_utf16_path(
+     libagdb_file_information_t *file_information,
+     uint16_t *utf16_string,
+     size_t utf16_string_size,
+     libcerror_error_t **error )
+{
+	libagdb_internal_file_information_t *internal_file_information = NULL;
+	static char *function                                          = "libagdb_file_information_get_utf16_path";
+
+	if( file_information == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid file information.",
+		 function );
+
+		return( -1 );
+	}
+	internal_file_information = (libagdb_internal_file_information_t *) file_information;
+
+	if( libuna_utf16_string_copy_from_utf16_stream(
+	     utf16_string,
+	     utf16_string_size,
+	     internal_file_information->path,
+	     internal_file_information->path_size,
+	     LIBUNA_ENDIAN_LITTLE,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_COPY_FAILED,
+		 "%s: unable to copy path to UTF-16 string.",
+		 function );
+
+		return( -1 );
+	}
+	return( 1 );
 }
 
