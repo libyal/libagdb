@@ -28,6 +28,7 @@
 #include "agdbinput.h"
 #include "agdbtools_libcerror.h"
 #include "agdbtools_libcstring.h"
+#include "agdbtools_libfdatetime.h"
 #include "agdbtools_libagdb.h"
 
 #define INFO_HANDLE_NOTIFY_STREAM	stdout
@@ -339,14 +340,20 @@ int info_handle_file_fprint(
      info_handle_t *info_handle,
      libcerror_error_t **error )
 {
+	libcstring_system_character_t filetime_string[ 48 ];
+
 	libagdb_executable_information_t *executable_information = NULL;
 	libagdb_volume_information_t *volume_information         = NULL;
 	libcstring_system_character_t *value_string              = NULL;
+	libfdatetime_filetime_t *filetime                        = NULL;
 	static char *function                                    = "info_handle_file_fprint";
+	size_t value_string_size                                 = 0;
+	uint64_t value_64bit                                     = 0;
 	uint32_t value_32bit                                     = 0;
 	int executable_index                                     = 0;
 	int number_of_executables                                = 0;
 	int number_of_volumes                                    = 0;
+	int result                                               = 0;
 	int volume_index                                         = 0;
 
 	if( info_handle == NULL )
@@ -360,9 +367,30 @@ int info_handle_file_fprint(
 
 		return( -1 );
 	}
+	if( libfdatetime_filetime_initialize(
+	     &filetime,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+		 "%s: unable to create filetime.",
+		 function );
+
+		goto on_error;
+	}
 	fprintf(
 	 info_handle->notify_stream,
 	 "Windows SuperFetch database file information:\n" );
+
+	fprintf(
+	 info_handle->notify_stream,
+	 "\n" );
+
+	fprintf(
+	 info_handle->notify_stream,
+	 "Volumes:\n" );
 
 	if( libagdb_file_get_number_of_volumes(
 	     info_handle->input_file,
@@ -382,6 +410,205 @@ int info_handle_file_fprint(
 	 info_handle->notify_stream,
 	 "\tNumber of volumes\t\t: %d\n",
 	 number_of_volumes );
+
+	fprintf(
+	 info_handle->notify_stream,
+	 "\n" );
+
+	for( volume_index = 0;
+	     volume_index < number_of_volumes;
+	     volume_index++ )
+	{
+		if( libagdb_file_get_volume_information(
+		     info_handle->input_file,
+		     volume_index,
+		     &volume_information,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve volume information.",
+			 function );
+
+			return( -1 );
+		}
+		fprintf(
+		 info_handle->notify_stream,
+		 "Volume: %d information:\n",
+		 volume_index + 1 );
+
+#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+		result = libagdb_volume_information_get_utf16_device_path_size(
+			  volume_information,
+			  &value_string_size,
+			  error );
+#else
+		result = libagdb_volume_information_get_utf8_device_path_size(
+			  volume_information,
+			  &value_string_size,
+			  error );
+#endif
+		if( result != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve device path size.",
+			 function );
+
+			goto on_error;
+		}
+		if( value_string_size > 0 )
+		{
+			value_string = libcstring_system_string_allocate(
+					value_string_size );
+
+			if( value_string == NULL )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_MEMORY,
+				 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
+				 "%s: unable to create value string.",
+				 function );
+
+				goto on_error;
+			}
+#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+			result = libagdb_volume_information_get_utf16_device_path(
+				  volume_information,
+				  (uint16_t *) value_string,
+				  value_string_size,
+				  error );
+#else
+			result = libagdb_volume_information_get_utf8_device_path(
+				  volume_information,
+				  (uint8_t *) value_string,
+				  value_string_size,
+				  error );
+#endif
+			if( result != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+				 "%s: unable to retrieve device path.",
+				 function );
+
+				goto on_error;
+			}
+			fprintf(
+			 info_handle->notify_stream,
+			 "\tDevice path\t\t\t: %" PRIs_LIBCSTRING_SYSTEM "\n",
+			 value_string );
+
+			memory_free(
+			 value_string );
+
+			value_string = NULL;
+		}
+		if( libagdb_volume_information_get_creation_time(
+		     volume_information,
+		     &value_64bit,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve creation time.",
+			 function );
+
+			goto on_error;
+		}
+		if( libfdatetime_filetime_copy_from_64bit(
+		     filetime,
+		     value_64bit,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_COPY_FAILED,
+			 "%s: unable to copy 64-bit value to filetime.",
+			 function );
+
+			goto on_error;
+		}
+#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+		result = libfdatetime_filetime_copy_to_utf16_string(
+			  filetime,
+			  (uint16_t *) filetime_string,
+			  48,
+			  LIBFDATETIME_STRING_FORMAT_TYPE_CTIME | LIBFDATETIME_STRING_FORMAT_FLAG_DATE_TIME_NANO_SECONDS,
+			  error );
+#else
+		result = libfdatetime_filetime_copy_to_utf8_string(
+			  filetime,
+			  (uint8_t *) filetime_string,
+			  48,
+			  LIBFDATETIME_STRING_FORMAT_TYPE_CTIME | LIBFDATETIME_STRING_FORMAT_FLAG_DATE_TIME_NANO_SECONDS,
+			  error );
+#endif
+		if( result != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_COPY_FAILED,
+			 "%s: unable to copy filetime to string.",
+			 function );
+
+			goto on_error;
+		}
+		fprintf(
+		 info_handle->notify_stream,
+		 "\tCreation time\t\t\t: %" PRIs_LIBCSTRING_SYSTEM " UTC\n",
+		 filetime_string );
+
+		if( libagdb_volume_information_get_serial_number(
+		     volume_information,
+		     &value_32bit,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve serial number.",
+			 function );
+
+			goto on_error;
+		}
+		fprintf(
+		 info_handle->notify_stream,
+		 "\tSerial number\t\t\t: 0x%08" PRIx32 "\n",
+		 value_32bit );
+
+		if( libagdb_volume_information_free(
+		     &volume_information,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+			 "%s: unable to free volume information.",
+			 function );
+
+			goto on_error;
+		}
+		fprintf(
+		 info_handle->notify_stream,
+		 "\n" );
+	}
+	fprintf(
+	 info_handle->notify_stream,
+	 "Executables:\n" );
 
 	if( libagdb_file_get_number_of_executables(
 	     info_handle->input_file,
@@ -406,128 +633,47 @@ int info_handle_file_fprint(
 	 info_handle->notify_stream,
 	 "\n" );
 
-	if( number_of_volumes > 0 )
+	for( executable_index = 0;
+	     executable_index < number_of_executables;
+	     executable_index++ )
 	{
+		if( libagdb_file_get_executable_information(
+		     info_handle->input_file,
+		     executable_index,
+		     &executable_information,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve executable information.",
+			 function );
+
+			return( -1 );
+		}
 		fprintf(
 		 info_handle->notify_stream,
-		 "Volumes:\n" );
+		 "Executable: %d information:\n",
+		 executable_index + 1 );
 
+/* TODO executable name */
+		if( libagdb_executable_information_free(
+		     &executable_information,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+			 "%s: unable to free executable information.",
+			 function );
+
+			goto on_error;
+		}
 		fprintf(
 		 info_handle->notify_stream,
 		 "\n" );
-
-		for( volume_index = 0;
-		     volume_index < number_of_volumes;
-		     volume_index++ )
-		{
-			if( libagdb_file_get_volume_information(
-			     info_handle->input_file,
-			     volume_index,
-			     &volume_information,
-			     error ) != 1 )
-			{
-				libcerror_error_set(
-				 error,
-				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-				 "%s: unable to retrieve volume information.",
-				 function );
-
-				return( -1 );
-			}
-			fprintf(
-			 info_handle->notify_stream,
-			 "Volume information:\n" );
-
-			if( libagdb_volume_information_get_serial_number(
-			     volume_information,
-			     &value_32bit,
-			     error ) != 1 )
-			{
-				libcerror_error_set(
-				 error,
-				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-				 "%s: unable to retrieve serial number.",
-				 function );
-
-				goto on_error;
-			}
-			fprintf(
-			 info_handle->notify_stream,
-			 "\tSerial number\t\t\t: 0x%08" PRIx32 "\n",
-			 value_32bit );
-
-/* TODO */
-			if( libagdb_volume_information_free(
-			     &volume_information,
-			     error ) != 1 )
-			{
-				libcerror_error_set(
-				 error,
-				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
-				 "%s: unable to free volume information.",
-				 function );
-
-				goto on_error;
-			}
-			fprintf(
-			 info_handle->notify_stream,
-			 "\n" );
-		}
-	}
-	if( number_of_executables > 0 )
-	{
-		fprintf(
-		 info_handle->notify_stream,
-		 "Executables:\n" );
-
-		fprintf(
-		 info_handle->notify_stream,
-		 "\n" );
-
-		for( executable_index = 0;
-		     executable_index < number_of_executables;
-		     executable_index++ )
-		{
-			if( libagdb_file_get_executable_information(
-			     info_handle->input_file,
-			     executable_index,
-			     &executable_information,
-			     error ) != 1 )
-			{
-				libcerror_error_set(
-				 error,
-				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-				 "%s: unable to retrieve executable information.",
-				 function );
-
-				return( -1 );
-			}
-			fprintf(
-			 info_handle->notify_stream,
-			 "Executable information:\n" );
-
-/* TODO */
-			if( libagdb_executable_information_free(
-			     &executable_information,
-			     error ) != 1 )
-			{
-				libcerror_error_set(
-				 error,
-				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
-				 "%s: unable to free executable information.",
-				 function );
-
-				goto on_error;
-			}
-			fprintf(
-			 info_handle->notify_stream,
-			 "\n" );
-		}
 	}
 	return( 1 );
 
@@ -548,6 +694,12 @@ on_error:
 	{
 		memory_free(
 		 value_string );
+	}
+	if( filetime != NULL )
+	{
+		libfdatetime_filetime_free(
+		 &filetime,
+		 NULL );
 	}
 	return( -1 );
 }

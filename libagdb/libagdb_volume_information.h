@@ -96,6 +96,32 @@ int libagdb_volume_information_get_serial_number(
      uint32_t *serial_number,
      libcerror_error_t **error );
 
+LIBAGDB_EXTERN \
+int libagdb_volume_information_get_utf8_device_path_size(
+     libagdb_volume_information_t *volume_information,
+     size_t *utf8_string_size,
+     libcerror_error_t **error );
+
+LIBAGDB_EXTERN \
+int libagdb_volume_information_get_utf8_device_path(
+     libagdb_volume_information_t *volume_information,
+     uint8_t *utf8_string,
+     size_t utf8_string_size,
+     libcerror_error_t **error );
+
+LIBAGDB_EXTERN \
+int libagdb_volume_information_get_utf16_device_path_size(
+     libagdb_volume_information_t *volume_information,
+     size_t *utf16_string_size,
+     libcerror_error_t **error );
+
+LIBAGDB_EXTERN \
+int libagdb_volume_information_get_utf16_device_path(
+     libagdb_volume_information_t *volume_information,
+     uint16_t *utf16_string,
+     size_t utf16_string_size,
+     libcerror_error_t **error );
+
 #if defined( __cplusplus )
 }
 #endif

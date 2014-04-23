@@ -1,4 +1,4 @@
-.Dd April 7, 2014
+.Dd April 23, 2014
 .Dt libagdb 3
 .Os libagdb
 .Sh NAME
@@ -61,11 +61,13 @@ File functions
 .Ft int
 .Fn libagdb_file_close "libagdb_file_t *file, libagdb_error_t **error"
 .Ft int
-.Fn libagdb_file_get_number_of_streams "libagdb_file_t *file, int *number_of_streams, libagdb_error_t **error"
+.Fn libagdb_file_get_number_of_volumes "libagdb_file_t *file, int *number_of_volumes, libagdb_error_t **error"
 .Ft int
-.Fn libagdb_file_get_stream "libagdb_file_t *file, int stream_index, libagdb_stream_t **stream, libagdb_error_t **error"
+.Fn libagdb_file_get_volume_information "libagdb_file_t *file, int volume_index, libagdb_volume_information_t **volume_information, libagdb_error_t **error"
 .Ft int
-.Fn libagdb_file_get_stream_by_type "libagdb_file_t *file, uit32_t stream_type, libagdb_stream_t **stream, libagdb_error_t **error"
+.Fn libagdb_file_get_number_of_executables "libagdb_file_t *file, int *number_of_executables, libagdb_error_t **error"
+.Ft int
+.Fn libagdb_file_get_executable_information "libagdb_file_t *file, int executable_index, libagdb_executable_information_t **executable_information, libagdb_error_t **error"
 .Pp
 Available when compiled with wide character string support:
 .Ft int
@@ -75,27 +77,25 @@ Available when compiled with libbfio support:
 .Ft int
 .Fn libagdb_file_open_file_io_handle "libagdb_file_t *file, libbfio_handle_t *file_io_handle, int access_flags, libagdb_error_t **error"
 .PP
-Stream functions
+Volume information functions
 .Ft int
-.Fn libagdb_stream_free "libagdb_stream_t **stream, libagdb_error_t **error"
+.Fn libagdb_volume_information_free "libagdb_volume_information_t **volume_information, libagdb_error_t **error"
 .Ft int
-.Fn libagdb_stream_get_type "libagdb_stream_t *stream, uint32_t *type, libagdb_error_t **error"
-.Ft ssize_t
-.Fn libagdb_stream_read_buffer "libagdb_stream_t *stream, void *buffer, size_t buffer_size, libagdb_error_t **error"
-.Ft ssize_t
-.Fn libagdb_stream_read_buffer_at_offset "libagdb_stream_t *stream, void *buffer, size_t buffer_size, off64_t offset, libagdb_error_t **error"
-.Ft off64_t
-.Fn libagdb_stream_seek_offset "libagdb_stream_t *stream, off64_t offset, int whence, libagdb_error_t **error"
+.Fn libagdb_volume_information_get_creation_time "libagdb_volume_information_t *volume_information, uint64_t *creation_time, libagdb_error_t **error"
 .Ft int
-.Fn libagdb_stream_get_offset "libagdb_stream_t *stream, off64_t *offset, libagdb_error_t **error"
+.Fn libagdb_volume_information_get_serial_number "libagdb_volume_information_t *volume_information, uint32_t *serial_number, libagdb_error_t **error"
 .Ft int
-.Fn libagdb_stream_get_size "libagdb_stream_t *stream, size64_t *size, libagdb_error_t **error"
+.Fn libagdb_volume_information_get_utf8_device_path_size "libagdb_volume_information_t *volume_information, size_t *utf8_string_size, libagdb_error_t **error"
 .Ft int
-.Fn libagdb_stream_get_start_offset "libagdb_stream_t *stream, off64_t *start_offset, libagdb_error_t **error"
-.Pp
-Available when compiled with libbfio support:
+.Fn libagdb_volume_information_get_utf8_device_path "libagdb_volume_information_t *volume_information, uint8_t *utf8_string, size_t utf8_string_size, libagdb_error_t **error"
 .Ft int
-.Fn libagdb_stream_get_data_file_io_handle "libagdb_stream_t *stream, libbfio_handle_t **file_io_handle, libagdb_error_t **error"
+.Fn libagdb_volume_information_get_utf16_device_path_size "libagdb_volume_information_t *volume_information, size_t *utf16_string_size, libagdb_error_t **error"
+.Ft int
+.Fn libagdb_volume_information_get_utf16_device_path "libagdb_volume_information_t *volume_information, uint16_t *utf16_string, size_t utf16_string_size, libagdb_error_t **error"
+.PP
+Executable information functions
+.Ft int
+.Fn libagdb_executable_information_free "libagdb_executable_information_t **executable_information, libagdb_error_t **error"
 .Sh DESCRIPTION
 The
 .Fn libagdb_get_version

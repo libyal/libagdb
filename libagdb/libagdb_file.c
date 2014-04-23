@@ -1143,7 +1143,7 @@ int libagdb_file_open_read(
 			if( libcnotify_verbose != 0 )
 			{
 				libcnotify_printf(
-				 "%s: alignment padding size\t\t: %" PRIzd "\n",
+				 "%s: alignment padding size\t\t\t\t: %" PRIzd "\n",
 				 function,
 				 alignment_padding_size );
 			}

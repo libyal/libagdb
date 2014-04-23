@@ -929,7 +929,7 @@ on_error:
 	return( -1 );
 }
 
-/* Retrieves the creation time
+/* Retrieves the 64-bit filetime value containing the volume creation date and time
  * Returns 1 if successful or -1 on error
  */
 int libagdb_volume_information_get_creation_time(
@@ -1009,3 +1009,182 @@ int libagdb_volume_information_get_serial_number(
 	return( 1 );
 }
 
+/* Retrieves the size of the UTF-8 encoded device path
+ * The returned size includes the end of string character
+ * Returns 1 if successful or -1 on error
+ */
+int libagdb_volume_information_get_utf8_device_path_size(
+     libagdb_volume_information_t *volume_information,
+     size_t *utf8_string_size,
+     libcerror_error_t **error )
+{
+	libagdb_internal_volume_information_t *internal_volume_information = NULL;
+	static char *function                                              = "libagdb_volume_information_get_utf8_device_path_size";
+
+	if( volume_information == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid volume information.",
+		 function );
+
+		return( -1 );
+	}
+	internal_volume_information = (libagdb_internal_volume_information_t *) volume_information;
+
+	if( libuna_utf8_string_size_from_utf16_stream(
+	     internal_volume_information->device_path,
+	     internal_volume_information->device_path_size,
+	     LIBUNA_ENDIAN_LITTLE,
+	     utf8_string_size,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve device path UTF-8 string size.",
+		 function );
+
+		return( -1 );
+	}
+	return( 1 );
+}
+
+/* Retrieves the UTF-8 encoded device path
+ * The size should include the end of string character
+ * Returns 1 if successful or -1 on error
+ */
+int libagdb_volume_information_get_utf8_device_path(
+     libagdb_volume_information_t *volume_information,
+     uint8_t *utf8_string,
+     size_t utf8_string_size,
+     libcerror_error_t **error )
+{
+	libagdb_internal_volume_information_t *internal_volume_information = NULL;
+	static char *function                                              = "libagdb_volume_information_get_utf8_device_path";
+
+	if( volume_information == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid volume information.",
+		 function );
+
+		return( -1 );
+	}
+	internal_volume_information = (libagdb_internal_volume_information_t *) volume_information;
+
+	if( libuna_utf8_string_copy_from_utf16_stream(
+	     utf8_string,
+	     utf8_string_size,
+	     internal_volume_information->device_path,
+	     internal_volume_information->device_path_size,
+	     LIBUNA_ENDIAN_LITTLE,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_COPY_FAILED,
+		 "%s: unable to copy device path to UTF-8 string.",
+		 function );
+
+		return( -1 );
+	}
+	return( 1 );
+}
+
+/* Retrieves the size of the UTF-16 encoded device path
+ * The returned size includes the end of string character
+ * Returns 1 if successful or -1 on error
+ */
+int libagdb_volume_information_get_utf16_device_path_size(
+     libagdb_volume_information_t *volume_information,
+     size_t *utf16_string_size,
+     libcerror_error_t **error )
+{
+	libagdb_internal_volume_information_t *internal_volume_information = NULL;
+	static char *function                                              = "libagdb_volume_information_get_utf16_device_path_size";
+
+	if( volume_information == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid volume information.",
+		 function );
+
+		return( -1 );
+	}
+	internal_volume_information = (libagdb_internal_volume_information_t *) volume_information;
+
+	if( libuna_utf16_string_size_from_utf16_stream(
+	     internal_volume_information->device_path,
+	     internal_volume_information->device_path_size,
+	     LIBUNA_ENDIAN_LITTLE,
+	     utf16_string_size,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve device path UTF-16 string size.",
+		 function );
+
+		return( -1 );
+	}
+	return( 1 );
+}
+
+/* Retrieves the UTF-16 encoded device path
+ * The size should include the end of string character
+ * Returns 1 if successful or -1 on error
+ */
+int libagdb_volume_information_get_utf16_device_path(
+     libagdb_volume_information_t *volume_information,
+     uint16_t *utf16_string,
+     size_t utf16_string_size,
+     libcerror_error_t **error )
+{
+	libagdb_internal_volume_information_t *internal_volume_information = NULL;
+	static char *function                                              = "libagdb_volume_information_get_utf16_device_path";
+
+	if( volume_information == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid volume information.",
+		 function );
+
+		return( -1 );
+	}
+	internal_volume_information = (libagdb_internal_volume_information_t *) volume_information;
+
+	if( libuna_utf16_string_copy_from_utf16_stream(
+	     utf16_string,
+	     utf16_string_size,
+	     internal_volume_information->device_path,
+	     internal_volume_information->device_path_size,
+	     LIBUNA_ENDIAN_LITTLE,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_COPY_FAILED,
+		 "%s: unable to copy device path to UTF-16 string.",
+		 function );
+
+		return( -1 );
+	}
+	return( 1 );
+}
