@@ -1296,6 +1296,43 @@ int libagdb_file_open_read(
 		}
 		executable_information = NULL;
 	}
+/* TODO remove use offset instead */
+#if defined( HAVE_DEBUG_OUTPUT )
+	if( libcnotify_verbose != 0 )
+	{
+		uint8_t trailing_data[ 128 ];
+
+		read_count = libfdata_stream_read_buffer(
+			      internal_file->uncompressed_data_stream,
+			      (intptr_t *) internal_file->file_io_handle,
+			      trailing_data,
+			      128,
+			      0,
+			      error );
+
+		if( read_count == -1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_IO,
+			 LIBCERROR_IO_ERROR_READ_FAILED,
+			 "%s: unable to read trailing data.",
+			 function );
+
+			goto on_error;
+		}
+		if( read_count > 0 )
+		{
+			libcnotify_printf(
+			 "%s: trailing data:\n",
+			 function );
+			libcnotify_print_data(
+			 trailing_data,
+			 read_count,
+			 LIBCNOTIFY_PRINT_DATA_FLAG_GROUP_DATA );
+		}
+	}
+#endif
 	return( 1 );
 
 on_error:

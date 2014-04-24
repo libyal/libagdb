@@ -793,7 +793,7 @@ int libagdb_io_handle_read_uncompressed_file_header(
 		libcnotify_print_data(
 	         database_header_data,
 	         database_header_size,
-		 0 );
+		 LIBCNOTIFY_PRINT_DATA_FLAG_GROUP_DATA );
 	}
 #endif
 	byte_stream_copy_to_uint32_little_endian(
@@ -920,7 +920,7 @@ int libagdb_io_handle_read_uncompressed_file_header(
 		 ( (agdb_database_header_t *) database_header_data )->unknown3,
 		 value_32bit );
 		libcnotify_printf(
-		 "%s: unknown3\t\t: %" PRIu32 "\n",
+		 "%s: unknown3\t\t: 0x%08" PRIx32 "\n",
 		 function,
 		 value_32bit );
 
@@ -933,7 +933,7 @@ int libagdb_io_handle_read_uncompressed_file_header(
 		 ( (agdb_database_header_t *) database_header_data )->unknown4,
 		 value_32bit );
 		libcnotify_printf(
-		 "%s: unknown4\t\t: %" PRIu32 "\n",
+		 "%s: unknown4\t\t: 0x%08" PRIx32 "\n",
 		 function,
 		 value_32bit );
 
@@ -941,10 +941,137 @@ int libagdb_io_handle_read_uncompressed_file_header(
 		 ( (agdb_database_header_t *) database_header_data )->unknown5,
 		 value_32bit );
 		libcnotify_printf(
-		 "%s: unknown5\t\t: %" PRIu32 "\n",
+		 "%s: unknown5\t\t: 0x%08" PRIx32 "\n",
 		 function,
 		 value_32bit );
 
+		if( ( database_header_size == 116 )
+		 || ( database_header_size == 228 ) )
+		{
+			byte_stream_copy_to_uint32_little_endian(
+			 ( (agdb_database_header_116_t *) database_header_data )->unknown6,
+			 value_32bit );
+			libcnotify_printf(
+			 "%s: unknown6\t\t: 0x%08" PRIx32 "\n",
+			 function,
+			 value_32bit );
+
+			byte_stream_copy_to_uint32_little_endian(
+			 ( (agdb_database_header_116_t *) database_header_data )->unknown7,
+			 value_32bit );
+			libcnotify_printf(
+			 "%s: unknown7\t\t: 0x%08" PRIx32 "\n",
+			 function,
+			 value_32bit );
+
+			byte_stream_copy_to_uint32_little_endian(
+			 ( (agdb_database_header_116_t *) database_header_data )->unknown8,
+			 value_32bit );
+			libcnotify_printf(
+			 "%s: unknown8\t\t: 0x%08" PRIx32 "\n",
+			 function,
+			 value_32bit );
+
+			byte_stream_copy_to_uint32_little_endian(
+			 ( (agdb_database_header_116_t *) database_header_data )->unknown9,
+			 value_32bit );
+			libcnotify_printf(
+			 "%s: unknown9\t\t: 0x%08" PRIx32 "\n",
+			 function,
+			 value_32bit );
+
+			byte_stream_copy_to_uint32_little_endian(
+			 ( (agdb_database_header_116_t *) database_header_data )->unknown10,
+			 value_32bit );
+			libcnotify_printf(
+			 "%s: unknown10\t\t: 0x%08" PRIx32 "\n",
+			 function,
+			 value_32bit );
+
+			byte_stream_copy_to_uint32_little_endian(
+			 ( (agdb_database_header_116_t *) database_header_data )->unknown11,
+			 value_32bit );
+			libcnotify_printf(
+			 "%s: unknown11\t\t: 0x%08" PRIx32 "\n",
+			 function,
+			 value_32bit );
+
+			byte_stream_copy_to_uint32_little_endian(
+			 ( (agdb_database_header_116_t *) database_header_data )->unknown12,
+			 value_32bit );
+			libcnotify_printf(
+			 "%s: unknown12\t\t: 0x%08" PRIx32 "\n",
+			 function,
+			 value_32bit );
+
+			byte_stream_copy_to_uint32_little_endian(
+			 ( (agdb_database_header_116_t *) database_header_data )->unknown13,
+			 value_32bit );
+			libcnotify_printf(
+			 "%s: unknown13\t\t: 0x%08" PRIx32 "\n",
+			 function,
+			 value_32bit );
+
+			byte_stream_copy_to_uint32_little_endian(
+			 ( (agdb_database_header_116_t *) database_header_data )->unknown14,
+			 value_32bit );
+			libcnotify_printf(
+			 "%s: unknown14\t\t: 0x%08" PRIx32 "\n",
+			 function,
+			 value_32bit );
+
+			byte_stream_copy_to_uint32_little_endian(
+			 ( (agdb_database_header_116_t *) database_header_data )->unknown15,
+			 value_32bit );
+			libcnotify_printf(
+			 "%s: unknown15\t\t: 0x%08" PRIx32 "\n",
+			 function,
+			 value_32bit );
+		}
+		if( database_header_size == 116 )
+		{
+			byte_stream_copy_to_uint32_little_endian(
+			 ( (agdb_database_header_116_t *) database_header_data )->unknown16,
+			 value_32bit );
+			libcnotify_printf(
+			 "%s: unknown16\t\t: 0x%08" PRIx32 "\n",
+			 function,
+			 value_32bit );
+
+			byte_stream_copy_to_uint32_little_endian(
+			 ( (agdb_database_header_116_t *) database_header_data )->unknown17,
+			 value_32bit );
+			libcnotify_printf(
+			 "%s: unknown17\t\t: 0x%08" PRIx32 "\n",
+			 function,
+			 value_32bit );
+
+			byte_stream_copy_to_uint32_little_endian(
+			 ( (agdb_database_header_116_t *) database_header_data )->unknown18,
+			 value_32bit );
+			libcnotify_printf(
+			 "%s: unknown18\t\t: 0x%08" PRIx32 "\n",
+			 function,
+			 value_32bit );
+		}
+		else if( database_header_size == 228 )
+		{
+			byte_stream_copy_to_uint32_little_endian(
+			 ( (agdb_database_header_116_t *) database_header_data )->unknown16,
+			 value_32bit );
+			libcnotify_printf(
+			 "%s: number of time values\t: %" PRIu32 "\n",
+			 function,
+			 value_32bit );
+
+			libcnotify_printf(
+			 "%s: time values data:\n",
+			 function );
+			libcnotify_print_data(
+		         ( (agdb_database_header_228_t *) database_header_data )->unknown17,
+		         120,
+			 LIBCNOTIFY_PRINT_DATA_FLAG_GROUP_DATA );
+		}
 		libcnotify_printf(
 		 "\n" );
 	}

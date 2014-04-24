@@ -661,7 +661,10 @@ ssize_t libagdb_file_information_read(
 			 "%s: unknown8b\t\t\t\t: 0x%08" PRIx32 "\n",
 			 function,
 			 value_32bit );
-
+		}
+		if( ( io_handle->file_information_entry_size == 56 )
+		 || ( io_handle->file_information_entry_size >= 88 ) )
+		{
 			if( mode == 32 )
 			{
 				byte_stream_copy_to_uint64_little_endian(
@@ -679,27 +682,40 @@ ssize_t libagdb_file_information_read(
 			 function,
 			 value_64bit );
 		}
-		if( io_handle->file_information_entry_size >= 72 )
-		{
-			if( mode == 32 )
-			{
-				byte_stream_copy_to_uint64_little_endian(
-				 ( (agdb_file_information_72_t *) file_information_data )->unknown10,
-				 value_64bit );
-			}
-			else if( mode == 64 )
-			{
-				byte_stream_copy_to_uint64_little_endian(
-				 ( (agdb_file_information_88_t *) file_information_data )->unknown10,
-				 value_64bit );
-			}
-			libcnotify_printf(
-			 "%s: unknown10\t\t\t\t: 0x%08" PRIx64 "\n",
-			 function,
-			 value_64bit );
-		}
 		if( io_handle->file_information_entry_size == 72 )
 		{
+			byte_stream_copy_to_uint32_little_endian(
+			 ( (agdb_file_information_72_t *) file_information_data )->unknown9a,
+			 value_32bit );
+			libcnotify_printf(
+			 "%s: unknown9a\t\t\t\t: 0x%08" PRIx32 "\n",
+			 function,
+			 value_32bit );
+
+			byte_stream_copy_to_uint32_little_endian(
+			 ( (agdb_file_information_72_t *) file_information_data )->unknown9b,
+			 value_32bit );
+			libcnotify_printf(
+			 "%s: unknown9b\t\t\t\t: 0x%08" PRIx32 "\n",
+			 function,
+			 value_32bit );
+
+			byte_stream_copy_to_uint32_little_endian(
+			 ( (agdb_file_information_72_t *) file_information_data )->unknown10a,
+			 value_32bit );
+			libcnotify_printf(
+			 "%s: unknown10a\t\t\t\t: 0x%08" PRIx32 "\n",
+			 function,
+			 value_32bit );
+
+			byte_stream_copy_to_uint32_little_endian(
+			 ( (agdb_file_information_72_t *) file_information_data )->unknown10b,
+			 value_32bit );
+			libcnotify_printf(
+			 "%s: unknown10b\t\t\t\t: 0x%08" PRIx32 "\n",
+			 function,
+			 value_32bit );
+
 			byte_stream_copy_to_uint64_little_endian(
 			 ( (agdb_file_information_72_t *) file_information_data )->unknown11,
 			 value_64bit );
@@ -708,7 +724,17 @@ ssize_t libagdb_file_information_read(
 			 function,
 			 value_64bit );
 		}
-		else if( io_handle->file_information_entry_size == 112 )
+		else if( io_handle->file_information_entry_size >= 88 )
+		{
+			byte_stream_copy_to_uint64_little_endian(
+			 ( (agdb_file_information_88_t *) file_information_data )->unknown10,
+			 value_64bit );
+			libcnotify_printf(
+			 "%s: unknown10\t\t\t\t: 0x%08" PRIx64 "\n",
+			 function,
+			 value_64bit );
+		}
+		if( io_handle->file_information_entry_size == 112 )
 		{
 			byte_stream_copy_to_uint64_little_endian(
 			 ( (agdb_file_information_112_t *) file_information_data )->unknown11,

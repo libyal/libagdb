@@ -349,14 +349,24 @@ struct agdb_file_information_72
 	uint8_t unknown8b[ 4 ];
 
 	/* Unknown
-	 * Consists of 8 bytes
+	 * Consists of 4 bytes
 	 */
-	uint8_t unknown9[ 8 ];
+	uint8_t unknown9a[ 4 ];
 
 	/* Unknown
-	 * Consists of 8 bytes
+	 * Consists of 4 bytes
 	 */
-	uint8_t unknown10[ 8 ];
+	uint8_t unknown9b[ 4 ];
+
+	/* Unknown
+	 * Consists of 4 bytes
+	 */
+	uint8_t unknown10a[ 4 ];
+
+	/* Unknown
+	 * Consists of 4 bytes
+	 */
+	uint8_t unknown10b[ 4 ];
 
 	/* Unknown
 	 * Consists of 8 bytes

@@ -198,10 +198,10 @@ struct agdb_executable_information_100
 	 */
 	uint8_t unknown9[ 4 ];
 
-	/* Unknown
+	/* The executable filename
 	 * Consists of 16 bytes
 	 */
-	uint8_t executable_name[ 16 ];
+	uint8_t executable_filename[ 16 ];
 
 	/* Unknown
 	 * Consists of 4 bytes
@@ -303,10 +303,10 @@ struct agdb_executable_information_144
 	 */
 	uint8_t unknown9[ 8 ];
 
-	/* Unknown
+	/* The executable filename
 	 * Consists of 16 bytes
 	 */
-	uint8_t executable_name[ 16 ];
+	uint8_t executable_filename[ 16 ];
 
 	/* Unknown
 	 * Consists of 8 bytes

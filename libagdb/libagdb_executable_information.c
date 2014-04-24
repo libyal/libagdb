@@ -549,14 +549,14 @@ ssize_t libagdb_executable_information_read(
 		{
 			if( memory_copy(
 			     internal_executable_information->filename,
-			     ( (agdb_executable_information_100_t *) executable_information_data )->executable_name,
+			     ( (agdb_executable_information_100_t *) executable_information_data )->executable_filename,
 			     (size_t) 16 ) == NULL )
 			{
 				libcerror_error_set(
 				 error,
 				 LIBCERROR_ERROR_DOMAIN_MEMORY,
 				 LIBCERROR_MEMORY_ERROR_COPY_FAILED,
-				 "%s: unable to copy exectutable name.",
+				 "%s: unable to copy executable filename.",
 				 function );
 
 				goto on_error;
@@ -566,14 +566,14 @@ ssize_t libagdb_executable_information_read(
 		{
 			if( memory_copy(
 			     internal_executable_information->filename,
-			     ( (agdb_executable_information_144_t *) executable_information_data )->executable_name,
+			     ( (agdb_executable_information_144_t *) executable_information_data )->executable_filename,
 			     (size_t) 16 ) == NULL )
 			{
 				libcerror_error_set(
 				 error,
 				 LIBCERROR_ERROR_DOMAIN_MEMORY,
 				 LIBCERROR_MEMORY_ERROR_COPY_FAILED,
-				 "%s: unable to copy exectutable name.",
+				 "%s: unable to copy executable filename.",
 				 function );
 
 				goto on_error;
@@ -589,6 +589,7 @@ ssize_t libagdb_executable_information_read(
 			}
 		}
 		internal_executable_information->filename_size = string_index + 1;
+
 #if defined( HAVE_DEBUG_OUTPUT )
 		if( libcnotify_verbose != 0 )
 		{
@@ -678,13 +679,99 @@ ssize_t libagdb_executable_information_read(
 			 function,
 			 value_64bit );
 
+/* TODO allow to set codepage */
+#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+			result = libuna_utf16_string_size_from_byte_stream(
+				  internal_executable_information->filename,
+				  internal_executable_information->filename_size,
+				  LIBUNA_CODEPAGE_ASCII,
+				  &value_string_size,
+				  error );
+#else
+			result = libuna_utf8_string_size_from_byte_stream(
+				  internal_executable_information->filename,
+				  internal_executable_information->filename_size,
+				  LIBUNA_CODEPAGE_ASCII,
+				  &value_string_size,
+				  error );
+#endif
+			if( result != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+				 "%s: unable to determine size of file filename string.",
+				 function );
+
+				goto on_error;
+			}
+			if( ( value_string_size > (size_t) SSIZE_MAX )
+			 || ( ( sizeof( libcstring_system_character_t ) * value_string_size ) > (size_t) SSIZE_MAX ) )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_VALUE_EXCEEDS_MAXIMUM,
+				 "%s: invalid file filename string size value exceeds maximum.",
+				 function );
+
+				goto on_error;
+			}
+			value_string = libcstring_system_string_allocate(
+					value_string_size );
+
+			if( value_string == NULL )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_MEMORY,
+				 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
+				 "%s: unable to create file filename string.",
+				 function );
+
+				goto on_error;
+			}
+#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+			result = libuna_utf16_string_copy_from_byte_stream(
+				  (libuna_utf16_character_t *) value_string,
+				  value_string_size,
+				  internal_executable_information->filename,
+				  internal_executable_information->filename_size,
+				  LIBUNA_CODEPAGE_ASCII,
+				  error );
+#else
+			result = libuna_utf8_string_copy_from_byte_stream(
+				  (libuna_utf8_character_t *) value_string,
+				  value_string_size,
+				  internal_executable_information->filename,
+				  internal_executable_information->filename_size,
+				  LIBUNA_CODEPAGE_ASCII,
+				  error );
+#endif
+			if( result != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+				 "%s: unable to set file filename string.",
+				 function );
+
+				goto on_error;
+			}
 			libcnotify_printf(
-			 "%s: executable name:\n",
-			 function );
-			libcnotify_print_data(
-			 internal_executable_information->filename,
-			 16,
-			 0 );
+			 "%s: executable filename\t\t\t: %" PRIs_LIBCSTRING_SYSTEM "\n",
+			 function,
+			 value_string );
+
+			libcnotify_printf(
+			 "\n" );
+
+			memory_free(
+			 value_string );
+
+			value_string = NULL;
 
 			if( mode == 32 )
 			{
@@ -868,10 +955,9 @@ ssize_t libagdb_executable_information_read(
 
 	if( number_of_entries > 0 )
 	{
+/* TODO is this the correct sub entry type ? */
 		if( ( io_handle->file_information_sub_entry_type2_size != 16 )
-		 && ( io_handle->file_information_sub_entry_type2_size != 20 )
-		 && ( io_handle->file_information_sub_entry_type2_size != 24 )
-		 && ( io_handle->file_information_sub_entry_type2_size != 32 ) )
+		 && ( io_handle->file_information_sub_entry_type2_size != 24 ) )
 		{
 			libcerror_error_set(
 			 error,

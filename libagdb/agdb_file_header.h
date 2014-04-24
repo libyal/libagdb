@@ -94,6 +94,221 @@ struct agdb_database_header
 	uint8_t unknown5[ 4 ];
 };
 
+typedef struct agdb_database_header_116 agdb_database_header_116_t;
+
+struct agdb_database_header_116
+{
+	/* The database type
+	 * Consists of 4 bytes
+	 */
+	uint8_t database_type[ 4 ];
+
+	/* The database parameters
+	 * Consists of 36 bytes
+	 */
+	uint8_t database_parameters[ 36 ];
+
+	/* The number of volumes
+	 * Consists of 4 bytes
+	 */
+	uint8_t number_of_volumes[ 4 ];
+
+	/* The number of files
+	 * Consists of 4 bytes
+	 */
+	uint8_t number_of_files[ 4 ];
+
+	/* Unknown
+	 * Consists of 4 bytes
+	 */
+	uint8_t unknown3[ 4 ];
+
+	/* The number of executables
+	 * Consists of 4 bytes
+	 */
+	uint8_t number_of_executables[ 4 ];
+
+	/* Unknown
+	 * Consists of 4 bytes
+	 */
+	uint8_t unknown4[ 4 ];
+
+	/* Unknown
+	 * Consists of 4 bytes
+	 */
+	uint8_t unknown5[ 4 ];
+
+	/* Unknown
+	 * Consists of 4 bytes
+	 */
+	uint8_t unknown6[ 4 ];
+
+	/* Unknown
+	 * Consists of 4 bytes
+	 */
+	uint8_t unknown7[ 4 ];
+
+	/* Unknown
+	 * Consists of 4 bytes
+	 */
+	uint8_t unknown8[ 4 ];
+
+	/* Unknown
+	 * Consists of 4 bytes
+	 */
+	uint8_t unknown9[ 4 ];
+
+	/* Unknown
+	 * Consists of 4 bytes
+	 */
+	uint8_t unknown10[ 4 ];
+
+	/* Unknown
+	 * Consists of 4 bytes
+	 */
+	uint8_t unknown11[ 4 ];
+
+	/* Unknown
+	 * Consists of 4 bytes
+	 */
+	uint8_t unknown12[ 4 ];
+
+	/* Unknown
+	 * Consists of 4 bytes
+	 */
+	uint8_t unknown13[ 4 ];
+
+	/* Unknown
+	 * Consists of 4 bytes
+	 */
+	uint8_t unknown14[ 4 ];
+
+	/* Unknown
+	 * Consists of 4 bytes
+	 */
+	uint8_t unknown15[ 4 ];
+
+	/* Unknown
+	 * Consists of 4 bytes
+	 */
+	uint8_t unknown16[ 4 ];
+
+	/* Unknown
+	 * Consists of 4 bytes
+	 */
+	uint8_t unknown17[ 4 ];
+
+	/* Unknown
+	 * Consists of 4 bytes
+	 */
+	uint8_t unknown18[ 4 ];
+};
+
+typedef struct agdb_database_header_228 agdb_database_header_228_t;
+
+struct agdb_database_header_228
+{
+	/* The database type
+	 * Consists of 4 bytes
+	 */
+	uint8_t database_type[ 4 ];
+
+	/* The database parameters
+	 * Consists of 36 bytes
+	 */
+	uint8_t database_parameters[ 36 ];
+
+	/* The number of volumes
+	 * Consists of 4 bytes
+	 */
+	uint8_t number_of_volumes[ 4 ];
+
+	/* The number of files
+	 * Consists of 4 bytes
+	 */
+	uint8_t number_of_files[ 4 ];
+
+	/* Unknown
+	 * Consists of 4 bytes
+	 */
+	uint8_t unknown3[ 4 ];
+
+	/* The number of executables
+	 * Consists of 4 bytes
+	 */
+	uint8_t number_of_executables[ 4 ];
+
+	/* Unknown
+	 * Consists of 4 bytes
+	 */
+	uint8_t unknown4[ 4 ];
+
+	/* Unknown
+	 * Consists of 4 bytes
+	 */
+	uint8_t unknown5[ 4 ];
+
+	/* Unknown
+	 * Consists of 4 bytes
+	 */
+	uint8_t unknown6[ 4 ];
+
+	/* Unknown
+	 * Consists of 4 bytes
+	 */
+	uint8_t unknown7[ 4 ];
+
+	/* Unknown
+	 * Consists of 4 bytes
+	 */
+	uint8_t unknown8[ 4 ];
+
+	/* Unknown
+	 * Consists of 4 bytes
+	 */
+	uint8_t unknown9[ 4 ];
+
+	/* Unknown
+	 * Consists of 4 bytes
+	 */
+	uint8_t unknown10[ 4 ];
+
+	/* Unknown
+	 * Consists of 4 bytes
+	 */
+	uint8_t unknown11[ 4 ];
+
+	/* Unknown
+	 * Consists of 4 bytes
+	 */
+	uint8_t unknown12[ 4 ];
+
+	/* Unknown
+	 * Consists of 4 bytes
+	 */
+	uint8_t unknown13[ 4 ];
+
+	/* Unknown
+	 * Consists of 4 bytes
+	 */
+	uint8_t unknown14[ 4 ];
+
+	/* Unknown
+	 * Consists of 4 bytes
+	 */
+	uint8_t unknown15[ 4 ];
+
+	/* Unknown
+	 * Consists of 4 bytes
+	 */
+	uint8_t unknown16[ 4 ];
+
+	/* Unknown
+	 * Consists of 120 bytes
+	 */
+	uint8_t unknown17[ 120 ];
+};
+
 #if defined( __cplusplus )
 }
 #endif
