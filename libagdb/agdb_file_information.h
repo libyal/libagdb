@@ -269,9 +269,14 @@ struct agdb_file_information_64
 	uint8_t unknown4b[ 8 ];
 
 	/* Unknown
-	 * Consists of 8 bytes
+	 * Consists of 4 bytes
 	 */
-	uint8_t unknown5[ 8 ];
+	uint8_t unknown5a[ 4 ];
+
+	/* Unknown
+	 * Consists of 4 bytes
+	 */
+	uint8_t unknown5b[ 4 ];
 
 	/* The (file) path number of characters
 	 * Consists of 4 bytes
@@ -404,14 +409,24 @@ struct agdb_file_information_88
 	uint8_t unknown4a[ 8 ];
 
 	/* Unknown
-	 * Consists of 8 bytes
+	 * Consists of 4 bytes
 	 */
-	uint8_t unknown4b[ 8 ];
+	uint8_t unknown4b[ 4 ];
 
 	/* Unknown
-	 * Consists of 8 bytes
+	 * Consists of 4 bytes
 	 */
-	uint8_t unknown5[ 8 ];
+	uint8_t unknown4c[ 4 ];
+
+	/* Unknown
+	 * Consists of 4 bytes
+	 */
+	uint8_t unknown5a[ 4 ];
+
+	/* Unknown
+	 * Consists of 4 bytes
+	 */
+	uint8_t unknown5b[ 4 ];
 
 	/* The (file) path number of characters
 	 * Consists of 4 bytes
@@ -429,14 +444,24 @@ struct agdb_file_information_88
 	uint8_t unknown7[ 8 ];
 
 	/* Unknown
-	 * Consists of 4 bytes
+	 * Consists of 2 bytes
 	 */
-	uint8_t unknown8a[ 4 ];
+	uint8_t unknown8a[ 2 ];
 
 	/* Unknown
-	 * Consists of 4 bytes
+	 * Consists of 2 bytes
 	 */
-	uint8_t unknown8b[ 4 ];
+	uint8_t unknown8b[ 2 ];
+
+	/* Unknown
+	 * Consists of 2 bytes
+	 */
+	uint8_t unknown8c[ 2 ];
+
+	/* Unknown
+	 * Consists of 2 bytes
+	 */
+	uint8_t unknown8d[ 2 ];
 
 	/* Unknown
 	 * Consists of 8 bytes
