@@ -9,6 +9,9 @@ TODO:
 * add macosx files
 * update manuals
 
+20140505
+* fixes to build static library with mingw and cygwin
+
 20140423
 * worked on format
 

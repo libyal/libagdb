@@ -391,11 +391,8 @@ int libagdb_io_handle_read_compressed_blocks(
 	uint32_t compressed_block_size   = 0;
 	uint32_t uncompressed_data_size  = 0;
 	uint32_t uncompressed_block_size = 0;
-	int element_index                = 0;
-
-#if defined( HAVE_DEBUG_OUTPUT )
 	int compressed_block_index       = 0;
-#endif
+	int element_index                = 0;
 
 	if( io_handle == NULL )
 	{
@@ -546,9 +543,7 @@ int libagdb_io_handle_read_compressed_blocks(
 		file_offset            += compressed_block_size;
 		uncompressed_data_size -= uncompressed_block_size;
 
-#if defined( HAVE_DEBUG_OUTPUT )
 		compressed_block_index++;
-#endif
 	}
 #if defined( HAVE_DEBUG_OUTPUT )
 	if( libcnotify_verbose != 0 )
