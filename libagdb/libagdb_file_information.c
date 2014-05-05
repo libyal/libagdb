@@ -708,7 +708,7 @@ ssize_t libagdb_file_information_read(
 			else if( mode == 64 )
 			{
 				byte_stream_copy_to_uint32_little_endian(
-				 ( (agdb_file_information_88_t *) file_information_data )->unknown8a,
+				 ( (agdb_file_information_72_t *) file_information_data )->unknown8a,
 				 value_32bit );
 			}
 			libcnotify_printf(
@@ -725,7 +725,7 @@ ssize_t libagdb_file_information_read(
 			else if( mode == 64 )
 			{
 				byte_stream_copy_to_uint32_little_endian(
-				 ( (agdb_file_information_88_t *) file_information_data )->unknown8b,
+				 ( (agdb_file_information_72_t *) file_information_data )->unknown8b,
 				 value_32bit );
 			}
 			libcnotify_printf(
