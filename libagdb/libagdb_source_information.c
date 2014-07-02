@@ -1,5 +1,5 @@
 /*
- * Executable information functions
+ * Source information functions
  *
  * Copyright (C) 2014, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -25,192 +25,193 @@
 #include <types.h>
 
 #include "libagdb_definitions.h"
-#include "libagdb_executable_information.h"
 #include "libagdb_io_handle.h"
+#include "libagdb_hash.h"
 #include "libagdb_libbfio.h"
 #include "libagdb_libcerror.h"
 #include "libagdb_libcnotify.h"
 #include "libagdb_libfdata.h"
 #include "libagdb_libuna.h"
+#include "libagdb_source_information.h"
 
-#include "agdb_executable_information.h"
+#include "agdb_source_information.h"
 
-/* Creates executable information
- * Make sure the value executable_information is referencing, is set to NULL
+/* Creates source information
+ * Make sure the value source_information is referencing, is set to NULL
  * Returns 1 if successful or -1 on error
  */
-int libagdb_executable_information_initialize(
-     libagdb_executable_information_t **executable_information,
+int libagdb_source_information_initialize(
+     libagdb_source_information_t **source_information,
      libcerror_error_t **error )
 {
-	libagdb_internal_executable_information_t *internal_executable_information = NULL;
-	static char *function                                                      = "libagdb_executable_information_initialize";
+	libagdb_internal_source_information_t *internal_source_information = NULL;
+	static char *function                                              = "libagdb_source_information_initialize";
 
-	if( executable_information == NULL )
+	if( source_information == NULL )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid executable information.",
+		 "%s: invalid source information.",
 		 function );
 
 		return( -1 );
 	}
-	if( *executable_information != NULL )
+	if( *source_information != NULL )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
-		 "%s: invalid executable information value already set.",
+		 "%s: invalid source information value already set.",
 		 function );
 
 		return( -1 );
 	}
-	internal_executable_information = memory_allocate_structure(
-	                                   libagdb_internal_executable_information_t );
+	internal_source_information = memory_allocate_structure(
+	                               libagdb_internal_source_information_t );
 
-	if( internal_executable_information == NULL )
+	if( internal_source_information == NULL )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_MEMORY,
 		 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
-		 "%s: unable to create executable information.",
+		 "%s: unable to create source information.",
 		 function );
 
 		goto on_error;
 	}
 	if( memory_set(
-	     internal_executable_information,
+	     internal_source_information,
 	     0,
-	     sizeof( libagdb_internal_executable_information_t ) ) == NULL )
+	     sizeof( libagdb_internal_source_information_t ) ) == NULL )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_MEMORY,
 		 LIBCERROR_MEMORY_ERROR_SET_FAILED,
-		 "%s: unable to clear executable.",
+		 "%s: unable to clear source information.",
 		 function );
 
 		goto on_error;
 	}
-	*executable_information = (libagdb_executable_information_t *) internal_executable_information;
+	*source_information = (libagdb_source_information_t *) internal_source_information;
 
 	return( 1 );
 
 on_error:
-	if( internal_executable_information != NULL )
+	if( internal_source_information != NULL )
 	{
 		memory_free(
-		 internal_executable_information );
+		 internal_source_information );
 	}
 	return( -1 );
 }
 
-/* Frees executable information
+/* Frees source information
  * Returns 1 if successful or -1 on error
  */
-int libagdb_executable_information_free(
-     libagdb_executable_information_t **executable_information,
+int libagdb_source_information_free(
+     libagdb_source_information_t **source_information,
      libcerror_error_t **error )
 {
-	static char *function = "libagdb_executable_information_free";
+	static char *function = "libagdb_source_information_free";
 
-	if( executable_information == NULL )
+	if( source_information == NULL )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid executable information.",
+		 "%s: invalid source information.",
 		 function );
 
 		return( -1 );
 	}
-	if( *executable_information != NULL )
+	if( *source_information != NULL )
 	{
-		*executable_information = NULL;
+		*source_information = NULL;
 	}
 	return( 1 );
 }
 
-/* Frees executable information
+/* Frees source information
  * Returns 1 if successful or -1 on error
  */
-int libagdb_internal_executable_information_free(
-     libagdb_internal_executable_information_t **executable_information,
+int libagdb_internal_source_information_free(
+     libagdb_internal_source_information_t **source_information,
      libcerror_error_t **error )
 {
-	static char *function = "libagdb_internal_executable_information_free";
+	static char *function = "libagdb_internal_source_information_free";
 
-	if( executable_information == NULL )
+	if( source_information == NULL )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid executable information.",
+		 "%s: invalid source information.",
 		 function );
 
 		return( -1 );
 	}
-	if( *executable_information != NULL )
+	if( *source_information != NULL )
 	{
 		memory_free(
-		 *executable_information );
+		 *source_information );
 
-		*executable_information = NULL;
+		*source_information = NULL;
 	}
 	return( 1 );
 }
 
-/* Reads the executable information
+/* Reads the source information
  * Returns the number of bytes read if successful or -1 on error
  */
-ssize_t libagdb_executable_information_read(
-         libagdb_executable_information_t *executable_information,
+ssize_t libagdb_source_information_read(
+         libagdb_source_information_t *source_information,
          libfdata_stream_t *uncompressed_data_stream,
          libbfio_handle_t *file_io_handle,
          libagdb_io_handle_t *io_handle,
          off64_t file_offset,
-         uint32_t executable_index,
+         uint32_t source_information_index,
          libcerror_error_t **error )
 {
 	uint8_t sub_entry_data[ 32 ];
 
-	libagdb_internal_executable_information_t *internal_executable_information = NULL;
-	uint8_t *executable_information_data                                       = NULL;
-	static char *function                                                      = "libagdb_executable_information_read";
-	ssize_t read_count                                                         = 0;
-	ssize_t total_read_count                                                   = 0;
-	uint32_t entry_index                                                       = 0;
-	uint32_t number_of_entries                                                 = 0;
-	uint32_t sub_entry_data_size                                               = 0;
-	uint8_t mode                                                               = 0;
-	int string_index                                                           = 0;
+	libagdb_internal_source_information_t *internal_source_information = NULL;
+	uint8_t *source_information_data                                   = NULL;
+	static char *function                                              = "libagdb_source_information_read";
+	ssize_t read_count                                                 = 0;
+	ssize_t total_read_count                                           = 0;
+	uint32_t entry_index                                               = 0;
+	uint32_t number_of_entries                                         = 0;
+	uint32_t sub_entry_data_size                                       = 0;
+	uint8_t mode                                                       = 0;
+	int string_index                                                   = 0;
 
 #if defined( HAVE_DEBUG_OUTPUT )
-	libcstring_system_character_t *value_string                                = NULL;
-	size_t value_string_size                                                   = 0;
-	uint64_t value_64bit                                                       = 0;
-	uint32_t value_32bit                                                       = 0;
-	int result                                                                 = 0;
+	libcstring_system_character_t *value_string                        = NULL;
+	size_t value_string_size                                           = 0;
+	uint64_t value_64bit                                               = 0;
+	uint32_t value_32bit                                               = 0;
+	int result                                                         = 0;
 #endif
 
-	if( executable_information == NULL )
+	if( source_information == NULL )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid executable information.",
+		 "%s: invalid source information.",
 		 function );
 
 		return( -1 );
 	}
-	internal_executable_information = (libagdb_internal_executable_information_t *) executable_information;
+	internal_source_information = (libagdb_internal_source_information_t *) source_information;
 
 	if( io_handle == NULL )
 	{
@@ -224,13 +225,13 @@ ssize_t libagdb_executable_information_read(
 		return( -1 );
 	}
 #if SIZEOF_SIZE_T <= 4
-	if( (size_t) io_handle->executable_information_entry_size > (size_t) SSIZE_MAX )
+	if( (size_t) io_handle->source_information_entry_size > (size_t) SSIZE_MAX )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBCERROR_ARGUMENT_ERROR_VALUE_EXCEEDS_MAXIMUM,
-		 "%s: invalid IO handle - executable information entry size value exceeds maximum.",
+		 "%s: invalid IO handle - source information entry size value exceeds maximum.",
 		 function );
 
 		return( -1 );
@@ -240,9 +241,9 @@ ssize_t libagdb_executable_information_read(
 	if( libcnotify_verbose != 0 )
 	{
 		libcnotify_printf(
-		 "%s: reading executable: %" PRIu32 " information at offset: %" PRIi64 " (0x%08" PRIx64 ")\n",
+		 "%s: reading source: %" PRIu32 " information at offset: %" PRIi64 " (0x%08" PRIx64 ")\n",
 		 function,
-		 executable_index,
+		 source_information_index,
 		 file_offset,
 		 file_offset );
 	}
@@ -257,24 +258,24 @@ ssize_t libagdb_executable_information_read(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_IO,
 		 LIBCERROR_IO_ERROR_SEEK_FAILED,
-		 "%s: unable to seek executable: %" PRIu32 " information offset: %" PRIi64 " (0x%08" PRIx64 ").",
+		 "%s: unable to seek source: %" PRIu32 " information offset: %" PRIi64 " (0x%08" PRIx64 ").",
 		 function,
-		 executable_index,
+		 source_information_index,
 		 file_offset,
 		 file_offset );
 
 		goto on_error;
 	}
-	executable_information_data = (uint8_t *) memory_allocate(
-	                                           sizeof( uint8_t ) * io_handle->executable_information_entry_size );
+	source_information_data = (uint8_t *) memory_allocate(
+	                                       sizeof( uint8_t ) * io_handle->source_information_entry_size );
 
-	if( executable_information_data == NULL )
+	if( source_information_data == NULL )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_MEMORY,
 		 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
-		 "%s: unable to create executable information data.",
+		 "%s: unable to create source information data.",
 		 function );
 
 		goto on_error;
@@ -282,20 +283,20 @@ ssize_t libagdb_executable_information_read(
 	read_count = libfdata_stream_read_buffer(
 	              uncompressed_data_stream,
 	              (intptr_t *) file_io_handle,
-	              executable_information_data,
-	              (size_t) io_handle->executable_information_entry_size,
+	              source_information_data,
+	              (size_t) io_handle->source_information_entry_size,
 	              0,
 	              error );
 
-	if( read_count != (ssize_t) io_handle->executable_information_entry_size )
+	if( read_count != (ssize_t) io_handle->source_information_entry_size )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_IO,
 		 LIBCERROR_IO_ERROR_READ_FAILED,
-		 "%s: unable to read executable: %" PRIu32 " information data.",
+		 "%s: unable to read source: %" PRIu32 " information data.",
 		 function,
-		 executable_index );
+		 source_information_index );
 
 		goto on_error;
 	}
@@ -305,22 +306,22 @@ ssize_t libagdb_executable_information_read(
 	if( libcnotify_verbose != 0 )
 	{
 		libcnotify_printf(
-		 "%s: executable: %" PRIu32 " information data:\n",
+		 "%s: source: %" PRIu32 " information data:\n",
 		 function,
-		 executable_index );
+		 source_information_index );
 		libcnotify_print_data(
-		 executable_information_data,
-		 (size_t) io_handle->executable_information_entry_size,
+		 source_information_data,
+		 (size_t) io_handle->source_information_entry_size,
 		 0 );
 	}
 #endif
-	if( ( io_handle->executable_information_entry_size == 60 )
-	 || ( io_handle->executable_information_entry_size == 100 ) )
+	if( ( io_handle->source_information_entry_size == 60 )
+	 || ( io_handle->source_information_entry_size == 100 ) )
 	{
 		mode = 32;
 	}
-	else if( ( io_handle->executable_information_entry_size == 88 )
-	      || ( io_handle->executable_information_entry_size == 144 ) )
+	else if( ( io_handle->source_information_entry_size == 88 )
+	      || ( io_handle->source_information_entry_size == 144 ) )
 	{
 		mode = 64;
 	}
@@ -330,25 +331,25 @@ ssize_t libagdb_executable_information_read(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
-		 "%s: unsupported executable information entry size: %" PRIu32 ".",
+		 "%s: unsupported source information entry size: %" PRIu32 ".",
 		 function,
-		 io_handle->executable_information_entry_size );
+		 io_handle->source_information_entry_size );
 
 		return( -1 );
 	}
-	if( ( io_handle->executable_information_entry_size == 60 )
-	 || ( io_handle->executable_information_entry_size == 88 ) )
+	if( ( io_handle->source_information_entry_size == 60 )
+	 || ( io_handle->source_information_entry_size == 88 ) )
 	{
 		if( mode == 32 )
 		{
 			byte_stream_copy_to_uint32_little_endian(
-			 ( (agdb_executable_information_60_t *) executable_information_data )->unknown3,
+			 ( (agdb_source_information_60_t *) source_information_data )->unknown3,
 			 number_of_entries );
 		}
 		else if( mode == 64 )
 		{
 			byte_stream_copy_to_uint32_little_endian(
-			 ( (agdb_executable_information_88_t *) executable_information_data )->unknown3,
+			 ( (agdb_source_information_88_t *) source_information_data )->unknown3,
 			 number_of_entries );
 		}
 	}
@@ -358,63 +359,63 @@ ssize_t libagdb_executable_information_read(
 		if( mode == 32 )
 		{
 			byte_stream_copy_to_uint32_little_endian(
-			 ( (agdb_executable_information_60_t *) executable_information_data )->unknown1,
+			 ( (agdb_source_information_60_t *) source_information_data )->unknown1,
 			 value_64bit );
 		}
 		else if( mode == 64 )
 		{
 			byte_stream_copy_to_uint64_little_endian(
-			 ( (agdb_executable_information_88_t *) executable_information_data )->unknown1,
+			 ( (agdb_source_information_88_t *) source_information_data )->unknown1,
 			 value_64bit );
 		}
 		libcnotify_printf(
-		 "%s: unknown1\t\t\t\t\t: 0x%08" PRIx64 "\n",
+		 "%s: unknown1\t\t\t\t: 0x%08" PRIx64 "\n",
 		 function,
 		 value_64bit );
 
 		if( mode == 32 )
 		{
 			byte_stream_copy_to_uint32_little_endian(
-			 ( (agdb_executable_information_60_t *) executable_information_data )->unknown2,
+			 ( (agdb_source_information_60_t *) source_information_data )->name_hash,
 			 value_64bit );
 		}
 		else if( mode == 64 )
 		{
 			byte_stream_copy_to_uint64_little_endian(
-			 ( (agdb_executable_information_88_t *) executable_information_data )->unknown2,
+			 ( (agdb_source_information_88_t *) source_information_data )->name_hash,
 			 value_64bit );
 		}
 		libcnotify_printf(
-		 "%s: unknown2\t\t\t\t\t: 0x%08" PRIx64 "\n",
+		 "%s: name hash\t\t\t\t: 0x%08" PRIx64 "\n",
 		 function,
 		 value_64bit );
 
 		libcnotify_printf(
-		 "%s: number of entries\t\t\t\t: %" PRIu32 "\n",
+		 "%s: number of entries\t\t\t: %" PRIu32 "\n",
 		 function,
 		 number_of_entries );
 
 		if( mode == 32 )
 		{
 			byte_stream_copy_to_uint32_little_endian(
-			 ( (agdb_executable_information_60_t *) executable_information_data )->unknown4,
+			 ( (agdb_source_information_60_t *) source_information_data )->unknown4,
 			 value_32bit );
 		}
 		else if( mode == 64 )
 		{
 			byte_stream_copy_to_uint32_little_endian(
-			 ( (agdb_executable_information_88_t *) executable_information_data )->unknown4,
+			 ( (agdb_source_information_88_t *) source_information_data )->unknown4,
 			 value_32bit );
 		}
 		libcnotify_printf(
-		 "%s: unknown4\t\t\t\t\t: 0x%08" PRIx32 "\n",
+		 "%s: unknown4\t\t\t\t: 0x%08" PRIx32 "\n",
 		 function,
 		 value_32bit );
 	}
 #endif
 
-	if( ( io_handle->executable_information_entry_size == 60 )
-	 || ( io_handle->executable_information_entry_size == 88 ) )
+	if( ( io_handle->source_information_entry_size == 60 )
+	 || ( io_handle->source_information_entry_size == 88 ) )
 	{
 #if defined( HAVE_DEBUG_OUTPUT )
 		if( libcnotify_verbose != 0 )
@@ -422,17 +423,17 @@ ssize_t libagdb_executable_information_read(
 			if( mode == 32 )
 			{
 				byte_stream_copy_to_uint32_little_endian(
-				 ( (agdb_executable_information_60_t *) executable_information_data )->unknown5,
+				 ( (agdb_source_information_60_t *) source_information_data )->unknown5,
 				 value_64bit );
 			}
 			else if( mode == 64 )
 			{
 				byte_stream_copy_to_uint64_little_endian(
-				 ( (agdb_executable_information_88_t *) executable_information_data )->unknown5,
+				 ( (agdb_source_information_88_t *) source_information_data )->unknown5,
 				 value_64bit );
 			}
 			libcnotify_printf(
-			 "%s: unknown5\t\t\t\t\t: 0x%08" PRIx64 "\n",
+			 "%s: unknown5\t\t\t\t: 0x%08" PRIx64 "\n",
 			 function,
 			 value_64bit );
 
@@ -442,14 +443,14 @@ ssize_t libagdb_executable_information_read(
 			if( mode == 32 )
 			{
 				libcnotify_print_data(
-				 ( (agdb_executable_information_60_t *) executable_information_data )->unknown6,
+				 ( (agdb_source_information_60_t *) source_information_data )->unknown6,
 				 8,
 				 0 );
 			}
 			else if( mode == 64 )
 			{
 				libcnotify_print_data(
-				 ( (agdb_executable_information_88_t *) executable_information_data )->unknown6,
+				 ( (agdb_source_information_88_t *) source_information_data )->unknown6,
 				 16,
 				 0 );
 			}
@@ -457,68 +458,68 @@ ssize_t libagdb_executable_information_read(
 			if( mode == 32 )
 			{
 				byte_stream_copy_to_uint32_little_endian(
-				 ( (agdb_executable_information_60_t *) executable_information_data )->unknown7,
+				 ( (agdb_source_information_60_t *) source_information_data )->unknown7,
 				 value_32bit );
 			}
 			else if( mode == 64 )
 			{
 				byte_stream_copy_to_uint32_little_endian(
-				 ( (agdb_executable_information_88_t *) executable_information_data )->unknown7,
+				 ( (agdb_source_information_88_t *) source_information_data )->unknown7,
 				 value_32bit );
 			}
 			libcnotify_printf(
-			 "%s: unknown7\t\t\t\t\t: 0x%08" PRIx32 "\n",
+			 "%s: unknown7\t\t\t\t: 0x%08" PRIx32 "\n",
 			 function,
 			 value_32bit );
 
 			if( mode == 32 )
 			{
 				byte_stream_copy_to_uint32_little_endian(
-				 ( (agdb_executable_information_60_t *) executable_information_data )->unknown8,
+				 ( (agdb_source_information_60_t *) source_information_data )->unknown8,
 				 value_32bit );
 			}
 			else if( mode == 64 )
 			{
 				byte_stream_copy_to_uint32_little_endian(
-				 ( (agdb_executable_information_88_t *) executable_information_data )->unknown8,
+				 ( (agdb_source_information_88_t *) source_information_data )->unknown8,
 				 value_32bit );
 			}
 			libcnotify_printf(
-			 "%s: unknown8\t\t\t\t\t: 0x%08" PRIx32 "\n",
+			 "%s: unknown8\t\t\t\t: 0x%08" PRIx32 "\n",
 			 function,
 			 value_32bit );
 
 			if( mode == 32 )
 			{
 				byte_stream_copy_to_uint32_little_endian(
-				 ( (agdb_executable_information_60_t *) executable_information_data )->unknown9,
+				 ( (agdb_source_information_60_t *) source_information_data )->unknown9,
 				 value_64bit );
 			}
 			else if( mode == 64 )
 			{
 				byte_stream_copy_to_uint64_little_endian(
-				 ( (agdb_executable_information_88_t *) executable_information_data )->unknown9,
+				 ( (agdb_source_information_88_t *) source_information_data )->unknown9,
 				 value_64bit );
 			}
 			libcnotify_printf(
-			 "%s: unknown9\t\t\t\t\t: 0x%08" PRIx64 "\n",
+			 "%s: unknown9\t\t\t\t: 0x%08" PRIx64 "\n",
 			 function,
 			 value_64bit );
 
 			if( mode == 32 )
 			{
 				byte_stream_copy_to_uint32_little_endian(
-				 ( (agdb_executable_information_60_t *) executable_information_data )->unknown10,
+				 ( (agdb_source_information_60_t *) source_information_data )->unknown10,
 				 value_64bit );
 			}
 			else if( mode == 64 )
 			{
 				byte_stream_copy_to_uint64_little_endian(
-				 ( (agdb_executable_information_88_t *) executable_information_data )->unknown10,
+				 ( (agdb_source_information_88_t *) source_information_data )->unknown10,
 				 value_64bit );
 			}
 			libcnotify_printf(
-			 "%s: unknown10\t\t\t\t\t: 0x%08" PRIx64 "\n",
+			 "%s: unknown10\t\t\t\t: 0x%08" PRIx64 "\n",
 			 function,
 			 value_64bit );
 
@@ -528,28 +529,28 @@ ssize_t libagdb_executable_information_read(
 			if( mode == 32 )
 			{
 				libcnotify_print_data(
-				 ( (agdb_executable_information_60_t *) executable_information_data )->unknown11,
+				 ( (agdb_source_information_60_t *) source_information_data )->unknown11,
 				 8,
 				 0 );
 			}
 			else if( mode == 64 )
 			{
 				libcnotify_print_data(
-				 ( (agdb_executable_information_88_t *) executable_information_data )->unknown11,
+				 ( (agdb_source_information_88_t *) source_information_data )->unknown11,
 				 16,
 				 0 );
 			}
 		}
 #endif
 	}
-	else if( ( io_handle->executable_information_entry_size == 100 )
-	      || ( io_handle->executable_information_entry_size == 144 ) )
+	else if( ( io_handle->source_information_entry_size == 100 )
+	      || ( io_handle->source_information_entry_size == 144 ) )
 	{
 		if( mode == 32 )
 		{
 			if( memory_copy(
-			     internal_executable_information->filename,
-			     ( (agdb_executable_information_100_t *) executable_information_data )->executable_filename,
+			     internal_source_information->executable_filename,
+			     ( (agdb_source_information_100_t *) source_information_data )->executable_filename,
 			     (size_t) 16 ) == NULL )
 			{
 				libcerror_error_set(
@@ -565,8 +566,8 @@ ssize_t libagdb_executable_information_read(
 		else if( mode == 64 )
 		{
 			if( memory_copy(
-			     internal_executable_information->filename,
-			     ( (agdb_executable_information_144_t *) executable_information_data )->executable_filename,
+			     internal_source_information->executable_filename,
+			     ( (agdb_source_information_144_t *) source_information_data )->executable_filename,
 			     (size_t) 16 ) == NULL )
 			{
 				libcerror_error_set(
@@ -583,12 +584,12 @@ ssize_t libagdb_executable_information_read(
 		     string_index < 16;
 		     string_index++ )
 		{
-			if( internal_executable_information->filename[ string_index ] == 0 )
+			if( internal_source_information->executable_filename[ string_index ] == 0 )
 			{
 				break;
 			}
 		}
-		internal_executable_information->filename_size = string_index + 1;
+		internal_source_information->executable_filename_size = string_index + 1;
 
 #if defined( HAVE_DEBUG_OUTPUT )
 		if( libcnotify_verbose != 0 )
@@ -599,14 +600,14 @@ ssize_t libagdb_executable_information_read(
 			if( mode == 32 )
 			{
 				libcnotify_print_data(
-				 ( (agdb_executable_information_100_t *) executable_information_data )->unknown5,
+				 ( (agdb_source_information_100_t *) source_information_data )->unknown5,
 				 12,
 				 0 );
 			}
 			else if( mode == 64 )
 			{
 				libcnotify_print_data(
-				 ( (agdb_executable_information_144_t *) executable_information_data )->unknown5,
+				 ( (agdb_source_information_144_t *) source_information_data )->unknown5,
 				 24,
 				 0 );
 			}
@@ -614,47 +615,47 @@ ssize_t libagdb_executable_information_read(
 			if( mode == 32 )
 			{
 				byte_stream_copy_to_uint32_little_endian(
-				 ( (agdb_executable_information_100_t *) executable_information_data )->unknown6,
+				 ( (agdb_source_information_100_t *) source_information_data )->unknown6,
 				 value_32bit );
 			}
 			else if( mode == 64 )
 			{
 				byte_stream_copy_to_uint32_little_endian(
-				 ( (agdb_executable_information_144_t *) executable_information_data )->unknown6,
+				 ( (agdb_source_information_144_t *) source_information_data )->unknown6,
 				 value_32bit );
 			}
 			libcnotify_printf(
-			 "%s: unknown6\t\t\t\t\t: 0x%08" PRIx32 "\n",
+			 "%s: unknown6\t\t\t\t: 0x%08" PRIx32 "\n",
 			 function,
 			 value_32bit );
 
 			if( mode == 32 )
 			{
 				byte_stream_copy_to_uint32_little_endian(
-				 ( (agdb_executable_information_100_t *) executable_information_data )->unknown7,
+				 ( (agdb_source_information_100_t *) source_information_data )->unknown7,
 				 value_32bit );
 			}
 			else if( mode == 64 )
 			{
 				byte_stream_copy_to_uint32_little_endian(
-				 ( (agdb_executable_information_144_t *) executable_information_data )->unknown7,
+				 ( (agdb_source_information_144_t *) source_information_data )->unknown7,
 				 value_32bit );
 			}
 			libcnotify_printf(
-			 "%s: unknown7\t\t\t\t\t: 0x%08" PRIx32 "\n",
+			 "%s: unknown7\t\t\t\t: 0x%08" PRIx32 "\n",
 			 function,
 			 value_32bit );
 
 			if( mode == 32 )
 			{
 				byte_stream_copy_to_uint32_little_endian(
-				 ( (agdb_executable_information_100_t *) executable_information_data )->prefetch_hash,
+				 ( (agdb_source_information_100_t *) source_information_data )->prefetch_hash,
 				 value_64bit );
 			}
 			else if( mode == 64 )
 			{
 				byte_stream_copy_to_uint64_little_endian(
-				 ( (agdb_executable_information_144_t *) executable_information_data )->prefetch_hash,
+				 ( (agdb_source_information_144_t *) source_information_data )->prefetch_hash,
 				 value_64bit );
 			}
 			libcnotify_printf(
@@ -665,32 +666,32 @@ ssize_t libagdb_executable_information_read(
 			if( mode == 32 )
 			{
 				byte_stream_copy_to_uint32_little_endian(
-				 ( (agdb_executable_information_100_t *) executable_information_data )->unknown9,
+				 ( (agdb_source_information_100_t *) source_information_data )->unknown9,
 				 value_64bit );
 			}
 			else if( mode == 64 )
 			{
 				byte_stream_copy_to_uint64_little_endian(
-				 ( (agdb_executable_information_144_t *) executable_information_data )->unknown9,
+				 ( (agdb_source_information_144_t *) source_information_data )->unknown9,
 				 value_64bit );
 			}
 			libcnotify_printf(
-			 "%s: unknown9\t\t\t\t\t: 0x%08" PRIx64 "\n",
+			 "%s: unknown9\t\t\t\t: 0x%08" PRIx64 "\n",
 			 function,
 			 value_64bit );
 
 /* TODO allow to set codepage */
 #if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
 			result = libuna_utf16_string_size_from_byte_stream(
-				  internal_executable_information->filename,
-				  internal_executable_information->filename_size,
+				  internal_source_information->executable_filename,
+				  internal_source_information->executable_filename_size,
 				  LIBUNA_CODEPAGE_ASCII,
 				  &value_string_size,
 				  error );
 #else
 			result = libuna_utf8_string_size_from_byte_stream(
-				  internal_executable_information->filename,
-				  internal_executable_information->filename_size,
+				  internal_source_information->executable_filename,
+				  internal_source_information->executable_filename_size,
 				  LIBUNA_CODEPAGE_ASCII,
 				  &value_string_size,
 				  error );
@@ -701,7 +702,7 @@ ssize_t libagdb_executable_information_read(
 				 error,
 				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-				 "%s: unable to determine size of file filename string.",
+				 "%s: unable to determine size of executable filename string.",
 				 function );
 
 				goto on_error;
@@ -713,7 +714,7 @@ ssize_t libagdb_executable_information_read(
 				 error,
 				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 				 LIBCERROR_RUNTIME_ERROR_VALUE_EXCEEDS_MAXIMUM,
-				 "%s: invalid file filename string size value exceeds maximum.",
+				 "%s: invalid executable filename string size value exceeds maximum.",
 				 function );
 
 				goto on_error;
@@ -727,7 +728,7 @@ ssize_t libagdb_executable_information_read(
 				 error,
 				 LIBCERROR_ERROR_DOMAIN_MEMORY,
 				 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
-				 "%s: unable to create file filename string.",
+				 "%s: unable to create executable filename string.",
 				 function );
 
 				goto on_error;
@@ -736,16 +737,16 @@ ssize_t libagdb_executable_information_read(
 			result = libuna_utf16_string_copy_from_byte_stream(
 				  (libuna_utf16_character_t *) value_string,
 				  value_string_size,
-				  internal_executable_information->filename,
-				  internal_executable_information->filename_size,
+				  internal_source_information->executable_filename,
+				  internal_source_information->executable_filename_size,
 				  LIBUNA_CODEPAGE_ASCII,
 				  error );
 #else
 			result = libuna_utf8_string_copy_from_byte_stream(
 				  (libuna_utf8_character_t *) value_string,
 				  value_string_size,
-				  internal_executable_information->filename,
-				  internal_executable_information->filename_size,
+				  internal_source_information->executable_filename,
+				  internal_source_information->executable_filename_size,
 				  LIBUNA_CODEPAGE_ASCII,
 				  error );
 #endif
@@ -755,7 +756,7 @@ ssize_t libagdb_executable_information_read(
 				 error,
 				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 				 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
-				 "%s: unable to set file filename string.",
+				 "%s: unable to set executable filename string.",
 				 function );
 
 				goto on_error;
@@ -776,170 +777,170 @@ ssize_t libagdb_executable_information_read(
 			if( mode == 32 )
 			{
 				byte_stream_copy_to_uint32_little_endian(
-				 ( (agdb_executable_information_100_t *) executable_information_data )->unknown11,
+				 ( (agdb_source_information_100_t *) source_information_data )->unknown11,
 				 value_64bit );
 			}
 			else if( mode == 64 )
 			{
 				byte_stream_copy_to_uint64_little_endian(
-				 ( (agdb_executable_information_144_t *) executable_information_data )->unknown11,
+				 ( (agdb_source_information_144_t *) source_information_data )->unknown11,
 				 value_64bit );
 			}
 			libcnotify_printf(
-			 "%s: unknown11\t\t\t\t\t: 0x%08" PRIx64 "\n",
+			 "%s: unknown11\t\t\t\t: 0x%08" PRIx64 "\n",
 			 function,
 			 value_64bit );
 
 			if( mode == 32 )
 			{
 				byte_stream_copy_to_uint32_little_endian(
-				 ( (agdb_executable_information_100_t *) executable_information_data )->unknown12,
+				 ( (agdb_source_information_100_t *) source_information_data )->unknown12,
 				 value_64bit );
 			}
 			else if( mode == 64 )
 			{
 				byte_stream_copy_to_uint64_little_endian(
-				 ( (agdb_executable_information_144_t *) executable_information_data )->unknown12,
+				 ( (agdb_source_information_144_t *) source_information_data )->unknown12,
 				 value_64bit );
 			}
 			libcnotify_printf(
-			 "%s: unknown12\t\t\t\t\t: 0x%08" PRIx64 "\n",
+			 "%s: unknown12\t\t\t\t: 0x%08" PRIx64 "\n",
 			 function,
 			 value_64bit );
 
 			if( mode == 32 )
 			{
 				byte_stream_copy_to_uint32_little_endian(
-				 ( (agdb_executable_information_100_t *) executable_information_data )->unknown13,
+				 ( (agdb_source_information_100_t *) source_information_data )->unknown13,
 				 value_32bit );
 			}
 			else if( mode == 64 )
 			{
 				byte_stream_copy_to_uint32_little_endian(
-				 ( (agdb_executable_information_144_t *) executable_information_data )->unknown13,
+				 ( (agdb_source_information_144_t *) source_information_data )->unknown13,
 				 value_32bit );
 			}
 			libcnotify_printf(
-			 "%s: unknown13\t\t\t\t\t: 0x%08" PRIx32 "\n",
+			 "%s: unknown13\t\t\t\t: 0x%08" PRIx32 "\n",
 			 function,
 			 value_32bit );
 
 			if( mode == 32 )
 			{
 				byte_stream_copy_to_uint32_little_endian(
-				 ( (agdb_executable_information_100_t *) executable_information_data )->unknown14,
+				 ( (agdb_source_information_100_t *) source_information_data )->unknown14,
 				 value_32bit );
 			}
 			else if( mode == 64 )
 			{
 				byte_stream_copy_to_uint32_little_endian(
-				 ( (agdb_executable_information_144_t *) executable_information_data )->unknown14,
+				 ( (agdb_source_information_144_t *) source_information_data )->unknown14,
 				 value_32bit );
 			}
 			libcnotify_printf(
-			 "%s: unknown14\t\t\t\t\t: 0x%08" PRIx32 "\n",
+			 "%s: unknown14\t\t\t\t: 0x%08" PRIx32 "\n",
 			 function,
 			 value_32bit );
 
 			if( mode == 32 )
 			{
 				byte_stream_copy_to_uint32_little_endian(
-				 ( (agdb_executable_information_100_t *) executable_information_data )->unknown15,
+				 ( (agdb_source_information_100_t *) source_information_data )->unknown15,
 				 value_32bit );
 			}
 			else if( mode == 64 )
 			{
 				byte_stream_copy_to_uint32_little_endian(
-				 ( (agdb_executable_information_144_t *) executable_information_data )->unknown15,
+				 ( (agdb_source_information_144_t *) source_information_data )->unknown15,
 				 value_32bit );
 			}
 			libcnotify_printf(
-			 "%s: unknown15\t\t\t\t\t: 0x%08" PRIx32 "\n",
+			 "%s: unknown15\t\t\t\t: 0x%08" PRIx32 "\n",
 			 function,
 			 value_32bit );
 
 			if( mode == 32 )
 			{
 				byte_stream_copy_to_uint32_little_endian(
-				 ( (agdb_executable_information_100_t *) executable_information_data )->unknown16,
+				 ( (agdb_source_information_100_t *) source_information_data )->unknown16,
 				 value_32bit );
 			}
 			else if( mode == 64 )
 			{
 				byte_stream_copy_to_uint32_little_endian(
-				 ( (agdb_executable_information_144_t *) executable_information_data )->unknown16,
+				 ( (agdb_source_information_144_t *) source_information_data )->unknown16,
 				 value_32bit );
 			}
 			libcnotify_printf(
-			 "%s: unknown16\t\t\t\t\t: 0x%08" PRIx32 "\n",
+			 "%s: unknown16\t\t\t\t: 0x%08" PRIx32 "\n",
 			 function,
 			 value_32bit );
 
 			if( mode == 32 )
 			{
 				byte_stream_copy_to_uint32_little_endian(
-				 ( (agdb_executable_information_100_t *) executable_information_data )->unknown17,
+				 ( (agdb_source_information_100_t *) source_information_data )->unknown17,
 				 value_32bit );
 			}
 			else if( mode == 64 )
 			{
 				byte_stream_copy_to_uint32_little_endian(
-				 ( (agdb_executable_information_144_t *) executable_information_data )->unknown17,
+				 ( (agdb_source_information_144_t *) source_information_data )->unknown17,
 				 value_32bit );
 			}
 			libcnotify_printf(
-			 "%s: unknown17\t\t\t\t\t: 0x%08" PRIx32 "\n",
+			 "%s: unknown17\t\t\t\t: 0x%08" PRIx32 "\n",
 			 function,
 			 value_32bit );
 
 			if( mode == 32 )
 			{
 				byte_stream_copy_to_uint32_little_endian(
-				 ( (agdb_executable_information_100_t *) executable_information_data )->unknown18,
+				 ( (agdb_source_information_100_t *) source_information_data )->unknown18,
 				 value_32bit );
 			}
 			else if( mode == 64 )
 			{
 				byte_stream_copy_to_uint32_little_endian(
-				 ( (agdb_executable_information_144_t *) executable_information_data )->unknown18,
+				 ( (agdb_source_information_144_t *) source_information_data )->unknown18,
 				 value_32bit );
 			}
 			libcnotify_printf(
-			 "%s: unknown18\t\t\t\t\t: 0x%08" PRIx32 "\n",
+			 "%s: unknown18\t\t\t\t: 0x%08" PRIx32 "\n",
 			 function,
 			 value_32bit );
 
 			if( mode == 32 )
 			{
 				byte_stream_copy_to_uint32_little_endian(
-				 ( (agdb_executable_information_100_t *) executable_information_data )->unknown19,
+				 ( (agdb_source_information_100_t *) source_information_data )->unknown19,
 				 value_64bit );
 			}
 			else if( mode == 64 )
 			{
 				byte_stream_copy_to_uint64_little_endian(
-				 ( (agdb_executable_information_144_t *) executable_information_data )->unknown19,
+				 ( (agdb_source_information_144_t *) source_information_data )->unknown19,
 				 value_64bit );
 			}
 			libcnotify_printf(
-			 "%s: unknown19\t\t\t\t\t: 0x%08" PRIx64 "\n",
+			 "%s: unknown19\t\t\t\t: 0x%08" PRIx64 "\n",
 			 function,
 			 value_64bit );
 
 			if( mode == 32 )
 			{
 				byte_stream_copy_to_uint32_little_endian(
-				 ( (agdb_executable_information_100_t *) executable_information_data )->unknown20,
+				 ( (agdb_source_information_100_t *) source_information_data )->unknown20,
 				 value_64bit );
 			}
 			else if( mode == 64 )
 			{
 				byte_stream_copy_to_uint64_little_endian(
-				 ( (agdb_executable_information_144_t *) executable_information_data )->unknown20,
+				 ( (agdb_source_information_144_t *) source_information_data )->unknown20,
 				 value_64bit );
 			}
 			libcnotify_printf(
-			 "%s: unknown20\t\t\t\t\t: 0x%08" PRIx64 "\n",
+			 "%s: unknown20\t\t\t\t: 0x%08" PRIx64 "\n",
 			 function,
 			 value_64bit );
 
@@ -949,9 +950,9 @@ ssize_t libagdb_executable_information_read(
 #endif
 	}
 	memory_free(
-	 executable_information_data );
+	 source_information_data );
 
-	executable_information_data = NULL;
+	source_information_data = NULL;
 
 	if( number_of_entries > 0 )
 	{
@@ -1023,45 +1024,45 @@ on_error:
 		 value_string );
 	}
 #endif
-	internal_executable_information->filename_size = 0;
+	internal_source_information->executable_filename_size = 0;
 
-	if( executable_information_data != NULL )
+	if( source_information_data != NULL )
 	{
 		memory_free(
-		 executable_information_data );
+		 source_information_data );
 	}
 	return( -1 );
 }
 
-/* Retrieves the size of the UTF-8 encoded filename
+/* Retrieves the size of the UTF-8 encoded executable filename
  * The returned size includes the end of string character
  * Returns 1 if successful or -1 on error
  */
-int libagdb_executable_information_get_utf8_filename_size(
-     libagdb_executable_information_t *executable_information,
+int libagdb_source_information_get_utf8_executable_filename_size(
+     libagdb_source_information_t *source_information,
      size_t *utf8_string_size,
      libcerror_error_t **error )
 {
-	libagdb_internal_executable_information_t *internal_executable_information = NULL;
-	static char *function                                                      = "libagdb_executable_information_get_utf8_filename_size";
+	libagdb_internal_source_information_t *internal_source_information = NULL;
+	static char *function                                              = "libagdb_source_information_get_utf8_executable_filename_size";
 
-	if( executable_information == NULL )
+	if( source_information == NULL )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid executable information.",
+		 "%s: invalid source information.",
 		 function );
 
 		return( -1 );
 	}
-	internal_executable_information = (libagdb_internal_executable_information_t *) executable_information;
+	internal_source_information = (libagdb_internal_source_information_t *) source_information;
 
 /* TODO allow to set codepage */
 	if( libuna_utf8_string_size_from_byte_stream(
-	     internal_executable_information->filename,
-	     internal_executable_information->filename_size,
+	     internal_source_information->executable_filename,
+	     internal_source_information->executable_filename_size,
 	     LIBUNA_CODEPAGE_ASCII,
 	     utf8_string_size,
 	     error ) != 1 )
@@ -1070,7 +1071,7 @@ int libagdb_executable_information_get_utf8_filename_size(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve filename UTF-8 string size.",
+		 "%s: unable to retrieve executable filename UTF-8 string size.",
 		 function );
 
 		return( -1 );
@@ -1078,38 +1079,38 @@ int libagdb_executable_information_get_utf8_filename_size(
 	return( 1 );
 }
 
-/* Retrieves the UTF-8 encoded filename
+/* Retrieves the UTF-8 encoded executable filename
  * The size should include the end of string character
  * Returns 1 if successful or -1 on error
  */
-int libagdb_executable_information_get_utf8_filename(
-     libagdb_executable_information_t *executable_information,
+int libagdb_source_information_get_utf8_executable_filename(
+     libagdb_source_information_t *source_information,
      uint8_t *utf8_string,
      size_t utf8_string_size,
      libcerror_error_t **error )
 {
-	libagdb_internal_executable_information_t *internal_executable_information = NULL;
-	static char *function                                                      = "libagdb_executable_information_get_utf8_filename";
+	libagdb_internal_source_information_t *internal_source_information = NULL;
+	static char *function                                              = "libagdb_source_information_get_utf8_executable_filename";
 
-	if( executable_information == NULL )
+	if( source_information == NULL )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid executable information.",
+		 "%s: invalid source information.",
 		 function );
 
 		return( -1 );
 	}
-	internal_executable_information = (libagdb_internal_executable_information_t *) executable_information;
+	internal_source_information = (libagdb_internal_source_information_t *) source_information;
 
 /* TODO allow to set codepage */
 	if( libuna_utf8_string_copy_from_byte_stream(
 	     utf8_string,
 	     utf8_string_size,
-	     internal_executable_information->filename,
-	     internal_executable_information->filename_size,
+	     internal_source_information->executable_filename,
+	     internal_source_information->executable_filename_size,
 	     LIBUNA_CODEPAGE_ASCII,
 	     error ) != 1 )
 	{
@@ -1117,7 +1118,7 @@ int libagdb_executable_information_get_utf8_filename(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_COPY_FAILED,
-		 "%s: unable to copy filename to UTF-8 string.",
+		 "%s: unable to copy executable filename to UTF-8 string.",
 		 function );
 
 		return( -1 );
@@ -1125,35 +1126,35 @@ int libagdb_executable_information_get_utf8_filename(
 	return( 1 );
 }
 
-/* Retrieves the size of the UTF-16 encoded filename
+/* Retrieves the size of the UTF-16 encoded executable filename
  * The returned size includes the end of string character
  * Returns 1 if successful or -1 on error
  */
-int libagdb_executable_information_get_utf16_filename_size(
-     libagdb_executable_information_t *executable_information,
+int libagdb_source_information_get_utf16_executable_filename_size(
+     libagdb_source_information_t *source_information,
      size_t *utf16_string_size,
      libcerror_error_t **error )
 {
-	libagdb_internal_executable_information_t *internal_executable_information = NULL;
-	static char *function                                                      = "libagdb_executable_information_get_utf16_filename_size";
+	libagdb_internal_source_information_t *internal_source_information = NULL;
+	static char *function                                              = "libagdb_source_information_get_utf16_executable_filename_size";
 
-	if( executable_information == NULL )
+	if( source_information == NULL )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid executable information.",
+		 "%s: invalid source information.",
 		 function );
 
 		return( -1 );
 	}
-	internal_executable_information = (libagdb_internal_executable_information_t *) executable_information;
+	internal_source_information = (libagdb_internal_source_information_t *) source_information;
 
 /* TODO allow to set codepage */
 	if( libuna_utf16_string_size_from_byte_stream(
-	     internal_executable_information->filename,
-	     internal_executable_information->filename_size,
+	     internal_source_information->executable_filename,
+	     internal_source_information->executable_filename_size,
 	     LIBUNA_CODEPAGE_ASCII,
 	     utf16_string_size,
 	     error ) != 1 )
@@ -1162,7 +1163,7 @@ int libagdb_executable_information_get_utf16_filename_size(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve filename UTF-16 string size.",
+		 "%s: unable to retrieve executable filename UTF-16 string size.",
 		 function );
 
 		return( -1 );
@@ -1170,38 +1171,38 @@ int libagdb_executable_information_get_utf16_filename_size(
 	return( 1 );
 }
 
-/* Retrieves the UTF-16 encoded filename
+/* Retrieves the UTF-16 encoded executable filename
  * The size should include the end of string character
  * Returns 1 if successful or -1 on error
  */
-int libagdb_executable_information_get_utf16_filename(
-     libagdb_executable_information_t *executable_information,
+int libagdb_source_information_get_utf16_executable_filename(
+     libagdb_source_information_t *source_information,
      uint16_t *utf16_string,
      size_t utf16_string_size,
      libcerror_error_t **error )
 {
-	libagdb_internal_executable_information_t *internal_executable_information = NULL;
-	static char *function                                                      = "libagdb_executable_information_get_utf16_filename";
+	libagdb_internal_source_information_t *internal_source_information = NULL;
+	static char *function                                              = "libagdb_source_information_get_utf16_executable_filename";
 
-	if( executable_information == NULL )
+	if( source_information == NULL )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid executable information.",
+		 "%s: invalid source information.",
 		 function );
 
 		return( -1 );
 	}
-	internal_executable_information = (libagdb_internal_executable_information_t *) executable_information;
+	internal_source_information = (libagdb_internal_source_information_t *) source_information;
 
 /* TODO allow to set codepage */
 	if( libuna_utf16_string_copy_from_byte_stream(
 	     utf16_string,
 	     utf16_string_size,
-	     internal_executable_information->filename,
-	     internal_executable_information->filename_size,
+	     internal_source_information->executable_filename,
+	     internal_source_information->executable_filename_size,
 	     LIBUNA_CODEPAGE_ASCII,
 	     error ) != 1 )
 	{
@@ -1209,7 +1210,7 @@ int libagdb_executable_information_get_utf16_filename(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_COPY_FAILED,
-		 "%s: unable to copy filename to UTF-16 string.",
+		 "%s: unable to copy executable filename to UTF-16 string.",
 		 function );
 
 		return( -1 );

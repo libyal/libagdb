@@ -1,5 +1,5 @@
 /*
- * Executable information functions
+ * Source information functions
  *
  * Copyright (C) 2014, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -36,63 +36,63 @@
 extern "C" {
 #endif
 
-typedef struct libagdb_internal_executable_information libagdb_internal_executable_information_t;
+typedef struct libagdb_internal_source_information libagdb_internal_source_information_t;
 
-struct libagdb_internal_executable_information
+struct libagdb_internal_source_information
 {
-	/* The (executable) filename
+	/* The executable filename
 	 */
-	uint8_t filename[ 16 ];
+	uint8_t executable_filename[ 16 ];
 
-	/* The (executable) filename size
+	/* The executable filename size
 	 */
-	uint32_t filename_size;
+	uint32_t executable_filename_size;
 };
 
-int libagdb_executable_information_initialize(
-     libagdb_executable_information_t **executable_information,
+int libagdb_source_information_initialize(
+     libagdb_source_information_t **source_information,
      libcerror_error_t **error );
 
 LIBAGDB_EXTERN \
-int libagdb_executable_information_free(
-     libagdb_executable_information_t **executable_information,
+int libagdb_source_information_free(
+     libagdb_source_information_t **source_information,
      libcerror_error_t **error );
 
-int libagdb_internal_executable_information_free(
-     libagdb_internal_executable_information_t **executable_information,
+int libagdb_internal_source_information_free(
+     libagdb_internal_source_information_t **source_information,
      libcerror_error_t **error );
 
-ssize_t libagdb_executable_information_read(
-         libagdb_executable_information_t *executable_information,
+ssize_t libagdb_source_information_read(
+         libagdb_source_information_t *source_information,
          libfdata_stream_t *uncompressed_data_stream,
-         libbfio_handle_t *executable_io_handle,
+         libbfio_handle_t *source_io_handle,
          libagdb_io_handle_t *io_handle,
-         off64_t executable_offset,
-         uint32_t executable_index,
+         off64_t file_offset,
+         uint32_t source_information_index,
          libcerror_error_t **error );
 
 LIBAGDB_EXTERN \
-int libagdb_executable_information_get_utf8_filename_size(
-     libagdb_executable_information_t *executable_information,
+int libagdb_source_information_get_utf8_filename_size(
+     libagdb_source_information_t *source_information,
      size_t *utf8_string_size,
      libcerror_error_t **error );
 
 LIBAGDB_EXTERN \
-int libagdb_executable_information_get_utf8_filename(
-     libagdb_executable_information_t *executable_information,
+int libagdb_source_information_get_utf8_filename(
+     libagdb_source_information_t *source_information,
      uint8_t *utf8_string,
      size_t utf8_string_size,
      libcerror_error_t **error );
 
 LIBAGDB_EXTERN \
-int libagdb_executable_information_get_utf16_filename_size(
-     libagdb_executable_information_t *executable_information,
+int libagdb_source_information_get_utf16_filename_size(
+     libagdb_source_information_t *source_information,
      size_t *utf16_string_size,
      libcerror_error_t **error );
 
 LIBAGDB_EXTERN \
-int libagdb_executable_information_get_utf16_filename(
-     libagdb_executable_information_t *executable_information,
+int libagdb_source_information_get_utf16_filename(
+     libagdb_source_information_t *source_information,
      uint16_t *utf16_string,
      size_t utf16_string_size,
      libcerror_error_t **error );

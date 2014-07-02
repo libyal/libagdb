@@ -78,10 +78,10 @@ struct agdb_database_header
 	 */
 	uint8_t unknown3[ 4 ];
 
-	/* The number of executables
+	/* The number of sources
 	 * Consists of 4 bytes
 	 */
-	uint8_t number_of_executables[ 4 ];
+	uint8_t number_of_sources[ 4 ];
 
 	/* Unknown
 	 * Consists of 4 bytes
@@ -123,10 +123,10 @@ struct agdb_database_header_116
 	 */
 	uint8_t unknown3[ 4 ];
 
-	/* The number of executables
+	/* The number of sources
 	 * Consists of 4 bytes
 	 */
-	uint8_t number_of_executables[ 4 ];
+	uint8_t number_of_sources[ 4 ];
 
 	/* Unknown
 	 * Consists of 4 bytes
@@ -233,10 +233,10 @@ struct agdb_database_header_228
 	 */
 	uint8_t unknown3[ 4 ];
 
-	/* The number of executables
+	/* The number of sources
 	 * Consists of 4 bytes
 	 */
-	uint8_t number_of_executables[ 4 ];
+	uint8_t number_of_sources[ 4 ];
 
 	/* Unknown
 	 * Consists of 4 bytes

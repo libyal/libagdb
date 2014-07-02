@@ -74,9 +74,9 @@ struct libagdb_internal_file
 	 */
 	libcdata_array_t *volumes_array;
 
-	/* The executables array
+	/* The sources array
 	 */
-	libcdata_array_t *executables_array;
+	libcdata_array_t *sources_array;
 };
 
 LIBAGDB_EXTERN \
@@ -141,16 +141,16 @@ int libagdb_file_get_volume_information(
      libcerror_error_t **error );
 
 LIBAGDB_EXTERN \
-int libagdb_file_get_number_of_executables(
+int libagdb_file_get_number_of_sources(
      libagdb_file_t *file,
-     int *number_of_executables,
+     int *number_of_sources,
      libcerror_error_t **error );
 
 LIBAGDB_EXTERN \
-int libagdb_file_get_executable_information(
+int libagdb_file_get_source_information(
      libagdb_file_t *file,
-     int executable_index,
-     libagdb_executable_information_t **executable_information,
+     int source_index,
+     libagdb_source_information_t **source_information,
      libcerror_error_t **error );
 
 #if defined( __cplusplus )

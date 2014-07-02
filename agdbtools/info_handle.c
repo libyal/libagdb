@@ -342,22 +342,22 @@ int info_handle_file_fprint(
 {
 	libcstring_system_character_t filetime_string[ 48 ];
 
-	libagdb_executable_information_t *executable_information = NULL;
-	libagdb_file_information_t *file_information             = NULL;
-	libagdb_volume_information_t *volume_information         = NULL;
-	libcstring_system_character_t *value_string              = NULL;
-	libfdatetime_filetime_t *filetime                        = NULL;
-	static char *function                                    = "info_handle_file_fprint";
-	size_t value_string_size                                 = 0;
-	uint64_t value_64bit                                     = 0;
-	uint32_t value_32bit                                     = 0;
-	int executable_index                                     = 0;
-	int file_index                                           = 0;
-	int number_of_executables                                = 0;
-	int number_of_files                                      = 0;
-	int number_of_volumes                                    = 0;
-	int result                                               = 0;
-	int volume_index                                         = 0;
+	libagdb_source_information_t *source_information = NULL;
+	libagdb_file_information_t *file_information     = NULL;
+	libagdb_volume_information_t *volume_information = NULL;
+	libcstring_system_character_t *value_string      = NULL;
+	libfdatetime_filetime_t *filetime                = NULL;
+	static char *function                            = "info_handle_file_fprint";
+	size_t value_string_size                         = 0;
+	uint64_t value_64bit                             = 0;
+	uint32_t value_32bit                             = 0;
+	int file_index                                   = 0;
+	int number_of_files                              = 0;
+	int number_of_sources                            = 0;
+	int number_of_volumes                            = 0;
+	int result                                       = 0;
+	int source_index                                 = 0;
+	int volume_index                                 = 0;
 
 	if( info_handle == NULL )
 	{
@@ -755,63 +755,63 @@ int info_handle_file_fprint(
 	}
 	fprintf(
 	 info_handle->notify_stream,
-	 "Executables:\n" );
+	 "Sources:\n" );
 
-	if( libagdb_file_get_number_of_executables(
+	if( libagdb_file_get_number_of_sources(
 	     info_handle->input_file,
-	     &number_of_executables,
+	     &number_of_sources,
 	     error ) != 1 )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve number of executables.",
+		 "%s: unable to retrieve number of sources.",
 		 function );
 
 		goto on_error;
 	}
 	fprintf(
 	 info_handle->notify_stream,
-	 "\tNumber of executables\t\t: %d\n",
-	 number_of_executables );
+	 "\tNumber of sources\t\t: %d\n",
+	 number_of_sources );
 
 	fprintf(
 	 info_handle->notify_stream,
 	 "\n" );
 
-	for( executable_index = 0;
-	     executable_index < number_of_executables;
-	     executable_index++ )
+	for( source_index = 0;
+	     source_index < number_of_sources;
+	     source_index++ )
 	{
-		if( libagdb_file_get_executable_information(
+		if( libagdb_file_get_source_information(
 		     info_handle->input_file,
-		     executable_index,
-		     &executable_information,
+		     source_index,
+		     &source_information,
 		     error ) != 1 )
 		{
 			libcerror_error_set(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-			 "%s: unable to retrieve executable information.",
+			 "%s: unable to retrieve source information.",
 			 function );
 
 			return( -1 );
 		}
 		fprintf(
 		 info_handle->notify_stream,
-		 "Executable: %d information:\n",
-		 executable_index + 1 );
+		 "Source: %d information:\n",
+		 source_index + 1 );
 
 #if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
-		result = libagdb_executable_information_get_utf16_filename_size(
-			  executable_information,
+		result = libagdb_source_information_get_utf16_executable_filename_size(
+			  source_information,
 			  &value_string_size,
 			  error );
 #else
-		result = libagdb_executable_information_get_utf8_filename_size(
-			  executable_information,
+		result = libagdb_source_information_get_utf8_executable_filename_size(
+			  source_information,
 			  &value_string_size,
 			  error );
 #endif
@@ -821,7 +821,7 @@ int info_handle_file_fprint(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-			 "%s: unable to retrieve filename size.",
+			 "%s: unable to retrieve executable filename size.",
 			 function );
 
 			goto on_error;
@@ -843,14 +843,14 @@ int info_handle_file_fprint(
 				goto on_error;
 			}
 #if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
-			result = libagdb_executable_information_get_utf16_filename(
-				  executable_information,
+			result = libagdb_source_information_get_utf16_executable_filename(
+				  source_information,
 				  (uint16_t *) value_string,
 				  value_string_size,
 				  error );
 #else
-			result = libagdb_executable_information_get_utf8_filename(
-				  executable_information,
+			result = libagdb_source_information_get_utf8_executable_filename(
+				  source_information,
 				  (uint8_t *) value_string,
 				  value_string_size,
 				  error );
@@ -861,14 +861,14 @@ int info_handle_file_fprint(
 				 error,
 				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-				 "%s: unable to retrieve filename.",
+				 "%s: unable to retrieve executable filename.",
 				 function );
 
 				goto on_error;
 			}
 			fprintf(
 			 info_handle->notify_stream,
-			 "\tFilename\t\t\t: %" PRIs_LIBCSTRING_SYSTEM "\n",
+			 "\tExecutable filename\t\t: %" PRIs_LIBCSTRING_SYSTEM "\n",
 			 value_string );
 
 			memory_free(
@@ -876,15 +876,15 @@ int info_handle_file_fprint(
 
 			value_string = NULL;
 		}
-		if( libagdb_executable_information_free(
-		     &executable_information,
+		if( libagdb_source_information_free(
+		     &source_information,
 		     error ) != 1 )
 		{
 			libcerror_error_set(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
-			 "%s: unable to free executable information.",
+			 "%s: unable to free source information.",
 			 function );
 
 			goto on_error;
@@ -896,10 +896,10 @@ int info_handle_file_fprint(
 	return( 1 );
 
 on_error:
-	if( executable_information != NULL )
+	if( source_information != NULL )
 	{
-		libagdb_executable_information_free(
-		 &executable_information,
+		libagdb_source_information_free(
+		 &source_information,
 		 NULL );
 	}
 	if( volume_information != NULL )

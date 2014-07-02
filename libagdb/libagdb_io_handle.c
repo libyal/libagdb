@@ -569,7 +569,7 @@ int libagdb_io_handle_read_uncompressed_file_header(
      libbfio_handle_t *file_io_handle,
      off64_t *volumes_information_offset,
      uint32_t *number_of_volumes,
-     uint32_t *number_of_executables,
+     uint32_t *number_of_sources,
      libcerror_error_t **error )
 {
 	agdb_file_header_t file_header_data;
@@ -619,13 +619,13 @@ int libagdb_io_handle_read_uncompressed_file_header(
 
 		return( -1 );
 	}
-	if( number_of_executables == NULL )
+	if( number_of_sources == NULL )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid number of executables.",
+		 "%s: invalid number of sources.",
 		 function );
 
 		return( -1 );
@@ -805,7 +805,7 @@ int libagdb_io_handle_read_uncompressed_file_header(
 
 	byte_stream_copy_to_uint32_little_endian(
 	 &( ( (agdb_database_header_t *) database_header_data )->database_parameters[ 8 ] ),
-	 io_handle->executable_information_entry_size );
+	 io_handle->source_information_entry_size );
 
 	byte_stream_copy_to_uint32_little_endian(
 	 &( ( (agdb_database_header_t *) database_header_data )->database_parameters[ 12 ] ),
@@ -820,8 +820,8 @@ int libagdb_io_handle_read_uncompressed_file_header(
 	 *number_of_volumes );
 
 	byte_stream_copy_to_uint32_little_endian(
-	 ( (agdb_database_header_t *) database_header_data )->number_of_executables,
-	 *number_of_executables );
+	 ( (agdb_database_header_t *) database_header_data )->number_of_sources,
+	 *number_of_sources );
 
 #if defined( HAVE_DEBUG_OUTPUT )
 	if( libcnotify_verbose != 0 )
@@ -920,9 +920,9 @@ int libagdb_io_handle_read_uncompressed_file_header(
 		 value_32bit );
 
 		libcnotify_printf(
-		 "%s: number of executables\t: %" PRIu32 "\n",
+		 "%s: number of sources\t: %" PRIu32 "\n",
 		 function,
-		 *number_of_executables );
+		 *number_of_sources );
 
 		byte_stream_copy_to_uint32_little_endian(
 		 ( (agdb_database_header_t *) database_header_data )->unknown4,

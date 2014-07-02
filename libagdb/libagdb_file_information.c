@@ -26,6 +26,7 @@
 
 #include "libagdb_definitions.h"
 #include "libagdb_file_information.h"
+#include "libagdb_hash.h"
 #include "libagdb_io_handle.h"
 #include "libagdb_libbfio.h"
 #include "libagdb_libcerror.h"
@@ -193,6 +194,7 @@ ssize_t libagdb_file_information_read(
 	size_t alignment_size                                          = 0;
 	ssize_t read_count                                             = 0;
 	ssize_t total_read_count                                       = 0;
+	uint32_t calculated_hash_value                                 = 0;
 	uint32_t entry_index                                           = 0;
 	uint32_t flags                                                 = 0;
 	uint32_t number_of_entries                                     = 0;
@@ -593,6 +595,24 @@ ssize_t libagdb_file_information_read(
 			 function,
 			 value_32bit );
 		}
+		else if( io_handle->file_information_entry_size == 72 )
+		{
+			byte_stream_copy_to_uint32_little_endian(
+			 ( (agdb_file_information_72_t *) file_information_data )->unknown7a,
+			 value_32bit );
+			libcnotify_printf(
+			 "%s: unknown7a\t\t\t\t: 0x%08" PRIx32 "\n",
+			 function,
+			 value_32bit );
+
+			byte_stream_copy_to_uint32_little_endian(
+			 ( (agdb_file_information_72_t *) file_information_data )->unknown7b,
+			 value_32bit );
+			libcnotify_printf(
+			 "%s: unknown7b\t\t\t\t: 0x%08" PRIx32 "\n",
+			 function,
+			 value_32bit );
+		}
 		else if( io_handle->file_information_entry_size >= 56 )
 		{
 			if( mode == 32 )
@@ -739,7 +759,7 @@ ssize_t libagdb_file_information_read(
 			if( mode == 32 )
 			{
 				byte_stream_copy_to_uint64_little_endian(
-				 ( (agdb_file_information_56_t *) file_information_data )->unknown9,
+				 ( (agdb_file_information_56_t *) file_information_data )->file_reference,
 				 value_64bit );
 			}
 			else if( mode == 64 )
@@ -748,10 +768,21 @@ ssize_t libagdb_file_information_read(
 				 ( (agdb_file_information_88_t *) file_information_data )->unknown9,
 				 value_64bit );
 			}
-			libcnotify_printf(
-			 "%s: unknown9\t\t\t\t\t: 0x%08" PRIx64 "\n",
-			 function,
-			 value_64bit );
+			if( value_64bit == 0 )
+			{
+				libcnotify_printf(
+				 "%s: file reference\t\t\t\t: %" PRIu64 "\n",
+				 function,
+				 value_64bit );
+			}
+			else
+			{
+				libcnotify_printf(
+				 "%s: file reference\t\t\t\t: MFT entry: %" PRIu64 ", sequence: %" PRIu64 "\n",
+				 function,
+				 value_64bit & 0xffffffffffffUL,
+				 value_64bit >> 48 );
+			}
 		}
 		if( io_handle->file_information_entry_size == 72 )
 		{
@@ -787,13 +818,21 @@ ssize_t libagdb_file_information_read(
 			 function,
 			 value_32bit );
 
-			byte_stream_copy_to_uint64_little_endian(
-			 ( (agdb_file_information_72_t *) file_information_data )->unknown11,
-			 value_64bit );
+			byte_stream_copy_to_uint32_little_endian(
+			 ( (agdb_file_information_72_t *) file_information_data )->unknown11a,
+			 value_32bit );
 			libcnotify_printf(
-			 "%s: unknown11\t\t\t\t: 0x%08" PRIx64 "\n",
+			 "%s: unknown11a\t\t\t\t: 0x%08" PRIx32 "\n",
 			 function,
-			 value_64bit );
+			 value_32bit );
+
+			byte_stream_copy_to_uint32_little_endian(
+			 ( (agdb_file_information_72_t *) file_information_data )->unknown11b,
+			 value_32bit );
+			libcnotify_printf(
+			 "%s: unknown11b\t\t\t\t: 0x%08" PRIx32 "\n",
+			 function,
+			 value_32bit );
 		}
 		else if( io_handle->file_information_entry_size >= 88 )
 		{
@@ -898,6 +937,21 @@ ssize_t libagdb_file_information_read(
 			 0 );
 		}
 #endif
+		if( libagdb_hash_calculate(
+		     &calculated_hash_value,
+		     internal_file_information->path,
+		     internal_file_information->path_size - 2,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve path hash value.",
+			 function );
+
+			goto on_error;
+		}
 #if defined( HAVE_DEBUG_OUTPUT )
 		if( libcnotify_verbose != 0 )
 		{
@@ -985,6 +1039,11 @@ ssize_t libagdb_file_information_read(
 			 "%s: file path\t\t\t\t: %" PRIs_LIBCSTRING_SYSTEM "\n",
 			 function,
 			 value_string );
+
+			libcnotify_printf(
+			 "%s: file path hash value\t\t\t: 0x%08" PRIx64 "\n",
+			 function,
+			 calculated_hash_value );
 
 			libcnotify_printf(
 			 "\n" );

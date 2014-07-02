@@ -1,4 +1,4 @@
-.Dd April 23, 2014
+.Dd June 28, 2014
 .Dt libagdb 3
 .Os libagdb
 .Sh NAME
@@ -65,9 +65,9 @@ File functions
 .Ft int
 .Fn libagdb_file_get_volume_information "libagdb_file_t *file, int volume_index, libagdb_volume_information_t **volume_information, libagdb_error_t **error"
 .Ft int
-.Fn libagdb_file_get_number_of_executables "libagdb_file_t *file, int *number_of_executables, libagdb_error_t **error"
+.Fn libagdb_file_get_number_of_sources "libagdb_file_t *file, int *number_of_sources, libagdb_error_t **error"
 .Ft int
-.Fn libagdb_file_get_executable_information "libagdb_file_t *file, int executable_index, libagdb_executable_information_t **executable_information, libagdb_error_t **error"
+.Fn libagdb_file_get_source_information "libagdb_file_t *file, int source_index, libagdb_source_information_t **source_information, libagdb_error_t **error"
 .Pp
 Available when compiled with wide character string support:
 .Ft int
@@ -109,17 +109,17 @@ File information functions
 .Ft int
 .Fn libagdb_file_information_get_utf16_path "libagdb_file_information_t *file_information, uint16_t *utf16_string, size_t utf16_string_size, libagdb_error_t **error"
 .Pp
-Executable information functions
+Source information functions
 .Ft int
-.Fn libagdb_executable_information_free "libagdb_executable_information_t **executable_information, libagdb_error_t **error"
+.Fn libagdb_source_information_free "libagdb_source_information_t **source_information, libagdb_error_t **error"
 .Ft int
-.Fn libagdb_executable_information_get_utf8_filename_size "libagdb_executable_information_t *executable_information, size_t *utf8_string_size, libagdb_error_t **error"
+.Fn libagdb_source_information_get_utf8_executable_filename_size "libagdb_source_information_t *source_information, size_t *utf8_string_size, libagdb_error_t **error"
 .Ft int
-.Fn libagdb_executable_information_get_utf8_filename "libagdb_executable_information_t *executable_information, uint8_t *utf8_string, size_t utf8_string_size, libagdb_error_t **error"
+.Fn libagdb_source_information_get_utf8_executable_filename "libagdb_source_information_t *source_information, uint8_t *utf8_string, size_t utf8_string_size, libagdb_error_t **error"
 .Ft int
-.Fn libagdb_executable_information_get_utf16_filename_size "libagdb_executable_information_t *executable_information, size_t *utf16_string_size, libagdb_error_t **error"
+.Fn libagdb_source_information_get_utf16_executable_filename_size "libagdb_source_information_t *source_information, size_t *utf16_string_size, libagdb_error_t **error"
 .Ft int
-.Fn libagdb_executable_information_get_utf16_filename "libagdb_executable_information_t *executable_information, uint16_t *utf16_string, size_t utf16_string_size, libagdb_error_t **error"
+.Fn libagdb_source_information_get_utf16_executable_filename "libagdb_source_information_t *source_information, uint16_t *utf16_string, size_t utf16_string_size, libagdb_error_t **error"
 .Sh DESCRIPTION
 The
 .Fn libagdb_get_version

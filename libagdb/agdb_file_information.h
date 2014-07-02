@@ -228,10 +228,10 @@ struct agdb_file_information_56
 	 */
 	uint8_t unknown8b[ 4 ];
 
-	/* Unknown
+	/* NTFS file reference
 	 * Consists of 8 bytes
 	 */
-	uint8_t unknown9[ 8 ];
+	uint8_t file_reference[ 8 ];
 };
 
 typedef struct agdb_file_information_64 agdb_file_information_64_t;
@@ -339,9 +339,14 @@ struct agdb_file_information_72
 	uint8_t path_number_of_characters[ 4 ];
 
 	/* Unknown
-	 * Consists of 8 bytes
+	 * Consists of 4 bytes
 	 */
-	uint8_t unknown7[ 8 ];
+	uint8_t unknown7a[ 4 ];
+
+	/* Unknown
+	 * Consists of 4 bytes
+	 */
+	uint8_t unknown7b[ 4 ];
 
 	/* Unknown
 	 * Consists of 4 bytes
@@ -374,9 +379,14 @@ struct agdb_file_information_72
 	uint8_t unknown10b[ 4 ];
 
 	/* Unknown
-	 * Consists of 8 bytes
+	 * Consists of 4 bytes
 	 */
-	uint8_t unknown11[ 8 ];
+	uint8_t unknown11a[ 4 ];
+
+	/* Unknown
+	 * Consists of 4 bytes
+	 */
+	uint8_t unknown11b[ 4 ];
 };
 
 typedef struct agdb_file_information_88 agdb_file_information_88_t;

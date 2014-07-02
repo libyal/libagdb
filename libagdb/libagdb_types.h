@@ -34,15 +34,15 @@
 /* The following type definitions hide internal data structures
  */
 #if defined( HAVE_DEBUG_OUTPUT ) && !defined( WINAPI )
-typedef struct libagdb_executable_information {}	libagdb_executable_information_t;
-typedef struct libagdb_file {}				libagdb_file_t;
-typedef struct libagdb_file_information {}		libagdb_file_information_t;
-typedef struct libagdb_volume_information {}		libagdb_volume_information_t;
+typedef struct libagdb_file {}			libagdb_file_t;
+typedef struct libagdb_file_information {}	libagdb_file_information_t;
+typedef struct libagdb_source_information {}	libagdb_source_information_t;
+typedef struct libagdb_volume_information {}	libagdb_volume_information_t;
 
 #else
-typedef intptr_t libagdb_executable_information_t;
 typedef intptr_t libagdb_file_t;
 typedef intptr_t libagdb_file_information_t;
+typedef intptr_t libagdb_source_information_t;
 typedef intptr_t libagdb_volume_information_t;
 
 #endif

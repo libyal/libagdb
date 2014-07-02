@@ -1,5 +1,5 @@
 /*
- * The executable information definitions of a Windows SuperFetch database file
+ * The source information definitions of a Windows SuperFetch database file
  *
  * Copyright (C) 2014, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -29,19 +29,19 @@
 extern "C" {
 #endif
 
-typedef struct agdb_executable_information_60 agdb_executable_information_60_t;
+typedef struct agdb_source_information_60 agdb_source_information_60_t;
 
-struct agdb_executable_information_60
+struct agdb_source_information_60
 {
 	/* Unknown
 	 * Consists of 4 bytes
 	 */
 	uint8_t unknown1[ 4 ];
 
-	/* Unknown
+	/* The name hash
 	 * Consists of 4 bytes
 	 */
-	uint8_t unknown2[ 4 ];
+	uint8_t name_hash[ 4 ];
 
 	/* Unknown
 	 * Consists of 4 bytes
@@ -89,19 +89,19 @@ struct agdb_executable_information_60
 	uint8_t unknown11[ 16 ];
 };
 
-typedef struct agdb_executable_information_88 agdb_executable_information_88_t;
+typedef struct agdb_source_information_88 agdb_source_information_88_t;
 
-struct agdb_executable_information_88
+struct agdb_source_information_88
 {
 	/* Unknown
 	 * Consists of 8 bytes
 	 */
 	uint8_t unknown1[ 8 ];
 
-	/* Unknown
+	/* The name hash
 	 * Consists of 8 bytes
 	 */
-	uint8_t unknown2[ 8 ];
+	uint8_t name_hash[ 8 ];
 
 	/* Unknown
 	 * Consists of 4 bytes
@@ -149,19 +149,19 @@ struct agdb_executable_information_88
 	uint8_t unknown11[ 16 ];
 };
 
-typedef struct agdb_executable_information_100 agdb_executable_information_100_t;
+typedef struct agdb_source_information_100 agdb_source_information_100_t;
 
-struct agdb_executable_information_100
+struct agdb_source_information_100
 {
 	/* Unknown
 	 * Consists of 4 bytes
 	 */
 	uint8_t unknown1[ 4 ];
 
-	/* Unknown
+	/* The name hash
 	 * Consists of 4 bytes
 	 */
-	uint8_t unknown2[ 4 ];
+	uint8_t name_hash[ 4 ];
 
 	/* Unknown
 	 * Consists of 4 bytes
@@ -254,19 +254,19 @@ struct agdb_executable_information_100
 	uint8_t unknown20[ 4 ];
 };
 
-typedef struct agdb_executable_information_144 agdb_executable_information_144_t;
+typedef struct agdb_source_information_144 agdb_source_information_144_t;
 
-struct agdb_executable_information_144
+struct agdb_source_information_144
 {
 	/* Unknown
 	 * Consists of 8 bytes
 	 */
 	uint8_t unknown1[ 8 ];
 
-	/* Unknown
+	/* The name hash
 	 * Consists of 8 bytes
 	 */
-	uint8_t unknown2[ 8 ];
+	uint8_t name_hash[ 8 ];
 
 	/* Unknown
 	 * Consists of 4 bytes

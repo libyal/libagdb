@@ -26,6 +26,7 @@
 
 #include "libagdb_definitions.h"
 #include "libagdb_file_information.h"
+#include "libagdb_hash.h"
 #include "libagdb_io_handle.h"
 #include "libagdb_libbfio.h"
 #include "libagdb_libcdata.h"
@@ -225,6 +226,7 @@ ssize64_t libagdb_volume_information_read(
 	size_t alignment_padding_size                                      = 0;
 	size_t alignment_size                                              = 0;
 	ssize_t read_count                                                 = 0;
+	uint32_t calculated_hash_value                                     = 0;
 	uint32_t file_index                                                = 0;
 	uint32_t number_of_files                                           = 0;
 	uint16_t device_path_size                                          = 0;
@@ -387,7 +389,7 @@ ssize64_t libagdb_volume_information_read(
 		 function,
 		 io_handle->volume_information_entry_size );
 
-		return( -1 );
+		goto on_error;
 	}
 	if( io_handle->volume_information_entry_size == 56 )
 	{
@@ -742,6 +744,22 @@ ssize64_t libagdb_volume_information_read(
 			 0 );
 		}
 #endif
+		if( libagdb_hash_calculate(
+		     &calculated_hash_value,
+		     internal_volume_information->device_path,
+		     internal_volume_information->device_path_size - 2,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve volume: %" PRIu32 " device path hash value.",
+			 function,
+			 volume_index );
+
+			goto on_error;
+		}
 #if defined( HAVE_DEBUG_OUTPUT )
 		if( libcnotify_verbose != 0 )
 		{
@@ -829,6 +847,11 @@ ssize64_t libagdb_volume_information_read(
 			 "%s: volume device path\t\t\t: %" PRIs_LIBCSTRING_SYSTEM "\n",
 			 function,
 			 value_string );
+
+			libcnotify_printf(
+			 "%s: volume device path hash value\t\t: 0x%08" PRIx64 "\n",
+			 function,
+			 calculated_hash_value );
 
 			libcnotify_printf(
 			 "\n" );

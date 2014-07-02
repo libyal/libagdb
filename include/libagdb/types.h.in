@@ -201,9 +201,9 @@ typedef int64_t off64_t;
 
 /* The following type definitions hide internal data structures
  */
-typedef intptr_t libagdb_executable_information_t;
 typedef intptr_t libagdb_file_t;
 typedef intptr_t libagdb_file_information_t;
+typedef intptr_t libagdb_source_information_t;
 typedef intptr_t libagdb_volume_information_t;
 
 #ifdef __cplusplus

@@ -21,9 +21,9 @@ AM_CPPFLAGS = \
 lib_LTLIBRARIES = libagdb.la
 
 libagdb_la_SOURCES = \
-	agdb_executable_information.h \
 	agdb_file_header.h \
 	agdb_file_information.h \
+	agdb_source_information.h \
 	agdb_volume_information.h \
 	libagdb.c \
 	libagdb_codepage.h \
@@ -32,10 +32,10 @@ libagdb_la_SOURCES = \
 	libagdb_debug.c libagdb_debug.h \
 	libagdb_definitions.h \
 	libagdb_error.c libagdb_error.h \
-	libagdb_executable_information.c libagdb_executable_information.h \
 	libagdb_extern.h \
 	libagdb_file.c libagdb_file.h \
 	libagdb_file_information.c libagdb_file_information.h \
+	libagdb_hash.c libagdb_hash.h \
 	libagdb_io_handle.c libagdb_io_handle.h \
 	libagdb_libbfio.h \
 	libagdb_libcdata.h \
@@ -49,6 +49,7 @@ libagdb_la_SOURCES = \
 	libagdb_libfwnt.h \
 	libagdb_libuna.h \
 	libagdb_notify.c libagdb_notify.h \
+	libagdb_source_information.c libagdb_source_information.h \
 	libagdb_support.c libagdb_support.h \
 	libagdb_types.h \
 	libagdb_unused.h \

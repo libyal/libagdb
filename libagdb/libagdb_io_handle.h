@@ -69,9 +69,9 @@ struct libagdb_io_handle
 	 */
 	uint32_t file_information_entry_size;
 
-	/* The executable information entry size
+	/* The source information entry size
 	 */
-	uint32_t executable_information_entry_size;
+	uint32_t source_information_entry_size;
 
 	/* The file information sub entry type 1 size
 	 */
@@ -115,7 +115,7 @@ int libagdb_io_handle_read_uncompressed_file_header(
      libbfio_handle_t *file_io_handle,
      off64_t *volumes_information_offset,
      uint32_t *number_of_volumes,
-     uint32_t *number_of_executables,
+     uint32_t *number_of_sources,
      libcerror_error_t **error );
 
 ssize_t libagdb_io_handle_read_segment_data(
