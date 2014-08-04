@@ -2,8 +2,8 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9,00"
-	Name="libagdb_dll"
-	ProjectGUID="{B5225323-AC67-411D-8FBA-199E9467FAB5}"
+	Name="libagdb"
+	ProjectGUID="{6CEDC6AA-1B60-434A-BD96-3BA83AB22ADE}"
 	RootNamespace="libagdb"
 	TargetFrameworkVersion="131072"
 	>
@@ -39,8 +39,8 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="..\..\include;..\..\common;..\..\libcstring;..\..\liberror;..\..\libnotify;..\..\libuna;..\..\libbfio;..\..\libfdatetime;..\..\libfguid;..\..\libfvalue;..\..\libfwnt;..\..\libfmapi;..\..\libagdb"
-				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;HAVE_LOCAL_LIBUNA;HAVE_LOCAL_LIBBFIO;HAVE_LOCAL_LIBFDATETIME;HAVE_LOCAL_LIBFGUID;HAVE_LOCAL_LIBFVALUE;HAVE_LOCAL_LIBFWNT;HAVE_LOCAL_LIBFMAPI;LIBAGDB_DLL_EXPORT"
+				AdditionalIncludeDirectories="..\..\include;..\..\common;..\..\libcstring;..\..\libcerror;..\..\libcthreads;..\..\libcdata;..\..\libclocale;..\..\libcnotify;..\..\libcsplit;..\..\libuna;..\..\libcfile;..\..\libcpath;..\..\libbfio;..\..\libfcache;..\..\libfdata;..\..\libfdatetime;..\..\libfwnt"
+				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;HAVE_LOCAL_LIBCSTRING;HAVE_LOCAL_LIBCERROR;HAVE_LOCAL_LIBCTHREADS;HAVE_LOCAL_LIBCDATA;HAVE_LOCAL_LIBCLOCALE;HAVE_LOCAL_LIBCNOTIFY;HAVE_LOCAL_LIBCSPLIT;HAVE_LOCAL_LIBUNA;HAVE_LOCAL_LIBCFILE;HAVE_LOCAL_LIBCPATH;HAVE_LOCAL_LIBBFIO;HAVE_LOCAL_LIBFCACHE;HAVE_LOCAL_LIBFDATA;HAVE_LOCAL_LIBFDATETIME;HAVE_LOCAL_LIBFWNT;LIBAGDB_DLL_EXPORT"
 				RuntimeLibrary="2"
 				WarningLevel="4"
 				CompileAs="1"
@@ -56,11 +56,12 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				OutputFile="$(OutDir)\libagdb.dll"
+				OutputFile="$(OutDir)\$(ProjectName).dll"
 				AdditionalLibraryDirectories="&quot;$(OutDir)&quot;"
-				RandomizedBaseAddress="1"
-				DataExecutionPrevention="0"
-				ImportLibrary="$(OutDir)\libagdb.lib"
+				RandomizedBaseAddress="2"
+				DataExecutionPrevention="2"
+				TargetMachine="1"
+				ImportLibrary="$(OutDir)\$(ProjectName).lib"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -109,12 +110,13 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\..\include;..\..\common;..\..\libcstring;..\..\liberror;..\..\libnotify;..\..\libuna;..\..\libbfio;..\..\libfdatetime;..\..\libfguid;..\..\libfvalue;..\..\libfwnt;..\..\libfmapi;..\..\libagdb"
-				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;HAVE_LOCAL_LIBUNA;HAVE_LOCAL_LIBBFIO;HAVE_LOCAL_LIBFDATETIME;HAVE_LOCAL_LIBFGUID;HAVE_LOCAL_LIBFVALUE;HAVE_LOCAL_LIBFWNT;HAVE_LOCAL_LIBFMAPI;LIBAGDB_DLL_EXPORT"
+				AdditionalIncludeDirectories="..\..\include;..\..\common;..\..\libcstring;..\..\libcerror;..\..\libcthreads;..\..\libcdata;..\..\libclocale;..\..\libcnotify;..\..\libcsplit;..\..\libuna;..\..\libcfile;..\..\libcpath;..\..\libbfio;..\..\libfcache;..\..\libfdata;..\..\libfdatetime;..\..\libfwnt"
+				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;HAVE_LOCAL_LIBCSTRING;HAVE_LOCAL_LIBCERROR;HAVE_LOCAL_LIBCTHREADS;HAVE_LOCAL_LIBCDATA;HAVE_LOCAL_LIBCLOCALE;HAVE_LOCAL_LIBCNOTIFY;HAVE_LOCAL_LIBCSPLIT;HAVE_LOCAL_LIBUNA;HAVE_LOCAL_LIBCFILE;HAVE_LOCAL_LIBCPATH;HAVE_LOCAL_LIBBFIO;HAVE_LOCAL_LIBFCACHE;HAVE_LOCAL_LIBFDATA;HAVE_LOCAL_LIBFDATETIME;HAVE_LOCAL_LIBFWNT;LIBAGDB_DLL_EXPORT"
 				BasicRuntimeChecks="3"
 				SmallerTypeCheck="true"
 				RuntimeLibrary="3"
 				WarningLevel="4"
+				DebugInformationFormat="3"
 				CompileAs="1"
 			/>
 			<Tool
@@ -128,12 +130,13 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				OutputFile="$(OutDir)\libagdb.dll"
+				OutputFile="$(OutDir)\$(ProjectName).dll"
 				AdditionalLibraryDirectories="&quot;$(OutDir)&quot;"
 				GenerateDebugInformation="true"
 				RandomizedBaseAddress="1"
-				DataExecutionPrevention="0"
-				ImportLibrary="$(OutDir)\libagdb.lib"
+				DataExecutionPrevention="1"
+				TargetMachine="1"
+				ImportLibrary="$(OutDir)\$(ProjectName).lib"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -171,7 +174,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\libagdb\libagdb_array_type.c"
+				RelativePath="..\..\libagdb\libagdb_compressed_block.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libagdb\libagdb_compressed_blocks_stream.c"
 				>
 			</File>
 			<File
@@ -187,15 +194,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\libagdb\libagdb_file_information.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libagdb\libagdb_hash.c"
+				>
+			</File>
+			<File
 				RelativePath="..\..\libagdb\libagdb_io_handle.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libagdb\libagdb_item.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libagdb\libagdb_legacy.c"
 				>
 			</File>
 			<File
@@ -203,11 +210,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\libagdb\libagdb_source_information.c"
+				>
+			</File>
+			<File
 				RelativePath="..\..\libagdb\libagdb_support.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\libagdb\libagdb_value_identifier.c"
+				RelativePath="..\..\libagdb\libagdb_volume_information.c"
 				>
 			</File>
 		</Filter>
@@ -217,11 +228,31 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath="..\..\libagdb\libagdb_array_type.h"
+				RelativePath="..\..\libagdb\agdb_file_header.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libagdb\agdb_file_information.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libagdb\agdb_source_information.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libagdb\agdb_volume_information.h"
 				>
 			</File>
 			<File
 				RelativePath="..\..\libagdb\libagdb_codepage.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libagdb\libagdb_compressed_block.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libagdb\libagdb_compressed_blocks_stream.h"
 				>
 			</File>
 			<File
@@ -245,15 +276,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\libagdb\libagdb_file_information.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libagdb\libagdb_hash.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\libagdb\libagdb_io_handle.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libagdb\libagdb_item.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libagdb\libagdb_legacy.h"
 				>
 			</File>
 			<File
@@ -261,15 +292,39 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\libagdb\libagdb_libcdata.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libagdb\libagdb_libcerror.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libagdb\libagdb_libclocale.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libagdb\libagdb_libcnotify.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libagdb\libagdb_libcstring.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libagdb\libagdb_libfcache.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libagdb\libagdb_libfdata.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\libagdb\libagdb_libfdatetime.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\libagdb\libagdb_libfmapi.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libagdb\libagdb_libfvalue.h"
+				RelativePath="..\..\libagdb\libagdb_libfwnt.h"
 				>
 			</File>
 			<File
@@ -277,11 +332,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\libagdb\libagdb_mapi.h"
+				RelativePath="..\..\libagdb\libagdb_notify.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\libagdb\libagdb_notify.h"
+				RelativePath="..\..\libagdb\libagdb_source_information.h"
 				>
 			</File>
 			<File
@@ -297,19 +352,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\libagdb\libagdb_value_identifier.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libagdb\agdb_file_footer.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libagdb\agdb_file_header.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libagdb\agdb_item.h"
+				RelativePath="..\..\libagdb\libagdb_volume_information.h"
 				>
 			</File>
 		</Filter>

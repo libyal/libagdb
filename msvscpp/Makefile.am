@@ -1,9 +1,8 @@
-EXTRA_DIST = \
+MSVSCPP_FILES = \
 	agdbinfo/agdbinfo.vcproj \
-	libagdb_dll/libagdb_dll.vcproj \
+	libagdb/libagdb.vcproj \
 	libbfio/libbfio.vcproj \
 	libcdata/libcdata.vcproj \
-	libcdirectory/libcdirectory.vcproj \
 	libcerror/libcerror.vcproj \
 	libcfile/libcfile.vcproj \
 	libclocale/libclocale.vcproj \
@@ -19,6 +18,18 @@ EXTRA_DIST = \
 	libfwnt/libfwnt.vcproj \
 	libuna/libuna.vcproj \
 	libagdb.sln
+
+SCRIPT_FILES = \
+	scripts/vs2008_x64.sh \
+	scripts/vs2008_x64_sln.sed \
+	scripts/vs2008_x64_vcproj.sed \
+	scripts/vs2010_x64.sh \
+	scripts/vs2010_x64_sln.sed \
+	scripts/vs2010_x64_vcxproj.sed
+
+EXTRA_DIST = \
+	$(MSVSCPP_FILES) \
+	$(SCRIPT_FILES)
 
 MAINTAINERCLEANFILES = \
 	Makefile.in

@@ -2,9 +2,9 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9,00"
-	Name="libfguid"
-	ProjectGUID="{8C13E498-6369-4792-A0CF-B7134C54561B}"
-	RootNamespace="libfguid"
+	Name="libfcache"
+	ProjectGUID="{636E0000-4959-457C-87C5-A212602F3D35}"
+	RootNamespace="libfcache"
 	TargetFrameworkVersion="131072"
 	>
 	<Platforms>
@@ -39,8 +39,8 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="..\..\include;..\..\common;..\..\libcstring;..\..\liberror"
-				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;HAVE_LOCAL_LIBFGUID"
+				AdditionalIncludeDirectories="..\..\include;..\..\common;..\..\libcstring;..\..\libcerror;..\..\libcthreads;..\..\libcdata"
+				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;HAVE_LOCAL_LIBCSTRING;HAVE_LOCAL_LIBCERROR;HAVE_LOCAL_LIBCTHREADS;HAVE_LOCAL_LIBCDATA;HAVE_LOCAL_LIBFCACHE"
 				RuntimeLibrary="2"
 				WarningLevel="4"
 				CompileAs="1"
@@ -56,7 +56,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="$(OutDir)\libfguid.lib"
+				OutputFile="$(OutDir)\$(ProjectName).lib"
 				ModuleDefinitionFile=""
 				IgnoreAllDefaultLibraries="false"
 			/>
@@ -101,12 +101,13 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\..\include;..\..\common;..\..\libcstring;..\..\liberror"
-				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;HAVE_LOCAL_LIBFGUID"
+				AdditionalIncludeDirectories="..\..\include;..\..\common;..\..\libcstring;..\..\libcerror;..\..\libcthreads;..\..\libcdata"
+				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;HAVE_LOCAL_LIBCSTRING;HAVE_LOCAL_LIBCERROR;HAVE_LOCAL_LIBCTHREADS;HAVE_LOCAL_LIBCDATA;HAVE_LOCAL_LIBFCACHE"
 				BasicRuntimeChecks="3"
 				SmallerTypeCheck="true"
 				RuntimeLibrary="3"
 				WarningLevel="4"
+				DebugInformationFormat="3"
 				CompileAs="1"
 			/>
 			<Tool
@@ -120,7 +121,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="$(OutDir)\libfguid.lib"
+				OutputFile="$(OutDir)\$(ProjectName).lib"
 				ModuleDefinitionFile=""
 				IgnoreAllDefaultLibraries="false"
 			/>
@@ -150,15 +151,23 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath="..\..\libfguid\libfguid_error.c"
+				RelativePath="..\..\libfcache\libfcache_cache.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\libfguid\libfguid_identifier.c"
+				RelativePath="..\..\libfcache\libfcache_cache_value.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\libfguid\libfguid_support.c"
+				RelativePath="..\..\libfcache\libfcache_date_time.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libfcache\libfcache_error.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libfcache\libfcache_support.c"
 				>
 			</File>
 		</Filter>
@@ -168,27 +177,47 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath="..\..\libfguid\libfguid_definitions.h"
+				RelativePath="..\..\libfcache\libfcache_cache.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\libfguid\libfguid_error.h"
+				RelativePath="..\..\libfcache\libfcache_cache_value.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\libfguid\libfguid_extern.h"
+				RelativePath="..\..\libfcache\libfcache_date_time.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\libfguid\libfguid_identifier.h"
+				RelativePath="..\..\libfcache\libfcache_definitions.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\libfguid\libfguid_support.h"
+				RelativePath="..\..\libfcache\libfcache_error.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\libfguid\libfguid_types.h"
+				RelativePath="..\..\libfcache\libfcache_extern.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libfcache\libfcache_libcdata.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libfcache\libfcache_libcerror.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libfcache\libfcache_support.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libfcache\libfcache_types.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libfcache\libfcache_unused.h"
 				>
 			</File>
 		</Filter>
