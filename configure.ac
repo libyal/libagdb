@@ -218,6 +218,7 @@ AC_CONFIG_FILES([include/libagdb/types.h])
 AC_CONFIG_FILES([libagdb/libagdb_definitions.h])
 dnl Have configure make distribution specific files
 AC_CONFIG_FILES([common/types.h])
+AC_CONFIG_FILES([dpkg/changelog])
 AC_CONFIG_FILES([libagdb/libagdb.rc])
 AC_CONFIG_FILES([libagdb.pc])
 AC_CONFIG_FILES([libagdb.spec])
