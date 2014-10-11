@@ -1,0 +1,37 @@
+Source: libagdb
+Section: unknown
+Priority: extra
+Maintainer: Joachim Metz <joachim.metz@gmail.com>
+Build-Depends: debhelper (>= 7), autotools-dev
+Standards-Version: 3.8.3
+Homepage: https://github.com/libyal/libagdb/
+
+Package: libagdb
+Section: libs
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Suggests: libagdb-dbg
+Description: Library to access the Windows SuperFetch database file format
+ libagdb is a library to access the Windows SuperFetch database file format.
+
+Package: libagdb-dbg
+Architecture: any
+Section: debug
+Depends: libagdb (= ${Source-Version}), ${misc:Depends}
+Description: Debugging symbols for libagdb
+ Debugging symbols for libagdb.
+
+Package: libagdb-dev
+Section: libdevel
+Architecture: any
+Depends: libagdb (= ${Source-Version})
+Description: Header files and libraries for developing applications for libagdb
+ Header files and libraries for developing applications for libagdb.
+
+Package: libagdb-tools
+Section: utils
+Architecture: any
+Depends: libagdb (= ${Source-Version}), ${shlibs:Depends}
+Description: Several tools for reading Windows SuperFetch database files
+ Several tools for reading Windows SuperFetch database files.
+
