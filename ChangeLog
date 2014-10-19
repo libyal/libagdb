@@ -6,9 +6,10 @@ TODO:
   - volume creation time
 * agdbinfo
 * add python bindings
-* add dpkg files
-* add macosx files
 * update manuals
+
+20141018
+* changes for deployment
 
 20141011
 * removed README.macosx

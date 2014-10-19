@@ -37,11 +37,11 @@
  * for local use of libagdb
  */
 #else
-#define LIBAGDB_VERSION					20141011
+#define LIBAGDB_VERSION					20141019
 
 /* The version string
  */
-#define LIBAGDB_VERSION_STRING				"20141011"
+#define LIBAGDB_VERSION_STRING				"20141019"
 
 /* The access flags definitions
  * bit 1        set to 1 for read access
