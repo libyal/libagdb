@@ -1,4 +1,4 @@
-Library and tools to access the SuperFetch database format.
+libagdb is a library to access the SuperFetch database format.
 
 Note that this project currently only focuses on the analysis of the format.
 
