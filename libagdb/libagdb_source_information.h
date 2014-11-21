@@ -29,6 +29,7 @@
 #include "libagdb_io_handle.h"
 #include "libagdb_libbfio.h"
 #include "libagdb_libcerror.h"
+#include "libagdb_libfcache.h"
 #include "libagdb_libfdata.h"
 #include "libagdb_types.h"
 

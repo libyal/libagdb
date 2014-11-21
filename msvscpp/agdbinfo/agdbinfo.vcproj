@@ -210,6 +210,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\agdbtools\agdbtools_libbfio.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\agdbtools\agdbtools_libcerror.h"
 				>
 			</File>

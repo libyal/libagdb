@@ -25,13 +25,14 @@ agdbinfo_SOURCES = \
 	agdbinfo.c \
 	agdbinput.c agdbinput.h \
 	agdboutput.c agdboutput.h \
+	agdbtools_libagdb.h \
+	agdbtools_libbfio.h \
 	agdbtools_libcerror.h \
 	agdbtools_libclocale.h \
 	agdbtools_libcnotify.h \
 	agdbtools_libcstring.h \
 	agdbtools_libcsystem.h \
 	agdbtools_libfdatetime.h \
-	agdbtools_libagdb.h \
 	agdbtools_libuna.h
 
 agdbinfo_LDADD = \

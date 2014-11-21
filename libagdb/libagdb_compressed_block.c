@@ -30,6 +30,7 @@
 #include "libagdb_io_handle.h"
 #include "libagdb_libcerror.h"
 #include "libagdb_libcnotify.h"
+#include "libagdb_libfcache.h"
 #include "libagdb_libfdata.h"
 #include "libagdb_libfwnt.h"
 #include "libagdb_unused.h"

@@ -30,6 +30,7 @@
 #include "libagdb_libbfio.h"
 #include "libagdb_libcdata.h"
 #include "libagdb_libcerror.h"
+#include "libagdb_libfcache.h"
 #include "libagdb_libfdata.h"
 #include "libagdb_types.h"
 

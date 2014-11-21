@@ -31,6 +31,7 @@
 #include "libagdb_libbfio.h"
 #include "libagdb_libcerror.h"
 #include "libagdb_libcnotify.h"
+#include "libagdb_libfcache.h"
 #include "libagdb_libfdata.h"
 #include "libagdb_libuna.h"
 
@@ -571,7 +572,7 @@ ssize_t libagdb_file_information_read(
 		libcnotify_printf(
 		 "%s: path number of characters\t\t: 0x%08" PRIx32 " (number of characters: %" PRIu32 ", lower bits: 0x%02" PRIx32 ")\n",
 		 function,
-		 path_size, 
+		 path_size,
 		 path_size >> 2,
 		 path_size & 0x00000001UL );
 

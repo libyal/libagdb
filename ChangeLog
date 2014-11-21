@@ -1,4 +1,5 @@
 TODO:
+* fix "EXE file (check for the EXE file signature)"
 * Add MAM file support
 * change structures to a common 32-bit and 64-bit structure?
 * API / info handle add
@@ -7,6 +8,9 @@ TODO:
 * agdbinfo
 * add python bindings
 * update manuals
+
+20141121
+* code clean up
 
 20141019
 * changes for deployment
