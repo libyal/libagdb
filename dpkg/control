@@ -11,8 +11,8 @@ Section: libs
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Suggests: libagdb-dbg
-Description: Library to access the Windows SuperFetch database file format
- libagdb is a library to access the Windows SuperFetch database file format.
+Description: Library to access the Windows SuperFetch database (AGDB) file format
+ libagdb is a library to access the Windows SuperFetch database (AGDB) file format.
 
 Package: libagdb-dbg
 Architecture: any
@@ -32,6 +32,6 @@ Package: libagdb-tools
 Section: utils
 Architecture: any
 Depends: libagdb (= ${Source-Version}), ${shlibs:Depends}
-Description: Several tools for reading Windows SuperFetch database files
- Several tools for reading Windows SuperFetch database files.
+Description: Several tools for reading Windows SuperFetch database (AGDB) files
+ Several tools for reading Windows SuperFetch database (AGDB) files.
 

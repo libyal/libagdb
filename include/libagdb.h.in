@@ -1,5 +1,5 @@
 /*
- * Library to access the Windows SuperFetch database file format
+ * Library to access the Windows SuperFetch database (AGDB) file format
  *
  * Copyright (C) 2014, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -73,7 +73,7 @@ int libagdb_set_codepage(
      int codepage,
      libagdb_error_t **error );
 
-/* Determines if a file is a Windows SuperFetch database file (check for the AGDB file signature)
+/* Determines if a file contains an AGDB file signature
  * Returns 1 if true, 0 if not or -1 on error
  */
 LIBAGDB_EXTERN \
@@ -83,7 +83,7 @@ int libagdb_check_file_signature(
 
 #if defined( LIBAGDB_HAVE_WIDE_CHARACTER_TYPE )
 
-/* Determines if a file is a Windows SuperFetch database file (check for the AGDB file signature)
+/* Determines if a file contains an AGDB file signature
  * Returns 1 if true, 0 if not or -1 on error
  */
 LIBAGDB_EXTERN \
@@ -95,7 +95,7 @@ int libagdb_check_file_signature_wide(
 
 #if defined( LIBAGDB_HAVE_BFIO )
 
-/* Determines if a file is a Windows SuperFetch database file (check for the AGDB file signature) using a Basic File IO (bfio) handle
+/* Determines if a file contains an AGDB file signature using a Basic File IO (bfio) handle
  * Returns 1 if true, 0 if not or -1 on error
  */
 LIBAGDB_EXTERN \
