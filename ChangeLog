@@ -6,7 +6,10 @@ TODO:
   - volume creation time
 * agdbinfo
 * add python bindings
-* update manuals
+* update manuals: agdbinfo.1
+
+20150105
+* 2015 update
 
 20141129
 * code clean up

@@ -1,9 +1,9 @@
-.Dd June 28, 2014
+.Dd January  5, 2015
 .Dt libagdb 3
 .Os libagdb
 .Sh NAME
 .Nm libagdb.h
-.Nd Library to access the Windows SuperFetch database file format
+.Nd Library to access the Windows SuperFetch database (AGDB) file format
 .Sh LIBRARY
 .Lb libagdb
 .Sh SYNOPSIS
@@ -13,7 +13,7 @@ Support functions
 .Ft const char *
 .Fn libagdb_get_version "void"
 .Ft int
-.Fn libagdb_get_access_flags_read
+.Fn libagdb_get_access_flags_read "void"
 .Ft int
 .Fn libagdb_get_codepage "int *codepage, libagdb_error_t **error"
 .Ft int
@@ -40,13 +40,13 @@ Notify functions
 .Fn libagdb_notify_stream_close "libagdb_error_t **error"
 .Pp
 Error functions
-.Ft void 
+.Ft void
 .Fn libagdb_error_free "libagdb_error_t **error"
 .Ft int
 .Fn libagdb_error_fprint "libagdb_error_t *error, FILE *stream"
 .Ft int
 .Fn libagdb_error_sprint "libagdb_error_t *error, char *string, size_t size"
-.Ft int 
+.Ft int
 .Fn libagdb_error_backtrace_fprint "libagdb_error_t *error, FILE *stream"
 .Ft int
 .Fn libagdb_error_backtrace_sprint "libagdb_error_t *error, char *string, size_t size"
@@ -56,6 +56,8 @@ File functions
 .Fn libagdb_file_initialize "libagdb_file_t **file, libagdb_error_t **error"
 .Ft int
 .Fn libagdb_file_free "libagdb_file_t **file, libagdb_error_t **error"
+.Ft int
+.Fn libagdb_file_signal_abort "libagdb_file_t *file, libagdb_error_t **error"
 .Ft int
 .Fn libagdb_file_open "libagdb_file_t *file, const char *filename, int access_flags, libagdb_error_t **error"
 .Ft int
@@ -125,40 +127,32 @@ The
 .Fn libagdb_get_version
 function is used to retrieve the library version.
 .Sh RETURN VALUES
-Most of the functions return NULL or \-1 on error, dependent on the return type. For the actual return values refer to libagdb.h
+Most of the functions return NULL or \-1 on error, dependent on the return type.
+For the actual return values see "libagdb.h".
 .Sh ENVIRONMENT
 None
 .Sh FILES
 None
-.Sh NOTES
-Libagdb uses either the system specific narrow or wide character strings for filenames.
-To compile libagdb with wide character support use
+libagdb allows to be compiled with wide character support (wchar_t).
+
+To compile libagdb with wide character support use:
 .Ar ./configure --enable-wide-character-type=yes
- or on Windows define
-.Ar WINAPI
- and either
+ or define:
 .Ar _UNICODE
  or
 .Ar UNICODE
+ during compilation.
 
-To have other code to determine if libagdb was compiled with wide character support it defines
-.Ar LIBAGDB_HAVE_WIDE_CHARACTER_TYPE
- in libagdb/features.h.
-
-libagdb allows to be compiled with chained IO support using libbfio.
-The libagdb configure script will automatically detect if a compatible version of libbfio is available.
-
-To have other code to determine if libagdb was compiled with libbfio support it defines
-.Ar LIBAGDB_HAVE_BFIO
- in libagdb/features.h.
-
+.Ar LIBAGDB_WIDE_CHARACTER_TYPE
+ in libagdb/features.h can be used to determine if libagdb was compiled with wide character support.
 .Sh BUGS
-Please report bugs of any kind to <joachim.metz@gmail.com> or on the project website:
-https://github.com/libyal/libagdb/
+Please report bugs of any kind on the project issue tracker: https://github.com/libyal/libagdb/issues
 .Sh AUTHOR
-These man pages were written by Joachim Metz.
+These man pages are generated from "libagdb.h".
 .Sh COPYRIGHT
-Copyright 2014, Joachim Metz <joachim.metz@gmail.com>.
-This is free software; see the source for copying conditions. There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+Copyright (C) 2014-2015, Joachim Metz <joachim.metz@gmail.com>.
+
+This is free software; see the source for copying conditions.
+There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 .Sh SEE ALSO
 the libagdb.h include file
