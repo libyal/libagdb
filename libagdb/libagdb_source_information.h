@@ -73,26 +73,26 @@ ssize_t libagdb_source_information_read(
          libcerror_error_t **error );
 
 LIBAGDB_EXTERN \
-int libagdb_source_information_get_utf8_filename_size(
+int libagdb_source_information_get_utf8_executable_filename_size(
      libagdb_source_information_t *source_information,
      size_t *utf8_string_size,
      libcerror_error_t **error );
 
 LIBAGDB_EXTERN \
-int libagdb_source_information_get_utf8_filename(
+int libagdb_source_information_get_utf8_executable_filename(
      libagdb_source_information_t *source_information,
      uint8_t *utf8_string,
      size_t utf8_string_size,
      libcerror_error_t **error );
 
 LIBAGDB_EXTERN \
-int libagdb_source_information_get_utf16_filename_size(
+int libagdb_source_information_get_utf16_executable_filename_size(
      libagdb_source_information_t *source_information,
      size_t *utf16_string_size,
      libcerror_error_t **error );
 
 LIBAGDB_EXTERN \
-int libagdb_source_information_get_utf16_filename(
+int libagdb_source_information_get_utf16_executable_filename(
      libagdb_source_information_t *source_information,
      uint16_t *utf16_string,
      size_t utf16_string_size,
