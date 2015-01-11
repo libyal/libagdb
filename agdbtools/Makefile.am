@@ -37,6 +37,7 @@ agdbinfo_SOURCES = \
 
 agdbinfo_LDADD = \
 	@LIBCSYSTEM_LIBADD@ \
+	@LIBFDATETIME_LIBADD@ \
 	../libagdb/libagdb.la \
 	@LIBCNOTIFY_LIBADD@ \
 	@LIBCLOCALE_LIBADD@ \
