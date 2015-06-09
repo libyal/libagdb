@@ -154,7 +154,7 @@ These database files can be stored in multiple formats:
 | Characteristics | Description
 | Compressed SuperFetch database - MAM file format | Used in Windows 8
 | Compressed SuperFetch database - MEMO file format | Used in Windows Vista
-| Compressed SuperFetch database – MEM0 file format | Used in Windows 7
+| Compressed SuperFetch database - MEM0 file format | Used in Windows 7
 | Uncompressed SuperFetch database file format | Used in Windows Vista, 7 and 8
 |===
 
@@ -304,7 +304,7 @@ The compressed block is variable of size and consists of:
 [cols="1,1,1,5",options="header"]
 |===
 | Offset | Size | Value | Description
-| 0 | 4 | | Compressed data
+| 0 | ... | | Compressed data
 |===
 
 The uncompressed block size is 65536 (0x10000) or the remaining uncompressed 
@@ -1307,7 +1307,7 @@ the lower 32-bit of the name hash seems to be the same as in 32-bit databases.*
 | 14 | 2 | | [yellow-background]*Unknown*
 |===
 
-===== Sub entry type 1 – 24 (64-bit)
+===== Sub entry type 1 - 24 (64-bit)
 
 [cols="1,1,1,5",options="header"]
 |===
@@ -1319,13 +1319,13 @@ the lower 32-bit of the name hash seems to be the same as in 32-bit databases.*
 |===
 
 ==== Sub entry type 2
-===== Sub entry type 2 – 16
+===== Sub entry type 2 - 16
 [yellow-background]*TODO*
 
-===== Sub entry type 2 – 20
+===== Sub entry type 2 - 20
 [yellow-background]*TODO*
 
-===== Sub entry type 2 – 24 (64-bit)
+===== Sub entry type 2 - 24 (64-bit)
 [yellow-background]*TODO*
 
 ===== Sub entry type 2 - 32
@@ -1504,7 +1504,7 @@ Uncertain which of the sub entry values is this.
 
 Are these the traces?
 
-===== Sub entry type X – 16 (32-bit)
+===== Sub entry type X - 16 (32-bit)
 
 [cols="1,1,1,5",options="header"]
 |===
@@ -1514,7 +1514,7 @@ Are these the traces?
 |===
 | Offset | Size | Value | Description
 
-===== Sub entry type X – 24 (64-bit)
+===== Sub entry type X - 24 (64-bit)
 
 [cols="1,1,1,5",options="header"]
 |===
@@ -1737,7 +1737,7 @@ sub entry type selection?
 
 [cols="1,5",options="header"]
 |===
-| Title: | Windows SuperFetch file format – partial specification
+| Title: | Windows SuperFetch file format - partial specification
 | URL: | http://blog.rewolf.pl/blog/?p=214#.U0waAnWSwyO
 |===
 
