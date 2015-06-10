@@ -24,8 +24,8 @@
 #include <memory.h>
 #include <types.h>
 
-#include "libagdb_definitions.h"
 #include "libagdb_compressed_block.h"
+#include "libagdb_definitions.h"
 #include "libagdb_file.h"
 #include "libagdb_io_handle.h"
 #include "libagdb_libcerror.h"

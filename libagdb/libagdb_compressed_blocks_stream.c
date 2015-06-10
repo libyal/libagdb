@@ -1,5 +1,5 @@
 /*
- * The compressed block stream functions
+ * The compressed blocks stream functions
  *
  * Copyright (C) 2014-2015, Joachim Metz <joachim.metz@gmail.com>
  *
