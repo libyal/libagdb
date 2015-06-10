@@ -109,7 +109,7 @@ stamp-h[1-9]
 /include/libagdb/features.h
 /include/libagdb/types.h
 /libagdb/libagdb.rc
-/libagdb/libagdb_definition.h
+/libagdb/libagdb_definitions.h
 /pyagdb/setup.py
 /tests/agdb_test_open_close
 /tests/input

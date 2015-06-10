@@ -997,7 +997,7 @@ int libagdb_file_open_read(
 
 		goto on_error;
 	}
-	if( internal_file->io_handle->file_type != LIBFWNT_FILE_TYPE_UNCOMPRESSED )
+	if( internal_file->io_handle->file_type != LIBAGDB_FILE_TYPE_UNCOMPRESSED )
 	{
 		if( libfdata_list_initialize(
 		     &( internal_file->compressed_blocks_list ),

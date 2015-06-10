@@ -210,9 +210,9 @@ int libagdb_compressed_block_read_element_data(
 
 		return( -1 );
 	}
-	if( ( io_handle->file_type != LIBFWNT_FILE_TYPE_COMPRESSED_VISTA )
-	 && ( io_handle->file_type != LIBFWNT_FILE_TYPE_COMPRESSED_WINDOWS7 )
-	 && ( io_handle->file_type != LIBFWNT_FILE_TYPE_COMPRESSED_WINDOWS8 ) )
+	if( ( io_handle->file_type != LIBAGDB_FILE_TYPE_COMPRESSED_VISTA )
+	 && ( io_handle->file_type != LIBAGDB_FILE_TYPE_COMPRESSED_WINDOWS7 )
+	 && ( io_handle->file_type != LIBAGDB_FILE_TYPE_COMPRESSED_WINDOWS8 ) )
 	{
 		libcerror_error_set(
 		 error,
@@ -346,7 +346,7 @@ int libagdb_compressed_block_read_element_data(
 	}
 	compressed_block->data_size = (size_t) uncompressed_size;
 
-	if( io_handle->file_type == LIBFWNT_FILE_TYPE_COMPRESSED_VISTA )
+	if( io_handle->file_type == LIBAGDB_FILE_TYPE_COMPRESSED_VISTA )
 	{
 		result = libfwnt_lznt1_decompress(
 		          compressed_data,
@@ -355,7 +355,7 @@ int libagdb_compressed_block_read_element_data(
 		          &( compressed_block->data_size ),
 		          error );
 	}
-	else if( io_handle->file_type == LIBFWNT_FILE_TYPE_COMPRESSED_WINDOWS7 )
+	else if( io_handle->file_type == LIBAGDB_FILE_TYPE_COMPRESSED_WINDOWS7 )
 	{
 		result = libfwnt_lzxpress_huffman_decompress(
 		          compressed_data,
@@ -364,7 +364,7 @@ int libagdb_compressed_block_read_element_data(
 		          &( compressed_block->data_size ),
 		          error );
 	}
-	else if( io_handle->file_type == LIBFWNT_FILE_TYPE_COMPRESSED_WINDOWS8 )
+	else if( io_handle->file_type == LIBAGDB_FILE_TYPE_COMPRESSED_WINDOWS8 )
 	{
 /* TODO implement */
 	}

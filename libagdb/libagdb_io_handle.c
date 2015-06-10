@@ -223,7 +223,7 @@ int libagdb_io_handle_read_compressed_file_header(
 	if( libcnotify_verbose != 0 )
 	{
 		libcnotify_printf(
-		 "%s: reading file header at offset: 0 (0x00000000)\n",
+		 "%s: reading compressed file header at offset: 0 (0x00000000)\n",
 		 function );
 	}
 #endif
@@ -276,7 +276,7 @@ int libagdb_io_handle_read_compressed_file_header(
 	     agdb_mem_file_signature_vista,
 	     4 ) == 0 )
 	{
-		io_handle->file_type               = LIBFWNT_FILE_TYPE_COMPRESSED_VISTA;
+		io_handle->file_type               = LIBAGDB_FILE_TYPE_COMPRESSED_VISTA;
 		io_handle->uncompressed_block_size = 4096;
 	}
 	else if( memory_compare(
@@ -284,7 +284,7 @@ int libagdb_io_handle_read_compressed_file_header(
 	          agdb_mem_file_signature_win7,
 	          4 ) == 0 )
 	{
-		io_handle->file_type               = LIBFWNT_FILE_TYPE_COMPRESSED_WINDOWS7;
+		io_handle->file_type               = LIBAGDB_FILE_TYPE_COMPRESSED_WINDOWS7;
 		io_handle->uncompressed_block_size = 65536;
 	}
 	else if( memory_compare(
@@ -292,19 +292,19 @@ int libagdb_io_handle_read_compressed_file_header(
 	          agdb_mam_file_signature_win8,
 	          4 ) == 0 )
 	{
-		io_handle->file_type               = LIBFWNT_FILE_TYPE_COMPRESSED_WINDOWS8;
+		io_handle->file_type               = LIBAGDB_FILE_TYPE_COMPRESSED_WINDOWS8;
 /* TODO implement */
 		io_handle->uncompressed_block_size = 0;
 	}
 	else
 	{
-		io_handle->file_type = LIBFWNT_FILE_TYPE_UNCOMPRESSED;
+		io_handle->file_type = LIBAGDB_FILE_TYPE_UNCOMPRESSED;
 	}
 #if defined( HAVE_DEBUG_OUTPUT )
 	if( libcnotify_verbose != 0 )
 	{
-		if( ( io_handle->file_type == LIBFWNT_FILE_TYPE_COMPRESSED_VISTA )
-		 || ( io_handle->file_type == LIBFWNT_FILE_TYPE_COMPRESSED_WINDOWS7 ) )
+		if( ( io_handle->file_type == LIBAGDB_FILE_TYPE_COMPRESSED_VISTA )
+		 || ( io_handle->file_type == LIBAGDB_FILE_TYPE_COMPRESSED_WINDOWS7 ) )
 		{
 			libcnotify_printf(
 			 "%s: signature\t\t: %c%c%c%c\n",
@@ -314,7 +314,7 @@ int libagdb_io_handle_read_compressed_file_header(
 			 file_header_data[ 2 ],
 			 file_header_data[ 3 ] );
 		}
-		else if( io_handle->file_type == LIBFWNT_FILE_TYPE_COMPRESSED_WINDOWS8 )
+		else if( io_handle->file_type == LIBAGDB_FILE_TYPE_COMPRESSED_WINDOWS8 )
 		{
 			libcnotify_printf(
 			 "%s: signature\t\t: %c%c%c\\x%02x\n",
@@ -326,9 +326,9 @@ int libagdb_io_handle_read_compressed_file_header(
 		}
 	}
 #endif
-	if( ( io_handle->file_type == LIBFWNT_FILE_TYPE_UNCOMPRESSED )
-	 || ( io_handle->file_type == LIBFWNT_FILE_TYPE_COMPRESSED_VISTA )
-	 || ( io_handle->file_type == LIBFWNT_FILE_TYPE_COMPRESSED_WINDOWS7 ) )
+	if( ( io_handle->file_type == LIBAGDB_FILE_TYPE_UNCOMPRESSED )
+	 || ( io_handle->file_type == LIBAGDB_FILE_TYPE_COMPRESSED_VISTA )
+	 || ( io_handle->file_type == LIBAGDB_FILE_TYPE_COMPRESSED_WINDOWS7 ) )
 	{
 		byte_stream_copy_to_uint32_little_endian(
 		 &( file_header_data[ 0 ] ),
@@ -338,7 +338,7 @@ int libagdb_io_handle_read_compressed_file_header(
 		 &( file_header_data[ 4 ] ),
 		 io_handle->uncompressed_data_size );
 
-		if( io_handle->file_type == LIBFWNT_FILE_TYPE_UNCOMPRESSED )
+		if( io_handle->file_type == LIBAGDB_FILE_TYPE_UNCOMPRESSED )
 		{
 /* TODO improve detection */
 			if( ( value_32bit != 0x0000000eUL )
@@ -406,9 +406,9 @@ int libagdb_io_handle_read_compressed_blocks(
 
 		return( -1 );
 	}
-	if( ( io_handle->file_type != LIBFWNT_FILE_TYPE_COMPRESSED_VISTA )
-	 && ( io_handle->file_type != LIBFWNT_FILE_TYPE_COMPRESSED_WINDOWS7 )
-	 && ( io_handle->file_type != LIBFWNT_FILE_TYPE_COMPRESSED_WINDOWS8 ) )
+	if( ( io_handle->file_type != LIBAGDB_FILE_TYPE_COMPRESSED_VISTA )
+	 && ( io_handle->file_type != LIBAGDB_FILE_TYPE_COMPRESSED_WINDOWS7 )
+	 && ( io_handle->file_type != LIBAGDB_FILE_TYPE_COMPRESSED_WINDOWS8 ) )
 	{
 		libcerror_error_set(
 		 error,
@@ -419,17 +419,17 @@ int libagdb_io_handle_read_compressed_blocks(
 
 		return( -1 );
 	}
-	if( io_handle->file_type == LIBFWNT_FILE_TYPE_COMPRESSED_VISTA )
+	if( io_handle->file_type == LIBAGDB_FILE_TYPE_COMPRESSED_VISTA )
 	{
 		file_offset = 8;
 		read_size   = 2;
 	}
-	else if( io_handle->file_type == LIBFWNT_FILE_TYPE_COMPRESSED_WINDOWS7 )
+	else if( io_handle->file_type == LIBAGDB_FILE_TYPE_COMPRESSED_WINDOWS7 )
 	{
 		file_offset = 8;
 		read_size   = 4;
 	}
-	else if( io_handle->file_type == LIBFWNT_FILE_TYPE_COMPRESSED_WINDOWS8 )
+	else if( io_handle->file_type == LIBAGDB_FILE_TYPE_COMPRESSED_WINDOWS8 )
 	{
 /* TODO implement */
 		file_offset = 4;
@@ -482,7 +482,7 @@ int libagdb_io_handle_read_compressed_blocks(
 
 			return( -1 );
 		}
-		if( io_handle->file_type == LIBFWNT_FILE_TYPE_COMPRESSED_VISTA )
+		if( io_handle->file_type == LIBAGDB_FILE_TYPE_COMPRESSED_VISTA )
 		{
 			byte_stream_copy_to_uint16_little_endian(
 			 compressed_block_data,
@@ -491,7 +491,7 @@ int libagdb_io_handle_read_compressed_blocks(
 			compressed_block_size &= 0x0fff;
 			compressed_block_size += 3;
 		}
-		else if( io_handle->file_type == LIBFWNT_FILE_TYPE_COMPRESSED_WINDOWS7 )
+		else if( io_handle->file_type == LIBAGDB_FILE_TYPE_COMPRESSED_WINDOWS7 )
 		{
 			byte_stream_copy_to_uint32_little_endian(
 			 compressed_block_data,
@@ -499,7 +499,7 @@ int libagdb_io_handle_read_compressed_blocks(
 
 			file_offset += 4;
 		}
-		else if( io_handle->file_type == LIBFWNT_FILE_TYPE_COMPRESSED_WINDOWS8 )
+		else if( io_handle->file_type == LIBAGDB_FILE_TYPE_COMPRESSED_WINDOWS8 )
 		{
 /* TODO implement */
 		}
@@ -649,7 +649,7 @@ int libagdb_io_handle_read_uncompressed_file_header(
 	if( libcnotify_verbose != 0 )
 	{
 		libcnotify_printf(
-		 "%s: reading file header at offset: 0 (0x00000000)\n",
+		 "%s: reading uncompressed file header at offset: 0 (0x00000000)\n",
 		 function );
 	}
 #endif
