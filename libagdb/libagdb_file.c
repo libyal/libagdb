@@ -215,54 +215,6 @@ int libagdb_file_free(
 		}
 		*file = NULL;
 
-		if( internal_file->compressed_blocks_cache != NULL )
-		{
-			if( libfcache_cache_free(
-			     &( internal_file->compressed_blocks_cache ),
-			     error ) != 1 )
-			{
-				libcerror_error_set(
-				 error,
-				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
-				 "%s: unable to free compressed blocks cache.",
-				 function );
-
-				result = -1;
-			}
-		}
-		if( internal_file->compressed_blocks_list != NULL )
-		{
-			if( libfdata_list_free(
-			     &( internal_file->compressed_blocks_list ),
-			     error ) != 1 )
-			{
-				libcerror_error_set(
-				 error,
-				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
-				 "%s: unable to free compressed blocks list.",
-				 function );
-
-				result = -1;
-			}
-		}
-		if( internal_file->uncompressed_data_stream != NULL )
-		{
-			if( libfdata_stream_free(
-			     &( internal_file->uncompressed_data_stream ),
-			     error ) != 1 )
-			{
-				libcerror_error_set(
-				 error,
-				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
-				 "%s: unable to free uncompressed data strea,.",
-				 function );
-
-				result = -1;
-			}
-		}
 		if( libcdata_array_free(
 		     &( internal_file->volumes_array ),
 		     (int (*)(intptr_t **, libcerror_error_t **)) &libagdb_internal_volume_information_free,
@@ -872,6 +824,54 @@ int libagdb_file_close(
 
 		result = -1;
 	}
+	if( internal_file->compressed_blocks_list != NULL )
+	{
+		if( libfdata_list_free(
+		     &( internal_file->compressed_blocks_list ),
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+			 "%s: unable to free compressed blocks list.",
+			 function );
+
+			result = -1;
+		}
+	}
+	if( internal_file->compressed_blocks_cache != NULL )
+	{
+		if( libfcache_cache_free(
+		     &( internal_file->compressed_blocks_cache ),
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+			 "%s: unable to free compressed blocks cache.",
+			 function );
+
+			result = -1;
+		}
+	}
+	if( internal_file->uncompressed_data_stream != NULL )
+	{
+		if( libfdata_stream_free(
+		     &( internal_file->uncompressed_data_stream ),
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+			 "%s: unable to free uncompressed data strea,.",
+			 function );
+
+			result = -1;
+		}
+	}
 	if( libcdata_array_resize(
 	     internal_file->volumes_array,
 	     0,
@@ -1035,7 +1035,7 @@ int libagdb_file_open_read(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_IO,
 			 LIBCERROR_IO_ERROR_READ_FAILED,
-			 "%s: unable to read file header.",
+			 "%s: unable to read compressed blocks.",
 			 function );
 
 			goto on_error;

@@ -273,7 +273,7 @@ The compressed block is variable of size and consists of:
 The uncompressed block size is 65536 (0x10000) or the remaining uncompressed 
 data size for the last block.
 
-=== LZExpress Huffman
+=== LZXPRESS Huffman
 [yellow-background]*TODO*
 
 == Compressed SuperFetch database - MAM file format
@@ -310,8 +310,8 @@ The compressed block is variable of size and consists of:
 The uncompressed block size is 65536 (0x10000) or the remaining uncompressed 
 data size for the last block.
 
-=== LZExpress Huffman stream variant
-The LZExpress Huffman stream variant differs from the LZExpress Huffman, as 
+=== LZXPRESS Huffman stream variant
+The LZXPRESS Huffman stream variant differs from the LZXPRESS Huffman, as 
 used in the MEM0 format. The stream variant can refer to uncompressed data 
 stored in the previous compressed block. The compressed blocks are essentially 
 a single compressed stream.

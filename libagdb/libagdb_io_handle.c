@@ -293,8 +293,7 @@ int libagdb_io_handle_read_compressed_file_header(
 	          4 ) == 0 )
 	{
 		io_handle->file_type               = LIBAGDB_FILE_TYPE_COMPRESSED_WINDOWS8;
-/* TODO implement */
-		io_handle->uncompressed_block_size = 0;
+		io_handle->uncompressed_block_size = 65536;
 	}
 	else
 	{
@@ -459,7 +458,7 @@ int libagdb_io_handle_read_compressed_blocks(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_IO,
 			 LIBCERROR_IO_ERROR_SEEK_FAILED,
-			 "%s: unable to seek file header offset: %" PRIi64 ".",
+			 "%s: unable to seek compressed data block offset: %" PRIi64 ".",
 			 function,
 			 file_offset );
 
@@ -501,7 +500,7 @@ int libagdb_io_handle_read_compressed_blocks(
 		}
 		else if( io_handle->file_type == LIBAGDB_FILE_TYPE_COMPRESSED_WINDOWS8 )
 		{
-/* TODO implement */
+/* TODO implement read the block and determine the range */
 		}
 		if( uncompressed_data_size < io_handle->uncompressed_block_size )
 		{

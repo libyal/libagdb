@@ -56,6 +56,13 @@ int libagdb_compressed_block_free(
      libagdb_compressed_block_t **compressed_block,
      libcerror_error_t **error );
 
+ssize_t libagdb_compressed_block_read(
+         libagdb_compressed_block_t *compressed_block,
+         libbfio_handle_t *file_io_handle,
+         off64_t compressed_block_offset,
+         size_t compressed_block_size,
+         libcerror_error_t **error );
+
 int libagdb_compressed_block_read_element_data(
      libagdb_io_handle_t *io_handle,
      libbfio_handle_t *file_io_handle,
