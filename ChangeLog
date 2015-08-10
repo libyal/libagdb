@@ -1,4 +1,5 @@
 TODO:
+* Fix compression support
 * Add MAM file support
 * change structures to a common 32-bit and 64-bit structure?
 * API / info handle add

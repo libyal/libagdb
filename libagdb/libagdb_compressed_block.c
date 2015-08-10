@@ -177,6 +177,7 @@ int libagdb_compressed_block_free(
  */
 ssize_t libagdb_compressed_block_read(
          libagdb_compressed_block_t *compressed_block,
+         libagdb_io_handle_t *io_handle,
          libbfio_handle_t *file_io_handle,
          off64_t compressed_block_offset,
          size_t compressed_block_size,
@@ -185,6 +186,7 @@ ssize_t libagdb_compressed_block_read(
 	uint8_t *compressed_data = NULL;
         static char *function    = "libagdb_compressed_block_read";
 	ssize_t read_count       = 0;
+	int result               = 0;
 
 	if( compressed_block == NULL )
 	{
@@ -327,11 +329,9 @@ int libagdb_compressed_block_read_element_data(
      libcerror_error_t **error )
 {
 	libagdb_compressed_block_t *compressed_block = NULL;
-	uint8_t *compressed_data                     = NULL;
 	static char *function                        = "libagdb_compressed_block_read_element_data";
 	size64_t uncompressed_size                   = 0;
 	ssize_t read_count                           = 0;
-	int result                                   = 0;
 
 	LIBAGDB_UNREFERENCED_PARAMETER( element_file_index )
 	LIBAGDB_UNREFERENCED_PARAMETER( read_flags )
@@ -423,6 +423,8 @@ int libagdb_compressed_block_read_element_data(
 	}
 	read_count = libagdb_compressed_block_read(
 	              compressed_block,
+	              io_handle,
+	              file_io_handle,
 	              compressed_block_offset,
 	              (size_t) compressed_block_size,
 	              error );
