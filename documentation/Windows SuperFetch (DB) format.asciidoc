@@ -1,6 +1,9 @@
 = Windows SuperFetch database format
 Analysis of AGDB
 
+:toc:
+:toclevels: 4
+
 :numbered!:
 [abstract]
 == Summary
