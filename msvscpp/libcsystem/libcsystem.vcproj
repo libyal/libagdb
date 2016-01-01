@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="9,00"
 	Name="libcsystem"
-	ProjectGUID="{0678C2E8-8318-4BE2-BA11-D0BCF8A77B52}"
+	ProjectGUID="{3B991223-F007-468C-AED9-13C773E414B4}"
 	RootNamespace="libcsystem"
 	TargetFrameworkVersion="131072"
 	>
