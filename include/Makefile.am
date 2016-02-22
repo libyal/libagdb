@@ -1,13 +1,13 @@
 include_HEADERS = \
-        libagdb.h
+	libagdb.h
 
 pkginclude_HEADERS = \
-        libagdb/codepage.h \
-        libagdb/definitions.h \
-        libagdb/error.h \
-        libagdb/extern.h \
-        libagdb/features.h \
-        libagdb/types.h
+	libagdb/codepage.h \
+	libagdb/definitions.h \
+	libagdb/error.h \
+	libagdb/extern.h \
+	libagdb/features.h \
+	libagdb/types.h
 
 EXTRA_DIST = \
 	libagdb.h.in \
