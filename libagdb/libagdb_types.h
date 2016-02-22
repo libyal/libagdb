@@ -45,9 +45,9 @@ typedef intptr_t libagdb_file_information_t;
 typedef intptr_t libagdb_source_information_t;
 typedef intptr_t libagdb_volume_information_t;
 
-#endif
+#endif /* defined( HAVE_DEBUG_OUTPUT ) && !defined( WINAPI ) */
 
-#endif
+#endif /* defined( HAVE_LOCAL_LIBAGDB ) */
 
-#endif
+#endif /* !defined( _LIBAGDB_INTERNAL_TYPES_H ) */
 

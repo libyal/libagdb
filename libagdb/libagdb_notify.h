@@ -53,11 +53,11 @@ LIBAGDB_EXTERN \
 int libagdb_notify_stream_close(
      libcerror_error_t **error );
 
-#endif
+#endif /* !defined( HAVE_LOCAL_LIBAGDB ) */
 
 #if defined( __cplusplus )
 }
 #endif
 
-#endif
+#endif /* !defined( _LIBAGDB_NOTIFY_H ) */
 

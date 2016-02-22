@@ -1,4 +1,5 @@
 MSVSCPP_FILES = \
+	agdb_test_open_close/agdb_test_open_close.vcproj \
 	agdbinfo/agdbinfo.vcproj \
 	libagdb/libagdb.vcproj \
 	libbfio/libbfio.vcproj \
