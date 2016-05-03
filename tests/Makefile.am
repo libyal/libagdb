@@ -11,39 +11,49 @@ AM_CPPFLAGS = \
 	@LIBCFILE_CPPFLAGS@ \
 	@LIBCPATH_CPPFLAGS@ \
 	@LIBBFIO_CPPFLAGS@ \
+	@LIBCSYSTEM_CPPFLAGS@ \
 	@LIBAGDB_DLL_IMPORT@
 
 TESTS = \
-	test_open_close.sh \
+	test_api_functions.sh \
 	test_agdbinfo.sh
 
 check_SCRIPTS = \
-	test_open_close.sh \
 	test_agdbinfo.sh \
+	test_api_functions.sh \
 	test_runner.sh
 
 EXTRA_DIST = \
 	$(check_SCRIPTS)
 
 check_PROGRAMS = \
+	agdb_test_get_version \
 	agdb_test_open_close
+
+agdb_test_get_version_SOURCES = \
+	agdb_test_get_version.c \
+	agdb_test_libagdb.h \
+	agdb_test_libcstring.h \
+	agdb_test_unused.h
+
+agdb_test_get_version_LDADD = \
+	../libagdb/libagdb.la \
+	@LIBCSTRING_LIBADD@
 
 agdb_test_open_close_SOURCES = \
 	agdb_test_libcerror.h \
 	agdb_test_libagdb.h \
 	agdb_test_libcstring.h \
+	agdb_test_libcsystem.h \
 	agdb_test_open_close.c
 
 agdb_test_open_close_LDADD = \
-	../libagdb/libagdb.la \
-	@LIBBFIO_LIBADD@ \
-	@LIBCPATH_LIBADD@ \
-	@LIBCFILE_LIBADD@ \
+	@LIBCSYSTEM_LIBADD@ \
 	@LIBUNA_LIBADD@ \
-	@LIBCSPLIT_LIBADD@ \
 	@LIBCNOTIFY_LIBADD@ \
 	@LIBCLOCALE_LIBADD@ \
 	@LIBCDATA_LIBADD@ \
+	../libagdb/libagdb.la \
 	@LIBCERROR_LIBADD@ \
 	@LIBCSTRING_LIBADD@
 

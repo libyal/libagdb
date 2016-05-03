@@ -24,14 +24,14 @@
 
 #include <common.h>
 
-/* If Cygwin libtool DLL support is enabled set LIBAGDB_DLL_IMPORT
- * before including libagdb.h
+/* If Cygwin libtool DLL support is enabled and do not want to create static
+ * executables set LIBAGDB_DLL_IMPORT before including libagdb.h
  */
-#if defined( _WIN32 ) && defined( DLL_EXPORT )
+#if defined( _WIN32 ) && defined( DLL_EXPORT ) && !defined( HAVE_STATIC_EXECUTABLES )
 #define LIBAGDB_DLL_IMPORT
 #endif
 
 #include <libagdb.h>
 
-#endif
+#endif /* !defined( _AGDB_TEST_LIBAGDB_H ) */
 

@@ -1,5 +1,6 @@
 /*
- * The libbfio header wrapper
+ * Library for system independent implementation of functionality
+ * for programs
  *
  * Copyright (C) 2014-2016, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -19,40 +20,35 @@
  * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#if !defined( _LIBAGDB_LIBBFIO_H )
-#define _LIBAGDB_LIBBFIO_H
+#if !defined( _AGDB_TEST_LIBCSYSTEM_H )
+#define _AGDB_TEST_LIBCSYSTEM_H
 
-#include <common.h>
-
-/* Define HAVE_LOCAL_LIBBFIO for local use of libbfio
+/* Define HAVE_LOCAL_LIBCSYSTEM for local use of libcsystem
  */
-#if defined( HAVE_LOCAL_LIBBFIO )
+#if defined( HAVE_LOCAL_LIBCSYSTEM )
 
-#include <libbfio_definitions.h>
-#include <libbfio_file.h>
-#include <libbfio_file_pool.h>
-#include <libbfio_file_range.h>
-#include <libbfio_handle.h>
-#include <libbfio_memory_range.h>
-#include <libbfio_pool.h>
-#include <libbfio_types.h>
+#include <libcsystem_definitions.h>
+#include <libcsystem_file_io.h>
+#include <libcsystem_getopt.h>
+#include <libcsystem_glob.h>
+#include <libcsystem_i18n.h>
+#include <libcsystem_signal.h>
+#include <libcsystem_string.h>
+#include <libcsystem_support.h>
+#include <libcsystem_unused.h>
 
 #else
 
-/* If libtool DLL support is enabled set LIBBFIO_DLL_IMPORT
- * before including libbfio.h
+/* If libtool DLL support is enabled set LIBCSYSTEM_DLL_IMPORT
+ * before including libcsystem.h
  */
 #if defined( _WIN32 ) && defined( DLL_IMPORT )
-#define LIBBFIO_DLL_IMPORT
+#define LIBCSYSTEM_DLL_IMPORT
 #endif
 
-#include <libbfio.h>
+#include <libcsystem.h>
 
-#if defined( HAVE_MULTI_THREAD_SUPPORT ) && !defined( LIBBFIO_HAVE_MULTI_THREAD_SUPPORT )
-#error Multi-threading support requires libbfio with multi-threading support
-#endif
+#endif /* defined( HAVE_LOCAL_LIBCSYSTEM ) */
 
-#endif /* defined( HAVE_LOCAL_LIBBFIO ) */
-
-#endif /* !defined( _LIBAGDB_LIBBFIO_H ) */
+#endif /* !defined( _AGDB_TEST_LIBCSYSTEM_H ) */
 

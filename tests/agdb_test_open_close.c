@@ -26,9 +26,10 @@
 #include <stdlib.h>
 #endif
 
-#include "agdb_test_libagdb.h"
 #include "agdb_test_libcerror.h"
 #include "agdb_test_libcstring.h"
+#include "agdb_test_libcsystem.h"
+#include "agdb_test_libagdb.h"
 
 /* Tests single open and close of a file
  * Returns 1 if successful, 0 if not or -1 on error
@@ -38,10 +39,45 @@ int agdb_test_single_open_close_file(
      int access_flags,
      int expected_result )
 {
-	libcerror_error_t *error = NULL;
 	libagdb_file_t *file     = NULL;
+	libcerror_error_t *error = NULL;
 	static char *function    = "agdb_test_single_open_close_file";
+	char *access_string      = NULL;
 	int result               = 0;
+
+	if( access_flags == LIBAGDB_OPEN_READ )
+	{
+		access_string = "read";
+	}
+	else if( access_flags == LIBAGDB_OPEN_WRITE )
+	{
+		access_string = "write";
+	}
+	else
+	{
+		access_string = "UNKNOWN";
+	}
+	fprintf(
+	 stdout,
+	 "Testing single open close of: " );
+
+	if( filename != NULL )
+	{
+		fprintf(
+		 stdout,
+		 "%" PRIs_LIBCSTRING_SYSTEM "",
+		 filename );
+	}
+	else
+	{
+		fprintf(
+		 stdout,
+		 "NULL" );
+	}
+	fprintf(
+	 stdout,
+	 " with access: %s\t",
+	 access_string );
 
 	if( libagdb_file_initialize(
 	     &file,
@@ -54,7 +90,7 @@ int agdb_test_single_open_close_file(
 		 "%s: unable to create file.",
 		 function );
 
-		return( -1 );
+		goto on_error;
 	}
 #if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
 	result = libagdb_file_open_wide(
@@ -82,7 +118,7 @@ int agdb_test_single_open_close_file(
 			 "%s: unable to close file.",
 			 function );
 
-			result = -1;
+			goto on_error;
 		}
 	}
 	if( libagdb_file_free(
@@ -96,7 +132,7 @@ int agdb_test_single_open_close_file(
 		 "%s: unable to free file.",
 		 function );
 
-		result = -1;
+		goto on_error;
 	}
 	result = ( expected_result == result );
 
@@ -118,16 +154,30 @@ int agdb_test_single_open_close_file(
 
 	if( error != NULL )
 	{
-		if( result != 1 )
-		{
-			libcerror_error_backtrace_fprint(
-			 error,
-			 stderr );
-		}
+		libcerror_error_backtrace_fprint(
+		 error,
+		 stderr );
 		libcerror_error_free(
 		 &error );
 	}
 	return( result );
+
+on_error:
+	if( error != NULL )
+	{
+		libcerror_error_backtrace_fprint(
+		 error,
+		 stderr );
+		libcerror_error_free(
+		 &error );
+	}
+	if( file != NULL )
+	{
+		libagdb_file_free(
+		 &file,
+		 NULL);
+	}
+	return( -1 );
 }
 
 /* Tests multiple open and close of a file
@@ -138,10 +188,45 @@ int agdb_test_multi_open_close_file(
      int access_flags,
      int expected_result )
 {
-	libcerror_error_t *error = NULL;
 	libagdb_file_t *file     = NULL;
+	libcerror_error_t *error = NULL;
 	static char *function    = "agdb_test_multi_open_close_file";
+	char *access_string      = NULL;
 	int result               = 0;
+
+	if( access_flags == LIBAGDB_OPEN_READ )
+	{
+		access_string = "read";
+	}
+	else if( access_flags == LIBAGDB_OPEN_WRITE )
+	{
+		access_string = "write";
+	}
+	else
+	{
+		access_string = "UNKNOWN";
+	}
+	fprintf(
+	 stdout,
+	 "Testing multi open close of: " );
+
+	if( filename != NULL )
+	{
+		fprintf(
+		 stdout,
+		 "%" PRIs_LIBCSTRING_SYSTEM "",
+		 filename );
+	}
+	else
+	{
+		fprintf(
+		 stdout,
+		 "NULL" );
+	}
+	fprintf(
+	 stdout,
+	 " with access: %s\t",
+	 access_string );
 
 	if( libagdb_file_initialize(
 	     &file,
@@ -154,7 +239,7 @@ int agdb_test_multi_open_close_file(
 		 "%s: unable to create file.",
 		 function );
 
-		return( -1 );
+		goto on_error;
 	}
 #if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
 	result = libagdb_file_open_wide(
@@ -182,7 +267,7 @@ int agdb_test_multi_open_close_file(
 			 "%s: unable to close file.",
 			 function );
 
-			result = -1;
+			goto on_error;
 		}
 #if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
 		result = libagdb_file_open_wide(
@@ -210,7 +295,7 @@ int agdb_test_multi_open_close_file(
 				 "%s: unable to close file.",
 				 function );
 
-				result = -1;
+				goto on_error;
 			}
 		}
 	}
@@ -225,7 +310,7 @@ int agdb_test_multi_open_close_file(
 		 "%s: unable to free file.",
 		 function );
 
-		result = -1;
+		goto on_error;
 	}
 	result = ( expected_result == result );
 
@@ -247,16 +332,30 @@ int agdb_test_multi_open_close_file(
 
 	if( error != NULL )
 	{
-		if( result != 1 )
-		{
-			libcerror_error_backtrace_fprint(
-			 error,
-			 stderr );
-		}
+		libcerror_error_backtrace_fprint(
+		 error,
+		 stderr );
 		libcerror_error_free(
 		 &error );
 	}
 	return( result );
+
+on_error:
+	if( error != NULL )
+	{
+		libcerror_error_backtrace_fprint(
+		 error,
+		 stderr );
+		libcerror_error_free(
+		 &error );
+	}
+	if( file != NULL )
+	{
+		libagdb_file_free(
+		 &file,
+		 NULL);
+	}
+	return( -1 );
 }
 
 /* The main program
@@ -267,23 +366,48 @@ int wmain( int argc, wchar_t * const argv[] )
 int main( int argc, char * const argv[] )
 #endif
 {
-	if( argc != 2 )
+	libcstring_system_character_t *source = NULL;
+	libcstring_system_integer_t option    = 0;
+
+	while( ( option = libcsystem_getopt(
+	                   argc,
+	                   argv,
+	                   _LIBCSTRING_SYSTEM_STRING( "" ) ) ) != (libcstring_system_integer_t) -1 )
+	{
+		switch( option )
+		{
+			case (libcstring_system_integer_t) '?':
+			default:
+				fprintf(
+				 stderr,
+				 "Invalid argument: %" PRIs_LIBCSTRING_SYSTEM ".\n",
+				 argv[ optind - 1 ] );
+
+				return( EXIT_FAILURE );
+		}
+	}
+	if( optind == argc )
 	{
 		fprintf(
 		 stderr,
-		 "Unsupported number of arguments.\n" );
+		 "Missing source file or device.\n" );
 
 		return( EXIT_FAILURE );
 	}
+	source = argv[ optind ];
+
+#if defined( HAVE_DEBUG_OUTPUT ) && defined( AGDB_TEST_OPEN_CLOSE_VERBOSE )
+	libagdb_notify_set_verbose(
+	 1 );
+	libagdb_notify_set_stream(
+	 stderr,
+	 NULL );
+#endif
+
 	/* Case 0: single open and close of a file using filename
 	 */
-	fprintf(
-	 stdout,
-	 "Testing single open close of: %s with access: read\t",
-	 argv[ 1 ] );
-
 	if( agdb_test_single_open_close_file(
-	     argv[ 1 ],
+	     source,
 	     LIBAGDB_OPEN_READ,
 	     1 ) != 1 )
 	{
@@ -293,10 +417,6 @@ int main( int argc, char * const argv[] )
 
 		return( EXIT_FAILURE );
 	}
-	fprintf(
-	 stdout,
-	 "Testing single open close of: NULL with access: read\t" );
-
 	if( agdb_test_single_open_close_file(
 	     NULL,
 	     LIBAGDB_OPEN_READ,
@@ -308,13 +428,8 @@ int main( int argc, char * const argv[] )
 
 		return( EXIT_FAILURE );
 	}
-	fprintf(
-	 stdout,
-	 "Testing single open close of: %s with access: write\t",
-	 argv[ 1 ] );
-
 	if( agdb_test_single_open_close_file(
-	     argv[ 1 ],
+	     source,
 	     LIBAGDB_OPEN_WRITE,
 	     -1 ) != 1 )
 	{
@@ -326,13 +441,8 @@ int main( int argc, char * const argv[] )
 	}
 	/* Case 1: multiple open and close of a file using filename
 	 */
-	fprintf(
-	 stdout,
-	 "Testing multi open close of: %s with access: read\t",
-	 argv[ 1 ] );
-
 	if( agdb_test_multi_open_close_file(
-	     argv[ 1 ],
+	     source,
 	     LIBAGDB_OPEN_READ,
 	     1 ) != 1 )
 	{

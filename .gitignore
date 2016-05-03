@@ -117,7 +117,7 @@ stamp-h[1-9]
 /libagdb/libagdb.rc
 /libagdb/libagdb_definitions.h
 /agdbtools/agdbinfo
-/pyagdb/setup.py
+/tests/agdb_test_get_version
 /tests/agdb_test_open_close
 /tests/input
 /tests/tmp*
