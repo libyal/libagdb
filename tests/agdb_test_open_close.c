@@ -39,8 +39,8 @@ int agdb_test_single_open_close_file(
      int access_flags,
      int expected_result )
 {
-	libagdb_file_t *file     = NULL;
 	libcerror_error_t *error = NULL;
+	libagdb_file_t *file      = NULL;
 	static char *function    = "agdb_test_single_open_close_file";
 	char *access_string      = NULL;
 	int result               = 0;
@@ -188,8 +188,8 @@ int agdb_test_multi_open_close_file(
      int access_flags,
      int expected_result )
 {
-	libagdb_file_t *file     = NULL;
 	libcerror_error_t *error = NULL;
+	libagdb_file_t *file      = NULL;
 	static char *function    = "agdb_test_multi_open_close_file";
 	char *access_string      = NULL;
 	int result               = 0;

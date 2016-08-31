@@ -20,14 +20,14 @@
  */
 
 #include <common.h>
-#include <file_stream.h>
 
 #if defined( HAVE_STDLIB_H ) || defined( WINAPI )
 #include <stdlib.h>
 #endif
 
-#include "agdb_test_libcstring.h"
 #include "agdb_test_libagdb.h"
+#include "agdb_test_libcstring.h"
+#include "agdb_test_macros.h"
 #include "agdb_test_unused.h"
 
 /* Tests retrieving the library version
@@ -46,11 +46,15 @@ int agdb_test_get_version(
 	          LIBAGDB_VERSION_STRING,
 	          9 );
 
-	if( result != 0 )
-	{
-		return( 0 );
-	}
+	AGDB_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 0 );
+
 	return( 1 );
+
+on_error:
+	return( 0 );
 }
 
 /* The main program
@@ -68,10 +72,13 @@ int main(
 	AGDB_TEST_UNREFERENCED_PARAMETER( argc )
 	AGDB_TEST_UNREFERENCED_PARAMETER( argv )
 
-	if( agdb_test_get_version() != 1 )
-	{
-		return( EXIT_FAILURE );
-	}
+	AGDB_TEST_RUN(
+	 "libagdb_get_version",
+	 agdb_test_get_version() )
+
 	return( EXIT_SUCCESS );
+
+on_error:
+	return( EXIT_FAILURE );
 }
 

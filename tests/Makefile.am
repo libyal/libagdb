@@ -27,13 +27,26 @@ EXTRA_DIST = \
 	$(check_SCRIPTS)
 
 check_PROGRAMS = \
+	agdb_test_error \
 	agdb_test_get_version \
 	agdb_test_open_close
+
+agdb_test_error_SOURCES = \
+	agdb_test_error.c \
+	agdb_test_libagdb.h \
+	agdb_test_libcstring.h \
+	agdb_test_macros.h \
+	agdb_test_unused.h
+
+agdb_test_error_LDADD = \
+	../libagdb/libagdb.la \
+	@LIBCSTRING_LIBADD@
 
 agdb_test_get_version_SOURCES = \
 	agdb_test_get_version.c \
 	agdb_test_libagdb.h \
 	agdb_test_libcstring.h \
+	agdb_test_macros.h \
 	agdb_test_unused.h
 
 agdb_test_get_version_LDADD = \
