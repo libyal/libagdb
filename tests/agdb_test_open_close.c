@@ -26,10 +26,10 @@
 #include <stdlib.h>
 #endif
 
+#include "agdb_test_libagdb.h"
 #include "agdb_test_libcerror.h"
 #include "agdb_test_libcstring.h"
 #include "agdb_test_libcsystem.h"
-#include "agdb_test_libagdb.h"
 
 /* Tests single open and close of a file
  * Returns 1 if successful, 0 if not or -1 on error

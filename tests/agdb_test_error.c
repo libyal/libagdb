@@ -25,8 +25,8 @@
 #include <stdlib.h>
 #endif
 
-#include "agdb_test_libcerror.h"
 #include "agdb_test_libagdb.h"
+#include "agdb_test_libcerror.h"
 #include "agdb_test_macros.h"
 #include "agdb_test_unused.h"
 
