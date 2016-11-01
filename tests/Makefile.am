@@ -53,8 +53,10 @@ agdb_test_file_SOURCES = \
 	agdb_test_file.c \
 	agdb_test_libagdb.h \
 	agdb_test_libcerror.h \
+	agdb_test_libclocale.h \
 	agdb_test_libcstring.h \
 	agdb_test_libcsystem.h \
+	agdb_test_libuna.h \
 	agdb_test_macros.h \
 	agdb_test_memory.c agdb_test_memory.h \
 	agdb_test_unused.h
@@ -73,8 +75,10 @@ agdb_test_file_information_SOURCES = \
 	agdb_test_file_information.c \
 	agdb_test_libagdb.h \
 	agdb_test_libcerror.h \
+	agdb_test_libclocale.h \
 	agdb_test_libcstring.h \
 	agdb_test_libcsystem.h \
+	agdb_test_libuna.h \
 	agdb_test_macros.h \
 	agdb_test_memory.c agdb_test_memory.h \
 	agdb_test_unused.h
@@ -120,8 +124,10 @@ agdb_test_open_close_LDADD = \
 agdb_test_source_information_SOURCES = \
 	agdb_test_libagdb.h \
 	agdb_test_libcerror.h \
+	agdb_test_libclocale.h \
 	agdb_test_libcstring.h \
 	agdb_test_libcsystem.h \
+	agdb_test_libuna.h \
 	agdb_test_macros.h \
 	agdb_test_memory.c agdb_test_memory.h \
 	agdb_test_source_information.c \
@@ -151,8 +157,10 @@ agdb_test_support_LDADD = \
 agdb_test_volume_information_SOURCES = \
 	agdb_test_libagdb.h \
 	agdb_test_libcerror.h \
+	agdb_test_libclocale.h \
 	agdb_test_libcstring.h \
 	agdb_test_libcsystem.h \
+	agdb_test_libuna.h \
 	agdb_test_macros.h \
 	agdb_test_memory.c agdb_test_memory.h \
 	agdb_test_unused.h \
