@@ -2,9 +2,9 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9,00"
-	Name="agdb_test_get_version"
-	ProjectGUID="{B7B727DF-F373-4084-930C-CCE8D0489724}"
-	RootNamespace="agdb_test_get_version"
+	Name="agdb_test_support"
+	ProjectGUID="{62A49753-10CD-4FC7-9A6D-4FC41633C383}"
+	RootNamespace="agdb_test_support"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="131072"
 	>
@@ -176,7 +176,7 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath="..\..\tests\agdb_test_get_version.c"
+				RelativePath="..\..\tests\agdb_test_support.c"
 				>
 			</File>
 		</Filter>

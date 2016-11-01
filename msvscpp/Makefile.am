@@ -1,7 +1,7 @@
 MSVSCPP_FILES = \
 	agdb_test_error/agdb_test_error.vcproj \
-	agdb_test_get_version/agdb_test_get_version.vcproj \
 	agdb_test_open_close/agdb_test_open_close.vcproj \
+	agdb_test_support/agdb_test_support.vcproj \
 	agdbinfo/agdbinfo.vcproj \
 	libagdb/libagdb.vcproj \
 	libbfio/libbfio.vcproj \
