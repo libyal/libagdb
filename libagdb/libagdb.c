@@ -1,5 +1,5 @@
 /*
- * Library to access the Windows SuperFetch database format
+ * Library to access the Windows SuperFetch database (AGDB) file format
  *
  * Copyright (C) 2014-2016, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -51,7 +51,7 @@ BOOL WINAPI DllMain(
 		case DLL_PROCESS_ATTACH:
 			DisableThreadLibraryCalls(
 			 hinstDLL );
-		break;
+			break;
 
 		case DLL_THREAD_ATTACH:
 			break;

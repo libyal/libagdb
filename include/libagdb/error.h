@@ -34,7 +34,7 @@ enum LIBAGDB_ERROR_DOMAINS
 {
 	LIBAGDB_ERROR_DOMAIN_ARGUMENTS			= (int) 'a',
 	LIBAGDB_ERROR_DOMAIN_CONVERSION			= (int) 'c',
-	LIBAGDB_ERROR_DOMAIN_COMPRESSION			= (int) 'C',
+	LIBAGDB_ERROR_DOMAIN_COMPRESSION		= (int) 'C',
 	LIBAGDB_ERROR_DOMAIN_IO				= (int) 'I',
 	LIBAGDB_ERROR_DOMAIN_INPUT			= (int) 'i',
 	LIBAGDB_ERROR_DOMAIN_MEMORY			= (int) 'm',
@@ -59,7 +59,7 @@ enum LIBAGDB_ARGUMENT_ERROR
 
 	/* The argument contains a value zero or less
 	 */
-	LIBAGDB_ARGUMENT_ERROR_VALUE_ZERO_OR_LESS		= 3,
+	LIBAGDB_ARGUMENT_ERROR_VALUE_ZERO_OR_LESS	= 3,
 
 	/* The argument contains a value that exceeds the maximum
 	 * for the specific type
@@ -80,11 +80,11 @@ enum LIBAGDB_ARGUMENT_ERROR
 
 	/* The argument contains a value that is not supported
 	 */
-	LIBAGDB_ARGUMENT_ERROR_UNSUPPORTED_VALUE		= 8,
+	LIBAGDB_ARGUMENT_ERROR_UNSUPPORTED_VALUE	= 8,
 
 	/* The argument contains a value that conficts with another argument
 	 */
-	LIBAGDB_ARGUMENT_ERROR_CONFLICTING_VALUE		= 9
+	LIBAGDB_ARGUMENT_ERROR_CONFLICTING_VALUE	= 9
 };
 
 /* The conversion error codes
@@ -92,7 +92,7 @@ enum LIBAGDB_ARGUMENT_ERROR
  */
 enum LIBAGDB_CONVERSION_ERROR
 {
-	LIBAGDB_CONVERSION_ERROR_GENERIC			= 0,
+	LIBAGDB_CONVERSION_ERROR_GENERIC		= 0,
 
 	/* The conversion failed on the input
 	 */
@@ -108,11 +108,11 @@ enum LIBAGDB_CONVERSION_ERROR
  */
 enum LIBAGDB_COMPRESSION_ERROR
 {
-	LIBAGDB_COMPRESSION_ERROR_GENERIC			= 0,
+	LIBAGDB_COMPRESSION_ERROR_GENERIC		= 0,
 
 	/* The compression failed
 	 */
-	LIBAGDB_COMPRESSION_ERROR_COMPRESS_FAILED		= 1,
+	LIBAGDB_COMPRESSION_ERROR_COMPRESS_FAILED	= 1,
 
 	/* The decompression failed
 	 */
@@ -124,7 +124,7 @@ enum LIBAGDB_COMPRESSION_ERROR
  */
 enum LIBAGDB_IO_ERROR
 {
-	LIBAGDB_IO_ERROR_GENERIC				= 0,
+	LIBAGDB_IO_ERROR_GENERIC			= 0,
 
 	/* The open failed
 	 */
@@ -152,7 +152,7 @@ enum LIBAGDB_IO_ERROR
 
 	/* The resource is invalid i.e. a missing file
 	 */
-	LIBAGDB_IO_ERROR_INVALID_RESOURCE			= 7,
+	LIBAGDB_IO_ERROR_INVALID_RESOURCE		= 7,
 
 	/* The ioctl failed
 	 */
@@ -172,7 +172,7 @@ enum LIBAGDB_INPUT_ERROR
 
 	/* The input contains invalid data
 	 */
-	LIBAGDB_INPUT_ERROR_INVALID_DATA			= 1,
+	LIBAGDB_INPUT_ERROR_INVALID_DATA		= 1,
 
 	/* The input contains an unsupported signature
 	 */
@@ -197,11 +197,11 @@ enum LIBAGDB_MEMORY_ERROR
 
 	/* There is insufficient memory available
 	 */
-	LIBAGDB_MEMORY_ERROR_INSUFFICIENT			= 1,
+	LIBAGDB_MEMORY_ERROR_INSUFFICIENT		= 1,
 
 	/* The memory failed to be copied
 	 */
-	LIBAGDB_MEMORY_ERROR_COPY_FAILED			= 2,
+	LIBAGDB_MEMORY_ERROR_COPY_FAILED		= 2,
 
 	/* The memory failed to be set
 	 */
@@ -237,11 +237,11 @@ enum LIBAGDB_RUNTIME_ERROR
 
 	/* The value could not be determined
 	 */
-	LIBAGDB_RUNTIME_ERROR_GET_FAILED			= 6,
+	LIBAGDB_RUNTIME_ERROR_GET_FAILED		= 6,
 
 	/* The value could not be set
 	 */
-	LIBAGDB_RUNTIME_ERROR_SET_FAILED			= 7,
+	LIBAGDB_RUNTIME_ERROR_SET_FAILED		= 7,
 
 	/* The value could not be appended/prepended
 	 */
@@ -249,7 +249,7 @@ enum LIBAGDB_RUNTIME_ERROR
 
 	/* The value could not be copied
 	 */
-	LIBAGDB_RUNTIME_ERROR_COPY_FAILED			= 9,
+	LIBAGDB_RUNTIME_ERROR_COPY_FAILED		= 9,
 
 	/* The value could not be removed
 	 */
@@ -261,7 +261,7 @@ enum LIBAGDB_RUNTIME_ERROR
 
 	/* The value was out of bounds
 	 */
-	LIBAGDB_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS		= 12,
+	LIBAGDB_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS	= 12,
 
 	/* The value exceeds the maximum for its specific type
 	 */
@@ -287,5 +287,5 @@ enum LIBAGDB_OUTPUT_ERROR
 	LIBAGDB_OUTPUT_ERROR_INSUFFICIENT_SPACE		= 1
 };
 
-#endif
+#endif /* !defined( _LIBAGDB_ERROR_H ) */
 

@@ -210,5 +210,5 @@ typedef intptr_t libagdb_volume_information_t;
 }
 #endif
 
-#endif
+#endif /* !defined( _LIBAGDB_TYPES_H ) */
 

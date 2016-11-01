@@ -1,5 +1,5 @@
 /*
- * Library error functions test program
+ * Library source_information type testing program
  *
  * Copyright (C) 2014-2016, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -20,6 +20,8 @@
  */
 
 #include <common.h>
+#include <file_stream.h>
+#include <types.h>
 
 #if defined( HAVE_STDLIB_H ) || defined( WINAPI )
 #include <stdlib.h>
@@ -27,83 +29,47 @@
 
 #include "agdb_test_libagdb.h"
 #include "agdb_test_libcerror.h"
+#include "agdb_test_libcstring.h"
 #include "agdb_test_macros.h"
+#include "agdb_test_memory.h"
 #include "agdb_test_unused.h"
 
-/* Tests the libagdb_error_free function
+/* Tests the libagdb_source_information_free function
  * Returns 1 if successful or 0 if not
  */
-int agdb_test_error_free(
+int agdb_test_source_information_free(
      void )
 {
-	/* Test invocation of function only
+	libcerror_error_t *error = NULL;
+	int result               = 0;
+
+	/* Test error cases
 	 */
-	libagdb_error_free(
-	 NULL );
+	result = libagdb_source_information_free(
+	          NULL,
+	          &error );
+
+	AGDB_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+        AGDB_TEST_ASSERT_IS_NOT_NULL(
+         "error",
+         error );
+
+	libcerror_error_free(
+	 &error );
 
 	return( 1 );
-}
 
-/* Tests the libagdb_error_fprint function
- * Returns 1 if successful or 0 if not
- */
-int agdb_test_error_fprint(
-     void )
-{
-	/* Test invocation of function only
-	 */
-	libagdb_error_fprint(
-	 NULL,
-	 NULL );
-
-	return( 1 );
-}
-
-/* Tests the libagdb_error_sprint function
- * Returns 1 if successful or 0 if not
- */
-int agdb_test_error_sprint(
-     void )
-{
-	/* Test invocation of function only
-	 */
-	libagdb_error_sprint(
-	 NULL,
-	 NULL,
-	 0 );
-
-	return( 1 );
-}
-
-/* Tests the libagdb_error_backtrace_fprint function
- * Returns 1 if successful or 0 if not
- */
-int agdb_test_error_backtrace_fprint(
-     void )
-{
-	/* Test invocation of function only
-	 */
-	libagdb_error_backtrace_fprint(
-	 NULL,
-	 NULL );
-
-	return( 1 );
-}
-
-/* Tests the libagdb_error_backtrace_sprint function
- * Returns 1 if successful or 0 if not
- */
-int agdb_test_error_backtrace_sprint(
-     void )
-{
-	/* Test invocation of function only
-	 */
-	libagdb_error_backtrace_sprint(
-	 NULL,
-	 NULL,
-	 0 );
-
-	return( 1 );
+on_error:
+	if( error != NULL )
+	{
+		libcerror_error_free(
+		 &error );
+	}
+	return( 0 );
 }
 
 /* The main program
@@ -122,24 +88,8 @@ int main(
 	AGDB_TEST_UNREFERENCED_PARAMETER( argv )
 
 	AGDB_TEST_RUN(
-	 "libagdb_error_free",
-	 agdb_test_error_free );
-
-	AGDB_TEST_RUN(
-	 "libagdb_error_fprint",
-	 agdb_test_error_fprint );
-
-	AGDB_TEST_RUN(
-	 "libagdb_error_sprint",
-	 agdb_test_error_sprint );
-
-	AGDB_TEST_RUN(
-	 "libagdb_error_backtrace_fprint",
-	 agdb_test_error_backtrace_fprint );
-
-	AGDB_TEST_RUN(
-	 "libagdb_error_backtrace_sprint",
-	 agdb_test_error_backtrace_sprint );
+	 "libagdb_source_information_free",
+	 agdb_test_source_information_free );
 
 	return( EXIT_SUCCESS );
 

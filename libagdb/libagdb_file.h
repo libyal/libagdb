@@ -19,8 +19,8 @@
  * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#if !defined( _LIBAGDB_INTERNAL_FILE_H )
-#define _LIBAGDB_INTERNAL_FILE_H
+#if !defined( _LIBAGDB_FILE_H )
+#define _LIBAGDB_FILE_H
 
 #include <common.h>
 #include <types.h>
@@ -167,5 +167,5 @@ int libagdb_file_get_source_information(
 }
 #endif
 
-#endif
+#endif /* !defined( _LIBAGDB_FILE_H ) */
 

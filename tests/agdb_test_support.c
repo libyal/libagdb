@@ -1,5 +1,5 @@
 /*
- * Library get version test program
+ * Library support functions test program
  *
  * Copyright (C) 2014-2016, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -30,7 +30,7 @@
 #include "agdb_test_macros.h"
 #include "agdb_test_unused.h"
 
-/* Tests retrieving the library version
+/* Tests the libagdb_get_version function
  * Returns 1 if successful or 0 if not
  */
 int agdb_test_get_version(
@@ -74,7 +74,7 @@ int main(
 
 	AGDB_TEST_RUN(
 	 "libagdb_get_version",
-	 agdb_test_get_version() )
+	 agdb_test_get_version );
 
 	return( EXIT_SUCCESS );
 

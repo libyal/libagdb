@@ -1,5 +1,5 @@
 /*
- * Library error functions test program
+ * Library notification functions test program
  *
  * Copyright (C) 2014-2016, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -30,78 +30,60 @@
 #include "agdb_test_macros.h"
 #include "agdb_test_unused.h"
 
-/* Tests the libagdb_error_free function
+/* Tests the libagdb_notify_set_verbose function
  * Returns 1 if successful or 0 if not
  */
-int agdb_test_error_free(
+int agdb_test_notify_set_verbose(
      void )
 {
 	/* Test invocation of function only
 	 */
-	libagdb_error_free(
-	 NULL );
-
-	return( 1 );
-}
-
-/* Tests the libagdb_error_fprint function
- * Returns 1 if successful or 0 if not
- */
-int agdb_test_error_fprint(
-     void )
-{
-	/* Test invocation of function only
-	 */
-	libagdb_error_fprint(
-	 NULL,
-	 NULL );
-
-	return( 1 );
-}
-
-/* Tests the libagdb_error_sprint function
- * Returns 1 if successful or 0 if not
- */
-int agdb_test_error_sprint(
-     void )
-{
-	/* Test invocation of function only
-	 */
-	libagdb_error_sprint(
-	 NULL,
-	 NULL,
+	libagdb_notify_set_verbose(
 	 0 );
 
 	return( 1 );
 }
 
-/* Tests the libagdb_error_backtrace_fprint function
+/* Tests the libagdb_notify_set_stream function
  * Returns 1 if successful or 0 if not
  */
-int agdb_test_error_backtrace_fprint(
+int agdb_test_notify_set_stream(
      void )
 {
 	/* Test invocation of function only
 	 */
-	libagdb_error_backtrace_fprint(
+	libagdb_notify_set_stream(
 	 NULL,
 	 NULL );
 
 	return( 1 );
 }
 
-/* Tests the libagdb_error_backtrace_sprint function
+/* Tests the libagdb_notify_stream_open function
  * Returns 1 if successful or 0 if not
  */
-int agdb_test_error_backtrace_sprint(
+int agdb_test_notify_stream_open(
      void )
 {
 	/* Test invocation of function only
 	 */
-	libagdb_error_backtrace_sprint(
+	libagdb_notify_stream_open(
 	 NULL,
-	 NULL,
-	 0 );
+	 NULL );
+
+	return( 1 );
+}
+
+/* Tests the libagdb_notify_stream_close function
+ * Returns 1 if successful or 0 if not
+ */
+int agdb_test_notify_stream_close(
+     void )
+{
+	/* Test invocation of function only
+	 */
+	libagdb_notify_stream_close(
+	 NULL );
 
 	return( 1 );
 }
@@ -122,24 +104,20 @@ int main(
 	AGDB_TEST_UNREFERENCED_PARAMETER( argv )
 
 	AGDB_TEST_RUN(
-	 "libagdb_error_free",
-	 agdb_test_error_free );
+	 "libagdb_notify_set_verbose",
+	 agdb_test_notify_set_verbose )
 
 	AGDB_TEST_RUN(
-	 "libagdb_error_fprint",
-	 agdb_test_error_fprint );
+	 "libagdb_notify_set_stream",
+	 agdb_test_notify_set_stream )
 
 	AGDB_TEST_RUN(
-	 "libagdb_error_sprint",
-	 agdb_test_error_sprint );
+	 "libagdb_notify_stream_open",
+	 agdb_test_notify_stream_open )
 
 	AGDB_TEST_RUN(
-	 "libagdb_error_backtrace_fprint",
-	 agdb_test_error_backtrace_fprint );
-
-	AGDB_TEST_RUN(
-	 "libagdb_error_backtrace_sprint",
-	 agdb_test_error_backtrace_sprint );
+	 "libagdb_notify_stream_close",
+	 agdb_test_notify_stream_close )
 
 	return( EXIT_SUCCESS );
 

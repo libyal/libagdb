@@ -60,5 +60,5 @@ enum LIBAGDB_FILE_TYPES
 	LIBAGDB_FILE_TYPE_COMPRESSED_WINDOWS8		= 4
 };
 
-#endif
+#endif /* !defined( _LIBAGDB_DEFINITIONS_H ) */
 

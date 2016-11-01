@@ -38,10 +38,9 @@
 #include <libagdb/extern.h>
 
 #else
-
-#define LIBAGDB_EXTERN  extern
-
-#endif
+#define LIBAGDB_EXTERN	extern
 
 #endif
+
+#endif /* !defined( _LIBAGDB_INTERNAL_EXTERN_H ) */
 
