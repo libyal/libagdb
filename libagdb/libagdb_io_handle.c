@@ -340,7 +340,8 @@ int libagdb_io_handle_read_compressed_file_header(
 		if( io_handle->file_type == LIBAGDB_FILE_TYPE_UNCOMPRESSED )
 		{
 /* TODO improve detection */
-			if( ( value_32bit != 0x0000000eUL )
+			if( ( ( value_32bit != 0x00000005UL )
+			  &&  ( value_32bit != 0x0000000eUL ) )
 			 || ( io_handle->file_size != (size64_t) io_handle->uncompressed_data_size ) )
 			{
 				libcerror_error_set(
@@ -581,6 +582,7 @@ int libagdb_io_handle_read_uncompressed_file_header(
 	ssize_t read_count            = 0;
 	uint32_t data_size            = 0;
 	uint32_t header_size          = 0;
+	uint32_t unknown1             = 0;
 
 #if defined( HAVE_DEBUG_OUTPUT )
 	uint32_t value_32bit          = 0;
@@ -715,19 +717,25 @@ int libagdb_io_handle_read_uncompressed_file_header(
 		return( -1 );
 	}
 	byte_stream_copy_to_uint32_little_endian(
+	 file_header_data.unknown1,
+	 unknown1 );
+
+	if( unknown1 != 0x0000000eUL )
+	{
+/* TODO add support for AgAppLaunch.db unknown1: 5 */
+		return( 1 );
+	}
+	byte_stream_copy_to_uint32_little_endian(
 	 file_header_data.header_size,
 	 header_size );
 
 #if defined( HAVE_DEBUG_OUTPUT )
 	if( libcnotify_verbose != 0 )
 	{
-		byte_stream_copy_to_uint32_little_endian(
-		 file_header_data.unknown1,
-		 value_32bit );
 		libcnotify_printf(
 		 "%s: unknown1\t\t: %" PRIu32 "\n",
 		 function,
-		 value_32bit );
+		 unknown1 );
 
 		libcnotify_printf(
 		 "%s: data size\t\t: %" PRIu32 "\n",
@@ -743,7 +751,17 @@ int libagdb_io_handle_read_uncompressed_file_header(
 		 "\n" );
 	}
 #endif
-/* TODO bounds check */
+	if( header_size < sizeof( agdb_file_header_t ) )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
+		 "%s: invalid header size  value out of bounds.",
+		 function );
+
+		return( -1 );
+	}
 	database_header_size = header_size - sizeof( agdb_file_header_t );
 
 	database_header_data = (uint8_t *) memory_allocate(

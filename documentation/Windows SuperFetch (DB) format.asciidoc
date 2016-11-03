@@ -29,7 +29,7 @@ tooling to be able to process this file type.
 [preface]
 == License
 ....
-Copyright (C) 2014, Joachim Metz <joachim.metz@gmail.com>.
+Copyright (C) 2014-2016, Joachim Metz <joachim.metz@gmail.com>.
 Permission is granted to copy, distribute and/or modify this document under the 
 terms of the GNU Free Documentation License, Version 1.3 or any later version 
 published by the Free Software Foundation; with no Invariant Sections, no 
@@ -46,6 +46,7 @@ in the section entitled "GNU Free Documentation License".
 | 0.0.2 | J.B. Metz | May 2014 | Additional findings.
 | 0.0.3 | J.B. Metz | June 2014 | Additional findings.
 | 0.0.4 | J.B. Metz | December 2014 | Switched to asccidoc format.
+| 0.0.5 | J.B. Metz | November 2016 | Moved compression information to libfwnt documentation.
 |===
 
 :numbered:
@@ -195,52 +196,8 @@ compressed data, + 2 bytes for the size of the chunk header itself.
 The uncompressed block size is 4096 (0x1000) or the remaining uncompressed data 
 size for the last block.
 
-=== LZNT1
-The LZNT1 compressed data consists of multiple chunks. Each chunk consists of:
-
-* a chunk header
-* a chunks data
-
-The LZNT1 chunk header is 2 bytes of size and consists of:
-
-[cols="1,1,1,5",options="header"]
-|===
-| Offset | Size | Value | Description
-| 0.0 | 12 bits | | Chunk data size +
-The value is stored as chunk data size - 1
-| 1.4 | 3 bits | | [yellow-background]*Signature value*
-| 1.7 | 1 bit | | Is compressed flag +
-0 => uncompressed +
-1 => compressed
-|===
-
-A chunk header value of 0 indicates the end of the compressed data.
-
-....
-while "compressed data" available:
-    read "chunk header"
-
-    if "chunk data size" is 0:
-        break
-
-    if the "is compressed flag" is not set:
-        chunk data is uncompressed
-
-    else:
-        read a "flag byte"
-
-        for "flag bit" in "flag byte" starting with the LSB:
-            if "flag bit" is not set:
-                read a literal (uncompressed) byte
-
-            else:
-                read 16-bit compression tuple
-
-                use the compression tuple to read previously
-                decompressed data
-....
-
-[yellow-background]*TODO describe compression tuple*
+For more information about LZNT1 see:
+https://github.com/libyal/libfwnt/blob/master/documentation/Compression%20methods.asciidoc[LIBFWNT\]].
 
 == Compressed SuperFetch database - MEM0 file format
 A compressed SuperFetch database - MEM0 file consist of the following 
@@ -270,21 +227,21 @@ The compressed block is variable of size and consists of:
 |===
 | Offset | Size | Value | Description
 | 0 | 4 | | Compressed data size
-| 4 | ... | | Compressed data
+| 4 | ... | | LZXPRESS Huffman compressed data
 |===
 
 The uncompressed block size is 65536 (0x10000) or the remaining uncompressed 
 data size for the last block.
 
-=== LZXPRESS Huffman
-[yellow-background]*TODO*
+For more information about LZXPRESS Huffman see:
+https://github.com/libyal/libfwnt/blob/master/documentation/Compression%20methods.asciidoc[LIBFWNT\]].
 
 == Compressed SuperFetch database - MAM file format
 A compressed SuperFetch database - MAM file consist of the following 
 distinguishable elements:
 
 * file header
-* compressed blocks
+* compressed stream
 
 The compression method is Microsoft XPRESS Huffman (or LZXPRESS). Note that 
 this is a different compression method as Microsoft XPRESS (LZ77+DIRECT2).
@@ -301,23 +258,21 @@ The file header is 12 bytes of size and consists of:
 | 8 | 4 | | [yellow-background]*Unknown (checksum?)*
 |===
 
-=== Compressed block
-The compressed block is variable of size and consists of:
+=== Compressed stream
+The compressed stream is variable of size and consists of:
 
 [cols="1,1,1,5",options="header"]
 |===
 | Offset | Size | Value | Description
-| 0 | ... | | Compressed data
+| 0 | ... | | LZXPRESS Huffman compressed data
 |===
 
-The uncompressed block size is 65536 (0x10000) or the remaining uncompressed 
-data size for the last block.
+The compression stream differs from the compressed blocks as used in the MEM0
+format. In the stream the compressed data can refer to uncompressed data stored in
+previous compressed chunks.
 
-=== LZXPRESS Huffman stream variant
-The LZXPRESS Huffman stream variant differs from the LZXPRESS Huffman, as 
-used in the MEM0 format. The stream variant can refer to uncompressed data 
-stored in the previous compressed block. The compressed blocks are essentially 
-a single compressed stream.
+For more information about LZXPRESS Huffman see:
+https://github.com/libyal/libfwnt/blob/master/documentation/Compression%20methods.asciidoc[LIBFWNT\]].
 
 == Uncompressed SuperFetch database file format
 An uncompressed SuperFetch database consist of the following distinguishable elements:

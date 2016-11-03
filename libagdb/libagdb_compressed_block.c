@@ -175,13 +175,13 @@ int libagdb_compressed_block_free(
 /* Reads a compressed block
  * Returns 1 if successful or -1 on error
  */
-ssize_t libagdb_compressed_block_read(
-         libagdb_compressed_block_t *compressed_block,
-         libagdb_io_handle_t *io_handle,
-         libbfio_handle_t *file_io_handle,
-         off64_t compressed_block_offset,
-         size_t compressed_block_size,
-         libcerror_error_t **error )
+int libagdb_compressed_block_read(
+     libagdb_compressed_block_t *compressed_block,
+     libagdb_io_handle_t *io_handle,
+     libbfio_handle_t *file_io_handle,
+     off64_t compressed_block_offset,
+     size_t compressed_block_size,
+     libcerror_error_t **error )
 {
 	uint8_t *compressed_data = NULL;
         static char *function    = "libagdb_compressed_block_read";
@@ -278,7 +278,6 @@ ssize_t libagdb_compressed_block_read(
 	}
 	else if( io_handle->file_type == LIBAGDB_FILE_TYPE_COMPRESSED_WINDOWS8 )
 	{
-/* TODO implement stream support ? */
 		result = libfwnt_lzxpress_huffman_decompress(
 		          compressed_data,
 		          (size_t) compressed_block_size,
@@ -292,7 +291,7 @@ ssize_t libagdb_compressed_block_read(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_COMPRESSION,
 		 LIBCERROR_COMPRESSION_ERROR_DECOMPRESS_FAILED,
-		 "%s: unable to decompress compressed data.",
+		 "%s: unable to decompress block.",
 		 function );
 
 		goto on_error;
@@ -301,6 +300,7 @@ ssize_t libagdb_compressed_block_read(
 	 compressed_data );
 
 	compressed_data = NULL;
+
 	return( 1 );
 
 on_error:
@@ -331,7 +331,7 @@ int libagdb_compressed_block_read_element_data(
 	libagdb_compressed_block_t *compressed_block = NULL;
 	static char *function                        = "libagdb_compressed_block_read_element_data";
 	size64_t uncompressed_size                   = 0;
-	ssize_t read_count                           = 0;
+	int result                                   = 0;
 
 	LIBAGDB_UNREFERENCED_PARAMETER( element_file_index )
 	LIBAGDB_UNREFERENCED_PARAMETER( read_flags )
@@ -377,7 +377,7 @@ int libagdb_compressed_block_read_element_data(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
-		 "%s: compressed range flags not set.",
+		 "%s: compressed block flags not set.",
 		 function );
 
 		return( -1 );
@@ -421,15 +421,15 @@ int libagdb_compressed_block_read_element_data(
 
 		goto on_error;
 	}
-	read_count = libagdb_compressed_block_read(
-	              compressed_block,
-	              io_handle,
-	              file_io_handle,
-	              compressed_block_offset,
-	              (size_t) compressed_block_size,
-	              error );
+	result = libagdb_compressed_block_read(
+	          compressed_block,
+	          io_handle,
+	          file_io_handle,
+	          compressed_block_offset,
+	          (size_t) compressed_block_size,
+	          error );
 
-	if( read_count != (ssize_t) compressed_block_size )
+	if( result != 1 )
 	{
 		libcerror_error_set(
 		 error,
