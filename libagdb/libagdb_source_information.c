@@ -22,7 +22,10 @@
 #include <common.h>
 #include <byte_stream.h>
 #include <memory.h>
+#include <narrow_string.h>
+#include <system_string.h>
 #include <types.h>
+#include <wide_string.h>
 
 #include "libagdb_definitions.h"
 #include "libagdb_io_handle.h"
@@ -194,7 +197,7 @@ ssize_t libagdb_source_information_read(
 	int string_index                                                   = 0;
 
 #if defined( HAVE_DEBUG_OUTPUT )
-	libcstring_system_character_t *value_string                        = NULL;
+	system_character_t *value_string                                   = NULL;
 	size_t value_string_size                                           = 0;
 	uint64_t value_64bit                                               = 0;
 	uint32_t value_32bit                                               = 0;
@@ -682,7 +685,7 @@ ssize_t libagdb_source_information_read(
 			 value_64bit );
 
 /* TODO allow to set codepage */
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 			result = libuna_utf16_string_size_from_byte_stream(
 				  internal_source_information->executable_filename,
 				  internal_source_information->executable_filename_size,
@@ -709,7 +712,7 @@ ssize_t libagdb_source_information_read(
 				goto on_error;
 			}
 			if( ( value_string_size > (size_t) SSIZE_MAX )
-			 || ( ( sizeof( libcstring_system_character_t ) * value_string_size ) > (size_t) SSIZE_MAX ) )
+			 || ( ( sizeof( system_character_t ) * value_string_size ) > (size_t) SSIZE_MAX ) )
 			{
 				libcerror_error_set(
 				 error,
@@ -720,7 +723,7 @@ ssize_t libagdb_source_information_read(
 
 				goto on_error;
 			}
-			value_string = libcstring_system_string_allocate(
+			value_string = system_string_allocate(
 					value_string_size );
 
 			if( value_string == NULL )
@@ -734,7 +737,7 @@ ssize_t libagdb_source_information_read(
 
 				goto on_error;
 			}
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 			result = libuna_utf16_string_copy_from_byte_stream(
 				  (libuna_utf16_character_t *) value_string,
 				  value_string_size,
@@ -763,7 +766,7 @@ ssize_t libagdb_source_information_read(
 				goto on_error;
 			}
 			libcnotify_printf(
-			 "%s: executable filename\t\t\t: %" PRIs_LIBCSTRING_SYSTEM "\n",
+			 "%s: executable filename\t\t\t: %" PRIs_SYSTEM "\n",
 			 function,
 			 value_string );
 

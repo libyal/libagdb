@@ -22,7 +22,9 @@
 #include <common.h>
 #include <byte_stream.h>
 #include <memory.h>
+#include <narrow_string.h>
 #include <types.h>
+#include <wide_string.h>
 
 #include "libagdb_codepage.h"
 #include "libagdb_definitions.h"
@@ -30,7 +32,6 @@
 #include "libagdb_libbfio.h"
 #include "libagdb_libcerror.h"
 #include "libagdb_libclocale.h"
-#include "libagdb_libcstring.h"
 #include "libagdb_support.h"
 
 #if !defined( HAVE_LOCAL_LIBAGDB )
@@ -128,7 +129,7 @@ int libagdb_check_file_signature(
 
 		return( -1 );
 	}
-	filename_length = libcstring_narrow_string_length(
+	filename_length = narrow_string_length(
 	                   filename );
 
 	if( filename_length == 0 )
@@ -235,7 +236,7 @@ int libagdb_check_file_signature_wide(
 
 		return( -1 );
 	}
-	filename_length = libcstring_wide_string_length(
+	filename_length = wide_string_length(
 	                   filename );
 
 	if( filename_length == 0 )

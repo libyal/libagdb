@@ -1,7 +1,6 @@
 AM_CPPFLAGS = \
 	-I$(top_srcdir)/include \
 	-I$(top_srcdir)/common \
-	@LIBCSTRING_CPPFLAGS@ \
 	@LIBCERROR_CPPFLAGS@ \
 	@LIBCTHREADS_CPPFLAGS@ \
 	@LIBCDATA_CPPFLAGS@ \
@@ -42,7 +41,6 @@ libagdb_la_SOURCES = \
 	libagdb_libcerror.h \
 	libagdb_libclocale.h \
 	libagdb_libcnotify.h \
-	libagdb_libcstring.h \
 	libagdb_libfcache.h \
 	libagdb_libfdata.h \
 	libagdb_libfdatetime.h \
@@ -56,7 +54,6 @@ libagdb_la_SOURCES = \
 	libagdb_volume_information.c libagdb_volume_information.h
 
 libagdb_la_LIBADD = \
-	@LIBCSTRING_LIBADD@ \
 	@LIBCERROR_LIBADD@ \
 	@LIBCTHREADS_LIBADD@ \
 	@LIBCDATA_LIBADD@ \

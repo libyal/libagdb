@@ -22,7 +22,10 @@
 #include <common.h>
 #include <byte_stream.h>
 #include <memory.h>
+#include <narrow_string.h>
+#include <system_string.h>
 #include <types.h>
+#include <wide_string.h>
 
 #include "libagdb_definitions.h"
 #include "libagdb_file_information.h"
@@ -234,10 +237,10 @@ ssize64_t libagdb_volume_information_read(
 	int entry_index                                                    = 0;
 
 #if defined( HAVE_DEBUG_OUTPUT )
-	libcstring_system_character_t filetime_string[ 48 ];
+	system_character_t filetime_string[ 48 ];
 
 	libfdatetime_filetime_t *filetime                                  = NULL;
-	libcstring_system_character_t *value_string                        = NULL;
+	system_character_t *value_string                                   = NULL;
 	size_t value_string_size                                           = 0;
 	uint64_t value_64bit                                               = 0;
 	uint32_t value_32bit                                               = 0;
@@ -546,7 +549,7 @@ ssize64_t libagdb_volume_information_read(
 
 			goto on_error;
 		}
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 		result = libfdatetime_filetime_copy_to_utf16_string(
 			  filetime,
 			  (uint16_t *) filetime_string,
@@ -573,7 +576,7 @@ ssize64_t libagdb_volume_information_read(
 			goto on_error;
 		}
 		libcnotify_printf(
-		 "%s: creation time\t\t\t\t: %" PRIs_LIBCSTRING_SYSTEM " UTC\n",
+		 "%s: creation time\t\t\t\t: %" PRIs_SYSTEM " UTC\n",
 		 function,
 		 filetime_string );
 
@@ -764,7 +767,7 @@ ssize64_t libagdb_volume_information_read(
 #if defined( HAVE_DEBUG_OUTPUT )
 		if( libcnotify_verbose != 0 )
 		{
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 			result = libuna_utf16_string_size_from_utf16_stream(
 				  internal_volume_information->device_path,
 				  internal_volume_information->device_path_size,
@@ -791,7 +794,7 @@ ssize64_t libagdb_volume_information_read(
 				goto on_error;
 			}
 			if( ( value_string_size > (size_t) SSIZE_MAX )
-			 || ( ( sizeof( libcstring_system_character_t ) * value_string_size ) > (size_t) SSIZE_MAX ) )
+			 || ( ( sizeof( system_character_t ) * value_string_size ) > (size_t) SSIZE_MAX ) )
 			{
 				libcerror_error_set(
 				 error,
@@ -802,7 +805,7 @@ ssize64_t libagdb_volume_information_read(
 
 				goto on_error;
 			}
-			value_string = libcstring_system_string_allocate(
+			value_string = system_string_allocate(
 					value_string_size );
 
 			if( value_string == NULL )
@@ -816,7 +819,7 @@ ssize64_t libagdb_volume_information_read(
 
 				goto on_error;
 			}
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 			result = libuna_utf16_string_copy_from_utf16_stream(
 				  (libuna_utf16_character_t *) value_string,
 				  value_string_size,
@@ -845,7 +848,7 @@ ssize64_t libagdb_volume_information_read(
 				goto on_error;
 			}
 			libcnotify_printf(
-			 "%s: volume device path\t\t\t: %" PRIs_LIBCSTRING_SYSTEM "\n",
+			 "%s: volume device path\t\t\t: %" PRIs_SYSTEM "\n",
 			 function,
 			 value_string );
 

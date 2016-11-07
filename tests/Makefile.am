@@ -1,7 +1,6 @@
 AM_CPPFLAGS = \
 	-I$(top_srcdir)/include \
 	-I$(top_srcdir)/common \
-	@LIBCSTRING_CPPFLAGS@ \
 	@LIBCERROR_CPPFLAGS@ \
 	@LIBCDATA_CPPFLAGS@ \
 	@LIBCLOCALE_CPPFLAGS@ \
@@ -41,20 +40,17 @@ check_PROGRAMS = \
 agdb_test_error_SOURCES = \
 	agdb_test_error.c \
 	agdb_test_libagdb.h \
-	agdb_test_libcstring.h \
 	agdb_test_macros.h \
 	agdb_test_unused.h
 
 agdb_test_error_LDADD = \
-	../libagdb/libagdb.la \
-	@LIBCSTRING_LIBADD@
+	../libagdb/libagdb.la
 
 agdb_test_file_SOURCES = \
 	agdb_test_file.c \
 	agdb_test_libagdb.h \
 	agdb_test_libcerror.h \
 	agdb_test_libclocale.h \
-	agdb_test_libcstring.h \
 	agdb_test_libcsystem.h \
 	agdb_test_libuna.h \
 	agdb_test_macros.h \
@@ -68,15 +64,13 @@ agdb_test_file_LDADD = \
 	@LIBCLOCALE_LIBADD@ \
 	@LIBCDATA_LIBADD@ \
 	../libagdb/libagdb.la \
-	@LIBCERROR_LIBADD@ \
-	@LIBCSTRING_LIBADD@
+	@LIBCERROR_LIBADD@
 
 agdb_test_file_information_SOURCES = \
 	agdb_test_file_information.c \
 	agdb_test_libagdb.h \
 	agdb_test_libcerror.h \
 	agdb_test_libclocale.h \
-	agdb_test_libcstring.h \
 	agdb_test_libcsystem.h \
 	agdb_test_libuna.h \
 	agdb_test_macros.h \
@@ -90,24 +84,20 @@ agdb_test_file_information_LDADD = \
 	@LIBCLOCALE_LIBADD@ \
 	@LIBCDATA_LIBADD@ \
 	../libagdb/libagdb.la \
-	@LIBCERROR_LIBADD@ \
-	@LIBCSTRING_LIBADD@
+	@LIBCERROR_LIBADD@
 
 agdb_test_notify_SOURCES = \
 	agdb_test_libagdb.h \
-	agdb_test_libcstring.h \
 	agdb_test_macros.h \
 	agdb_test_notify.c \
 	agdb_test_unused.h
 
 agdb_test_notify_LDADD = \
-	../libagdb/libagdb.la \
-	@LIBCSTRING_LIBADD@
+	../libagdb/libagdb.la
 
 agdb_test_open_close_SOURCES = \
 	agdb_test_libagdb.h \
 	agdb_test_libcerror.h \
-	agdb_test_libcstring.h \
 	agdb_test_libcsystem.h \
 	agdb_test_open_close.c
 
@@ -118,14 +108,12 @@ agdb_test_open_close_LDADD = \
 	@LIBCLOCALE_LIBADD@ \
 	@LIBCDATA_LIBADD@ \
 	../libagdb/libagdb.la \
-	@LIBCERROR_LIBADD@ \
-	@LIBCSTRING_LIBADD@
+	@LIBCERROR_LIBADD@
 
 agdb_test_source_information_SOURCES = \
 	agdb_test_libagdb.h \
 	agdb_test_libcerror.h \
 	agdb_test_libclocale.h \
-	agdb_test_libcstring.h \
 	agdb_test_libcsystem.h \
 	agdb_test_libuna.h \
 	agdb_test_macros.h \
@@ -140,25 +128,21 @@ agdb_test_source_information_LDADD = \
 	@LIBCLOCALE_LIBADD@ \
 	@LIBCDATA_LIBADD@ \
 	../libagdb/libagdb.la \
-	@LIBCERROR_LIBADD@ \
-	@LIBCSTRING_LIBADD@
+	@LIBCERROR_LIBADD@
 
 agdb_test_support_SOURCES = \
 	agdb_test_libagdb.h \
-	agdb_test_libcstring.h \
 	agdb_test_macros.h \
 	agdb_test_support.c \
 	agdb_test_unused.h
 
 agdb_test_support_LDADD = \
-	../libagdb/libagdb.la \
-	@LIBCSTRING_LIBADD@
+	../libagdb/libagdb.la
 
 agdb_test_volume_information_SOURCES = \
 	agdb_test_libagdb.h \
 	agdb_test_libcerror.h \
 	agdb_test_libclocale.h \
-	agdb_test_libcstring.h \
 	agdb_test_libcsystem.h \
 	agdb_test_libuna.h \
 	agdb_test_macros.h \
@@ -173,8 +157,7 @@ agdb_test_volume_information_LDADD = \
 	@LIBCLOCALE_LIBADD@ \
 	@LIBCDATA_LIBADD@ \
 	../libagdb/libagdb.la \
-	@LIBCERROR_LIBADD@ \
-	@LIBCSTRING_LIBADD@
+	@LIBCERROR_LIBADD@
 
 MAINTAINERCLEANFILES = \
 	Makefile.in

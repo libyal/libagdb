@@ -1,7 +1,6 @@
 AM_CPPFLAGS = \
 	-I$(top_srcdir)/include \
 	-I$(top_srcdir)/common \
-	@LIBCSTRING_CPPFLAGS@ \
 	@LIBCERROR_CPPFLAGS@ \
 	@LIBCDATA_CPPFLAGS@ \
 	@LIBCLOCALE_CPPFLAGS@ \
@@ -30,7 +29,6 @@ agdbinfo_SOURCES = \
 	agdbtools_libcerror.h \
 	agdbtools_libclocale.h \
 	agdbtools_libcnotify.h \
-	agdbtools_libcstring.h \
 	agdbtools_libcsystem.h \
 	agdbtools_libfdatetime.h \
 	agdbtools_libuna.h
@@ -42,7 +40,6 @@ agdbinfo_LDADD = \
 	@LIBCNOTIFY_LIBADD@ \
 	@LIBCLOCALE_LIBADD@ \
 	@LIBCERROR_LIBADD@ \
-	@LIBCSTRING_LIBADD@ \
 	@LIBINTL@
 
 MAINTAINERCLEANFILES = \

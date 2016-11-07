@@ -26,14 +26,13 @@
 #include <types.h>
 
 #include "agdbtools_libcerror.h"
-#include "agdbtools_libcstring.h"
 
 #if defined( __cplusplus )
 extern "C" {
 #endif
 
 int agdbinput_determine_ascii_codepage(
-     const libcstring_system_character_t *string,
+     const system_character_t *string,
      int *ascii_codepage,
      libcerror_error_t **error );
 
@@ -41,5 +40,5 @@ int agdbinput_determine_ascii_codepage(
 }
 #endif
 
-#endif
+#endif /* !defined( _AGDBINPUT_H ) */
 

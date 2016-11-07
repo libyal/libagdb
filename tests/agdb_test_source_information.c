@@ -29,7 +29,6 @@
 
 #include "agdb_test_libagdb.h"
 #include "agdb_test_libcerror.h"
-#include "agdb_test_libcstring.h"
 #include "agdb_test_macros.h"
 #include "agdb_test_memory.h"
 #include "agdb_test_unused.h"
@@ -74,7 +73,7 @@ on_error:
 
 /* The main program
  */
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 int wmain(
      int argc AGDB_TEST_ATTRIBUTE_UNUSED,
      wchar_t * const argv[] AGDB_TEST_ATTRIBUTE_UNUSED )

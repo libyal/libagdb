@@ -39,7 +39,7 @@ enum LIBAGDB_ERROR_DOMAINS
 	LIBAGDB_ERROR_DOMAIN_INPUT			= (int) 'i',
 	LIBAGDB_ERROR_DOMAIN_MEMORY			= (int) 'm',
 	LIBAGDB_ERROR_DOMAIN_OUTPUT			= (int) 'o',
-	LIBAGDB_ERROR_DOMAIN_RUNTIME			= (int) 'r',
+	LIBAGDB_ERROR_DOMAIN_RUNTIME			= (int) 'r'
 };
 
 /* The argument error codes
@@ -208,6 +208,17 @@ enum LIBAGDB_MEMORY_ERROR
 	LIBAGDB_MEMORY_ERROR_SET_FAILED			= 3
 };
 
+/* The output error codes
+ */
+enum LIBAGDB_OUTPUT_ERROR
+{
+	LIBAGDB_OUTPUT_ERROR_GENERIC			= 0,
+
+	/* There is insuficient space to write the output
+	 */
+	LIBAGDB_OUTPUT_ERROR_INSUFFICIENT_SPACE		= 1
+};
+
 /* The runtime error codes
  * to signify errors regarding runtime processing
  */
@@ -274,17 +285,6 @@ enum LIBAGDB_RUNTIME_ERROR
 	/* An abort was requested
 	 */
 	LIBAGDB_RUNTIME_ERROR_ABORT_REQUESTED		= 15
-};
-
-/* The output error codes
- */
-enum LIBAGDB_OUTPUT_ERROR
-{
-	LIBAGDB_OUTPUT_ERROR_GENERIC			= 0,
-
-	/* There is insuficient space to write the output
-	 */
-	LIBAGDB_OUTPUT_ERROR_INSUFFICIENT_SPACE		= 1
 };
 
 #endif /* !defined( _LIBAGDB_ERROR_H ) */

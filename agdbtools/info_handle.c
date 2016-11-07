@@ -22,14 +22,16 @@
 #include <common.h>
 #include <file_stream.h>
 #include <memory.h>
+#include <narrow_string.h>
+#include <system_string.h>
 #include <types.h>
+#include <wide_string.h>
 
-#include "info_handle.h"
 #include "agdbinput.h"
 #include "agdbtools_libcerror.h"
-#include "agdbtools_libcstring.h"
 #include "agdbtools_libfdatetime.h"
 #include "agdbtools_libagdb.h"
+#include "info_handle.h"
 
 #define INFO_HANDLE_NOTIFY_STREAM	stdout
 
@@ -214,7 +216,7 @@ int info_handle_signal_abort(
  */
 int info_handle_set_ascii_codepage(
      info_handle_t *info_handle,
-     const libcstring_system_character_t *string,
+     const system_character_t *string,
      libcerror_error_t **error )
 {
 	static char *function = "info_handle_set_ascii_codepage";
@@ -255,7 +257,7 @@ int info_handle_set_ascii_codepage(
  */
 int info_handle_open_input(
      info_handle_t *info_handle,
-     const libcstring_system_character_t *filename,
+     const system_character_t *filename,
      libcerror_error_t **error )
 {
 	static char *function = "info_handle_open_input";
@@ -271,7 +273,7 @@ int info_handle_open_input(
 
 		return( -1 );
 	}
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 	if( libagdb_file_open_wide(
 	     info_handle->input_file,
 	     filename,
@@ -340,12 +342,12 @@ int info_handle_file_fprint(
      info_handle_t *info_handle,
      libcerror_error_t **error )
 {
-	libcstring_system_character_t filetime_string[ 48 ];
+	system_character_t filetime_string[ 48 ];
 
 	libagdb_source_information_t *source_information = NULL;
 	libagdb_file_information_t *file_information     = NULL;
 	libagdb_volume_information_t *volume_information = NULL;
-	libcstring_system_character_t *value_string      = NULL;
+	system_character_t *value_string                 = NULL;
 	libfdatetime_filetime_t *filetime                = NULL;
 	static char *function                            = "info_handle_file_fprint";
 	size_t value_string_size                         = 0;
@@ -442,7 +444,7 @@ int info_handle_file_fprint(
 		 "Volume: %d information:\n",
 		 volume_index + 1 );
 
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 		result = libagdb_volume_information_get_utf16_device_path_size(
 			  volume_information,
 			  &value_string_size,
@@ -466,7 +468,7 @@ int info_handle_file_fprint(
 		}
 		if( value_string_size > 0 )
 		{
-			value_string = libcstring_system_string_allocate(
+			value_string = system_string_allocate(
 					value_string_size );
 
 			if( value_string == NULL )
@@ -480,7 +482,7 @@ int info_handle_file_fprint(
 
 				goto on_error;
 			}
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 			result = libagdb_volume_information_get_utf16_device_path(
 				  volume_information,
 				  (uint16_t *) value_string,
@@ -506,7 +508,7 @@ int info_handle_file_fprint(
 			}
 			fprintf(
 			 info_handle->notify_stream,
-			 "\tDevice path\t\t\t: %" PRIs_LIBCSTRING_SYSTEM "\n",
+			 "\tDevice path\t\t\t: %" PRIs_SYSTEM "\n",
 			 value_string );
 
 			memory_free(
@@ -542,7 +544,7 @@ int info_handle_file_fprint(
 
 			goto on_error;
 		}
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 		result = libfdatetime_filetime_copy_to_utf16_string(
 			  filetime,
 			  (uint16_t *) filetime_string,
@@ -570,7 +572,7 @@ int info_handle_file_fprint(
 		}
 		fprintf(
 		 info_handle->notify_stream,
-		 "\tCreation time\t\t\t: %" PRIs_LIBCSTRING_SYSTEM " UTC\n",
+		 "\tCreation time\t\t\t: %" PRIs_SYSTEM " UTC\n",
 		 filetime_string );
 
 		if( libagdb_volume_information_get_serial_number(
@@ -647,7 +649,7 @@ int info_handle_file_fprint(
 			 "File: %d information:\n",
 			 file_index + 1 );
 
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 			result = libagdb_file_information_get_utf16_path_size(
 				  file_information,
 				  &value_string_size,
@@ -671,7 +673,7 @@ int info_handle_file_fprint(
 			}
 			if( value_string_size > 0 )
 			{
-				value_string = libcstring_system_string_allocate(
+				value_string = system_string_allocate(
 						value_string_size );
 
 				if( value_string == NULL )
@@ -685,7 +687,7 @@ int info_handle_file_fprint(
 
 					goto on_error;
 				}
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 				result = libagdb_file_information_get_utf16_path(
 					  file_information,
 					  (uint16_t *) value_string,
@@ -711,7 +713,7 @@ int info_handle_file_fprint(
 				}
 				fprintf(
 				 info_handle->notify_stream,
-				 "\tPath\t\t\t\t: %" PRIs_LIBCSTRING_SYSTEM "\n",
+				 "\tPath\t\t\t\t: %" PRIs_SYSTEM "\n",
 				 value_string );
 
 				memory_free(
@@ -804,7 +806,7 @@ int info_handle_file_fprint(
 		 "Source: %d information:\n",
 		 source_index + 1 );
 
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 		result = libagdb_source_information_get_utf16_executable_filename_size(
 			  source_information,
 			  &value_string_size,
@@ -828,7 +830,7 @@ int info_handle_file_fprint(
 		}
 		if( value_string_size > 0 )
 		{
-			value_string = libcstring_system_string_allocate(
+			value_string = system_string_allocate(
 					value_string_size );
 
 			if( value_string == NULL )
@@ -842,7 +844,7 @@ int info_handle_file_fprint(
 
 				goto on_error;
 			}
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 			result = libagdb_source_information_get_utf16_executable_filename(
 				  source_information,
 				  (uint16_t *) value_string,
@@ -868,7 +870,7 @@ int info_handle_file_fprint(
 			}
 			fprintf(
 			 info_handle->notify_stream,
-			 "\tExecutable filename\t\t: %" PRIs_LIBCSTRING_SYSTEM "\n",
+			 "\tExecutable filename\t\t: %" PRIs_SYSTEM "\n",
 			 value_string );
 
 			memory_free(
