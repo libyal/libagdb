@@ -132,12 +132,22 @@ agdb_test_source_information_LDADD = \
 
 agdb_test_support_SOURCES = \
 	agdb_test_libagdb.h \
+	agdb_test_libcerror.h \
+	agdb_test_libclocale.h \
+	agdb_test_libcsystem.h \
+	agdb_test_libuna.h \
 	agdb_test_macros.h \
 	agdb_test_support.c \
 	agdb_test_unused.h
 
 agdb_test_support_LDADD = \
-	../libagdb/libagdb.la
+	@LIBCSYSTEM_LIBADD@ \
+	@LIBUNA_LIBADD@ \
+	@LIBCNOTIFY_LIBADD@ \
+	@LIBCLOCALE_LIBADD@ \
+	@LIBCDATA_LIBADD@ \
+	../libagdb/libagdb.la \
+	@LIBCERROR_LIBADD@
 
 agdb_test_volume_information_SOURCES = \
 	agdb_test_libagdb.h \

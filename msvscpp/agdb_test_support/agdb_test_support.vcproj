@@ -190,6 +190,22 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\tests\agdb_test_libcerror.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\tests\agdb_test_libclocale.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\tests\agdb_test_libcsystem.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\tests\agdb_test_libuna.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\tests\agdb_test_macros.h"
 				>
 			</File>
