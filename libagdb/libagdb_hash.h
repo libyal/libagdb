@@ -41,5 +41,5 @@ int libagdb_hash_calculate(
 }
 #endif
 
-#endif
+#endif /* !defined( _LIBAGDB_HASH_H ) */
 

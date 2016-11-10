@@ -11,6 +11,7 @@ AM_CPPFLAGS = \
 	@LIBCPATH_CPPFLAGS@ \
 	@LIBBFIO_CPPFLAGS@ \
 	@LIBCSYSTEM_CPPFLAGS@ \
+	@PTHREAD_CPPFLAGS@ \
 	@LIBAGDB_DLL_IMPORT@
 
 TESTS = \
@@ -32,9 +33,8 @@ check_PROGRAMS = \
 	agdb_test_file \
 	agdb_test_file_information \
 	agdb_test_notify \
-	agdb_test_open_close \
-	agdb_test_support \
 	agdb_test_source_information \
+	agdb_test_support \
 	agdb_test_volume_information
 
 agdb_test_error_SOURCES = \
@@ -53,9 +53,7 @@ agdb_test_file_SOURCES = \
 	agdb_test_libclocale.h \
 	agdb_test_libcsystem.h \
 	agdb_test_libuna.h \
-	agdb_test_macros.h \
-	agdb_test_memory.c agdb_test_memory.h \
-	agdb_test_unused.h
+	agdb_test_memory.c agdb_test_memory.h
 
 agdb_test_file_LDADD = \
 	@LIBCSYSTEM_LIBADD@ \
@@ -70,19 +68,10 @@ agdb_test_file_information_SOURCES = \
 	agdb_test_file_information.c \
 	agdb_test_libagdb.h \
 	agdb_test_libcerror.h \
-	agdb_test_libclocale.h \
-	agdb_test_libcsystem.h \
-	agdb_test_libuna.h \
-	agdb_test_macros.h \
 	agdb_test_memory.c agdb_test_memory.h \
 	agdb_test_unused.h
 
 agdb_test_file_information_LDADD = \
-	@LIBCSYSTEM_LIBADD@ \
-	@LIBUNA_LIBADD@ \
-	@LIBCNOTIFY_LIBADD@ \
-	@LIBCLOCALE_LIBADD@ \
-	@LIBCDATA_LIBADD@ \
 	../libagdb/libagdb.la \
 	@LIBCERROR_LIBADD@
 
@@ -95,38 +84,14 @@ agdb_test_notify_SOURCES = \
 agdb_test_notify_LDADD = \
 	../libagdb/libagdb.la
 
-agdb_test_open_close_SOURCES = \
-	agdb_test_libagdb.h \
-	agdb_test_libcerror.h \
-	agdb_test_libcsystem.h \
-	agdb_test_open_close.c
-
-agdb_test_open_close_LDADD = \
-	@LIBCSYSTEM_LIBADD@ \
-	@LIBUNA_LIBADD@ \
-	@LIBCNOTIFY_LIBADD@ \
-	@LIBCLOCALE_LIBADD@ \
-	@LIBCDATA_LIBADD@ \
-	../libagdb/libagdb.la \
-	@LIBCERROR_LIBADD@
-
 agdb_test_source_information_SOURCES = \
 	agdb_test_libagdb.h \
 	agdb_test_libcerror.h \
-	agdb_test_libclocale.h \
-	agdb_test_libcsystem.h \
-	agdb_test_libuna.h \
-	agdb_test_macros.h \
 	agdb_test_memory.c agdb_test_memory.h \
 	agdb_test_source_information.c \
 	agdb_test_unused.h
 
 agdb_test_source_information_LDADD = \
-	@LIBCSYSTEM_LIBADD@ \
-	@LIBUNA_LIBADD@ \
-	@LIBCNOTIFY_LIBADD@ \
-	@LIBCLOCALE_LIBADD@ \
-	@LIBCDATA_LIBADD@ \
 	../libagdb/libagdb.la \
 	@LIBCERROR_LIBADD@
 
@@ -152,20 +117,11 @@ agdb_test_support_LDADD = \
 agdb_test_volume_information_SOURCES = \
 	agdb_test_libagdb.h \
 	agdb_test_libcerror.h \
-	agdb_test_libclocale.h \
-	agdb_test_libcsystem.h \
-	agdb_test_libuna.h \
-	agdb_test_macros.h \
 	agdb_test_memory.c agdb_test_memory.h \
 	agdb_test_unused.h \
 	agdb_test_volume_information.c
 
 agdb_test_volume_information_LDADD = \
-	@LIBCSYSTEM_LIBADD@ \
-	@LIBUNA_LIBADD@ \
-	@LIBCNOTIFY_LIBADD@ \
-	@LIBCLOCALE_LIBADD@ \
-	@LIBCDATA_LIBADD@ \
 	../libagdb/libagdb.la \
 	@LIBCERROR_LIBADD@
 

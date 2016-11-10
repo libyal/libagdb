@@ -140,5 +140,5 @@ int libagdb_volume_information_get_file_information(
 }
 #endif
 
-#endif
+#endif /* !defined( _LIBAGDB_INTERNAL_VOLUME_INFORMATION_H ) */
 

@@ -125,7 +125,6 @@ stamp-h[1-9]
 /tests/agdb_test_file
 /tests/agdb_test_file_information
 /tests/agdb_test_notify
-/tests/agdb_test_open_close
 /tests/agdb_test_source_information
 /tests/agdb_test_support
 /tests/agdb_test_volume_information

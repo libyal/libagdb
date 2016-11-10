@@ -363,5 +363,5 @@ struct agdb_source_information_144
 }
 #endif
 
-#endif
+#endif /* !defined( _AGDB_EXECUTABLE_INFORMATION_H ) */
 

@@ -44,5 +44,5 @@ int libagdb_debug_print_read_offsets(
 }
 #endif
 
-#endif
+#endif /* !defined( _LIBAGDB_DEBUG_H ) */
 

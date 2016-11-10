@@ -168,5 +168,5 @@ struct agdb_volume_information_72
 }
 #endif
 
-#endif
+#endif /* !defined( _AGDB_VOLUME_INFORMATION_H ) */
 

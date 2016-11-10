@@ -313,5 +313,5 @@ struct agdb_database_header_228
 }
 #endif
 
-#endif
+#endif /* !defined( _AGDB_FILE_HEADER_H ) */
 

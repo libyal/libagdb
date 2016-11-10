@@ -80,5 +80,5 @@ int libagdb_compressed_block_read_element_data(
 }
 #endif
 
-#endif
+#endif /* !defined( _LIBAGDB_COMPRESSED_BLOCK_H ) */
 

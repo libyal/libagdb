@@ -102,5 +102,5 @@ int libagdb_source_information_get_utf16_executable_filename(
 }
 #endif
 
-#endif
+#endif /* !defined( _LIBAGDB_INTERNAL_EXECUTABLE_INFORMATION_H ) */
 

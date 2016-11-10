@@ -87,5 +87,5 @@ int libagdb_compressed_blocks_stream_initialize(
 }
 #endif
 
-#endif
+#endif /* !defined( _LIBAGDB_COMPRESSED_BLOCKS_STREAM_H ) */
 

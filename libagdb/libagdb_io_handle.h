@@ -142,5 +142,5 @@ off64_t libagdb_io_handle_seek_segment_offset(
 }
 #endif
 
-#endif
+#endif /* !defined( _LIBAGDB_IO_HANDLE_H ) */
 

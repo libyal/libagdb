@@ -578,5 +578,5 @@ struct agdb_file_information_112
 }
 #endif
 
-#endif
+#endif /* !defined( _AGDB_FILE_INFORMATION_H ) */
 

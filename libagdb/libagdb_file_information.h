@@ -102,5 +102,5 @@ int libagdb_file_information_get_utf16_path(
 }
 #endif
 
-#endif
+#endif /* !defined( _LIBAGDB_INTERNAL_FILE_INFORMATION_H ) */
 
