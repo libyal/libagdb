@@ -808,7 +808,7 @@ int main(
 
 #if defined( LIBAGDB_HAVE_BFIO )
 
-		/* TODO add test for libagdb_file_open_file_io_handle */
+		/* TODO add test for libagdb_check_file_file_io_handle */
 
 #endif /* defined( LIBAGDB_HAVE_BFIO ) */
 	}

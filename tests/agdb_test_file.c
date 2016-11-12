@@ -584,11 +584,17 @@ int agdb_test_file_close_source(
 int agdb_test_file_initialize(
      void )
 {
-	libagdb_file_t *file     = NULL;
-	libcerror_error_t *error = NULL;
-	int result               = 0;
+	libagdb_file_t *file            = NULL;
+	libcerror_error_t *error        = NULL;
+	int result                      = 0;
 
-	/* Test file initialization
+#if defined( HAVE_AGDB_TEST_MEMORY )
+	int number_of_malloc_fail_tests = 1;
+	int number_of_memset_fail_tests = 1;
+	int test_number                 = 0;
+#endif
+
+	/* Test regular cases
 	 */
 	result = libagdb_file_initialize(
 	          &file,
@@ -664,79 +670,89 @@ int agdb_test_file_initialize(
 
 #if defined( HAVE_AGDB_TEST_MEMORY )
 
-	/* Test libagdb_file_initialize with malloc failing
-	 */
-	agdb_test_malloc_attempts_before_fail = 0;
-
-	result = libagdb_file_initialize(
-	          &file,
-	          &error );
-
-	if( agdb_test_malloc_attempts_before_fail != -1 )
+	for( test_number = 0;
+	     test_number < number_of_malloc_fail_tests;
+	     test_number++ )
 	{
-		agdb_test_malloc_attempts_before_fail = -1;
+		/* Test libagdb_file_initialize with malloc failing
+		 */
+		agdb_test_malloc_attempts_before_fail = test_number;
 
-		if( file != NULL )
+		result = libagdb_file_initialize(
+		          &file,
+		          &error );
+
+		if( agdb_test_malloc_attempts_before_fail != -1 )
 		{
-			libagdb_file_free(
-			 &file,
-			 NULL );
+			agdb_test_malloc_attempts_before_fail = -1;
+
+			if( file != NULL )
+			{
+				libagdb_file_free(
+				 &file,
+				 NULL );
+			}
+		}
+		else
+		{
+			AGDB_TEST_ASSERT_EQUAL_INT(
+			 "result",
+			 result,
+			 -1 );
+
+			AGDB_TEST_ASSERT_IS_NULL(
+			 "file",
+			 file );
+
+			AGDB_TEST_ASSERT_IS_NOT_NULL(
+			 "error",
+			 error );
+
+			libcerror_error_free(
+			 &error );
 		}
 	}
-	else
+	for( test_number = 0;
+	     test_number < number_of_memset_fail_tests;
+	     test_number++ )
 	{
-		AGDB_TEST_ASSERT_EQUAL_INT(
-		 "result",
-		 result,
-		 -1 );
+		/* Test libagdb_file_initialize with memset failing
+		 */
+		agdb_test_memset_attempts_before_fail = test_number;
 
-		AGDB_TEST_ASSERT_IS_NULL(
-		 "file",
-		 file );
+		result = libagdb_file_initialize(
+		          &file,
+		          &error );
 
-		AGDB_TEST_ASSERT_IS_NOT_NULL(
-		 "error",
-		 error );
-
-		libcerror_error_free(
-		 &error );
-	}
-	/* Test libagdb_file_initialize with memset failing
-	 */
-	agdb_test_memset_attempts_before_fail = 0;
-
-	result = libagdb_file_initialize(
-	          &file,
-	          &error );
-
-	if( agdb_test_memset_attempts_before_fail != -1 )
-	{
-		agdb_test_memset_attempts_before_fail = -1;
-
-		if( file != NULL )
+		if( agdb_test_memset_attempts_before_fail != -1 )
 		{
-			libagdb_file_free(
-			 &file,
-			 NULL );
+			agdb_test_memset_attempts_before_fail = -1;
+
+			if( file != NULL )
+			{
+				libagdb_file_free(
+				 &file,
+				 NULL );
+			}
 		}
-	}
-	else
-	{
-		AGDB_TEST_ASSERT_EQUAL_INT(
-		 "result",
-		 result,
-		 -1 );
+		else
+		{
+			AGDB_TEST_ASSERT_EQUAL_INT(
+			 "result",
+			 result,
+			 -1 );
 
-		AGDB_TEST_ASSERT_IS_NULL(
-		 "file",
-		 file );
+			AGDB_TEST_ASSERT_IS_NULL(
+			 "file",
+			 file );
 
-		AGDB_TEST_ASSERT_IS_NOT_NULL(
-		 "error",
-		 error );
+			AGDB_TEST_ASSERT_IS_NOT_NULL(
+			 "error",
+			 error );
 
-		libcerror_error_free(
-		 &error );
+			libcerror_error_free(
+			 &error );
+		}
 	}
 #endif /* defined( HAVE_AGDB_TEST_MEMORY ) */
 
@@ -1216,148 +1232,6 @@ on_error:
 	return( 0 );
 }
 
-/* Tests the libagdb_file_get_number_of_volumes functions
- * Returns 1 if successful or 0 if not
- */
-int agdb_test_file_get_number_of_volumes(
-     libagdb_file_t *file )
-{
-	libcerror_error_t *error = NULL;
-	int number_of_volumes    = 0;
-	int result               = 0;
-
-	result = libagdb_file_get_number_of_volumes(
-	          file,
-	          &number_of_volumes,
-	          &error );
-
-	AGDB_TEST_ASSERT_EQUAL_INT(
-	 "result",
-	 result,
-	 1 );
-
-        AGDB_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
-
-	/* Test error cases
-	 */
-	result = libagdb_file_get_number_of_volumes(
-	          NULL,
-	          &number_of_volumes,
-	          &error );
-
-	AGDB_TEST_ASSERT_EQUAL_INT(
-	 "result",
-	 result,
-	 -1 );
-
-        AGDB_TEST_ASSERT_IS_NOT_NULL(
-         "error",
-         error );
-
-	libcerror_error_free(
-	 &error );
-
-	result = libagdb_file_get_number_of_volumes(
-	          file,
-	          NULL,
-	          &error );
-
-	AGDB_TEST_ASSERT_EQUAL_INT(
-	 "result",
-	 result,
-	 -1 );
-
-        AGDB_TEST_ASSERT_IS_NOT_NULL(
-         "error",
-         error );
-
-	libcerror_error_free(
-	 &error );
-
-	return( 1 );
-
-on_error:
-	if( error != NULL )
-	{
-		libcerror_error_free(
-		 &error );
-	}
-	return( 0 );
-}
-
-/* Tests the libagdb_file_get_number_of_sources functions
- * Returns 1 if successful or 0 if not
- */
-int agdb_test_file_get_number_of_sources(
-     libagdb_file_t *file )
-{
-	libcerror_error_t *error = NULL;
-	int number_of_sources    = 0;
-	int result               = 0;
-
-	result = libagdb_file_get_number_of_sources(
-	          file,
-	          &number_of_sources,
-	          &error );
-
-	AGDB_TEST_ASSERT_EQUAL_INT(
-	 "result",
-	 result,
-	 1 );
-
-        AGDB_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
-
-	/* Test error cases
-	 */
-	result = libagdb_file_get_number_of_sources(
-	          NULL,
-	          &number_of_sources,
-	          &error );
-
-	AGDB_TEST_ASSERT_EQUAL_INT(
-	 "result",
-	 result,
-	 -1 );
-
-        AGDB_TEST_ASSERT_IS_NOT_NULL(
-         "error",
-         error );
-
-	libcerror_error_free(
-	 &error );
-
-	result = libagdb_file_get_number_of_sources(
-	          file,
-	          NULL,
-	          &error );
-
-	AGDB_TEST_ASSERT_EQUAL_INT(
-	 "result",
-	 result,
-	 -1 );
-
-        AGDB_TEST_ASSERT_IS_NOT_NULL(
-         "error",
-         error );
-
-	libcerror_error_free(
-	 &error );
-
-	return( 1 );
-
-on_error:
-	if( error != NULL )
-	{
-		libcerror_error_free(
-		 &error );
-	}
-	return( 0 );
-}
-
 /* The main program
  */
 #if defined( HAVE_WIDE_SYSTEM_CHARACTER )
@@ -1465,15 +1339,21 @@ int main(
 	         "error",
 	         error );
 
-		AGDB_TEST_RUN_WITH_ARGS(
-		 "libagdb_file_get_number_of_volumes",
-		 agdb_test_file_get_number_of_volumes,
-		 file );
+		/* TODO: add tests for libagdb_file_signal_abort */
 
-		AGDB_TEST_RUN_WITH_ARGS(
-		 "libagdb_file_get_number_of_sources",
-		 agdb_test_file_get_number_of_sources,
-		 file );
+#if defined( __GNUC__ )
+
+		/* TODO: add tests for libagdb_file_open_read */
+
+#endif /* defined( __GNUC__ ) */
+
+		/* TODO: add tests for libagdb_file_get_number_of_volumes */
+
+		/* TODO: add tests for libagdb_file_get_volume_information */
+
+		/* TODO: add tests for libagdb_file_get_number_of_sources */
+
+		/* TODO: add tests for libagdb_file_get_source_information */
 
 		/* Clean up
 		 */

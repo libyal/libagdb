@@ -1,5 +1,5 @@
 /*
- * Library source_information type testing program
+ * Library compressed_blocks_stream_data_handle type testing program
  *
  * Copyright (C) 2014-2016, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -33,30 +33,30 @@
 #include "agdb_test_memory.h"
 #include "agdb_test_unused.h"
 
-#include "../libagdb/libagdb_source_information.h"
+#include "../libagdb/libagdb_compressed_blocks_stream_data_handle.h"
 
 #if defined( __GNUC__ )
 
-/* Tests the libagdb_source_information_initialize function
+/* Tests the libagdb_compressed_blocks_stream_data_handle_initialize function
  * Returns 1 if successful or 0 if not
  */
-int agdb_test_source_information_initialize(
+int agdb_test_compressed_blocks_stream_data_handle_initialize(
      void )
 {
-	libagdb_source_information_t *source_information = NULL;
-	libcerror_error_t *error                         = NULL;
-	int result                                       = 0;
+	libagdb_compressed_blocks_stream_data_handle_t *compressed_blocks_stream_data_handle = NULL;
+	libcerror_error_t *error                                                             = NULL;
+	int result                                                                           = 0;
 
 #if defined( HAVE_AGDB_TEST_MEMORY )
-	int number_of_malloc_fail_tests                  = 1;
-	int number_of_memset_fail_tests                  = 1;
-	int test_number                                  = 0;
+	int number_of_malloc_fail_tests                                                      = 1;
+	int number_of_memset_fail_tests                                                      = 1;
+	int test_number                                                                      = 0;
 #endif
 
 	/* Test regular cases
 	 */
-	result = libagdb_source_information_initialize(
-	          &source_information,
+	result = libagdb_compressed_blocks_stream_data_handle_initialize(
+	          &compressed_blocks_stream_data_handle,
 	          &error );
 
 	AGDB_TEST_ASSERT_EQUAL_INT(
@@ -65,15 +65,15 @@ int agdb_test_source_information_initialize(
 	 1 );
 
         AGDB_TEST_ASSERT_IS_NOT_NULL(
-         "source_information",
-         source_information );
+         "compressed_blocks_stream_data_handle",
+         compressed_blocks_stream_data_handle );
 
         AGDB_TEST_ASSERT_IS_NULL(
          "error",
          error );
 
-	result = libagdb_source_information_free(
-	          &source_information,
+	result = libagdb_compressed_blocks_stream_data_handle_free(
+	          &compressed_blocks_stream_data_handle,
 	          &error );
 
 	AGDB_TEST_ASSERT_EQUAL_INT(
@@ -82,8 +82,8 @@ int agdb_test_source_information_initialize(
 	 1 );
 
         AGDB_TEST_ASSERT_IS_NULL(
-         "source_information",
-         source_information );
+         "compressed_blocks_stream_data_handle",
+         compressed_blocks_stream_data_handle );
 
         AGDB_TEST_ASSERT_IS_NULL(
          "error",
@@ -91,7 +91,7 @@ int agdb_test_source_information_initialize(
 
 	/* Test error cases
 	 */
-	result = libagdb_source_information_initialize(
+	result = libagdb_compressed_blocks_stream_data_handle_initialize(
 	          NULL,
 	          &error );
 
@@ -107,10 +107,10 @@ int agdb_test_source_information_initialize(
 	libcerror_error_free(
 	 &error );
 
-	source_information = (libagdb_source_information_t *) 0x12345678UL;
+	compressed_blocks_stream_data_handle = (libagdb_compressed_blocks_stream_data_handle_t *) 0x12345678UL;
 
-	result = libagdb_source_information_initialize(
-	          &source_information,
+	result = libagdb_compressed_blocks_stream_data_handle_initialize(
+	          &compressed_blocks_stream_data_handle,
 	          &error );
 
 	AGDB_TEST_ASSERT_EQUAL_INT(
@@ -125,7 +125,7 @@ int agdb_test_source_information_initialize(
 	libcerror_error_free(
 	 &error );
 
-	source_information = NULL;
+	compressed_blocks_stream_data_handle = NULL;
 
 #if defined( HAVE_AGDB_TEST_MEMORY )
 
@@ -133,22 +133,22 @@ int agdb_test_source_information_initialize(
 	     test_number < number_of_malloc_fail_tests;
 	     test_number++ )
 	{
-		/* Test libagdb_source_information_initialize with malloc failing
+		/* Test libagdb_compressed_blocks_stream_data_handle_initialize with malloc failing
 		 */
 		agdb_test_malloc_attempts_before_fail = test_number;
 
-		result = libagdb_source_information_initialize(
-		          &source_information,
+		result = libagdb_compressed_blocks_stream_data_handle_initialize(
+		          &compressed_blocks_stream_data_handle,
 		          &error );
 
 		if( agdb_test_malloc_attempts_before_fail != -1 )
 		{
 			agdb_test_malloc_attempts_before_fail = -1;
 
-			if( source_information != NULL )
+			if( compressed_blocks_stream_data_handle != NULL )
 			{
-				libagdb_source_information_free(
-				 &source_information,
+				libagdb_compressed_blocks_stream_data_handle_free(
+				 &compressed_blocks_stream_data_handle,
 				 NULL );
 			}
 		}
@@ -160,8 +160,8 @@ int agdb_test_source_information_initialize(
 			 -1 );
 
 			AGDB_TEST_ASSERT_IS_NULL(
-			 "source_information",
-			 source_information );
+			 "compressed_blocks_stream_data_handle",
+			 compressed_blocks_stream_data_handle );
 
 			AGDB_TEST_ASSERT_IS_NOT_NULL(
 			 "error",
@@ -175,22 +175,22 @@ int agdb_test_source_information_initialize(
 	     test_number < number_of_memset_fail_tests;
 	     test_number++ )
 	{
-		/* Test libagdb_source_information_initialize with memset failing
+		/* Test libagdb_compressed_blocks_stream_data_handle_initialize with memset failing
 		 */
 		agdb_test_memset_attempts_before_fail = test_number;
 
-		result = libagdb_source_information_initialize(
-		          &source_information,
+		result = libagdb_compressed_blocks_stream_data_handle_initialize(
+		          &compressed_blocks_stream_data_handle,
 		          &error );
 
 		if( agdb_test_memset_attempts_before_fail != -1 )
 		{
 			agdb_test_memset_attempts_before_fail = -1;
 
-			if( source_information != NULL )
+			if( compressed_blocks_stream_data_handle != NULL )
 			{
-				libagdb_source_information_free(
-				 &source_information,
+				libagdb_compressed_blocks_stream_data_handle_free(
+				 &compressed_blocks_stream_data_handle,
 				 NULL );
 			}
 		}
@@ -202,8 +202,8 @@ int agdb_test_source_information_initialize(
 			 -1 );
 
 			AGDB_TEST_ASSERT_IS_NULL(
-			 "source_information",
-			 source_information );
+			 "compressed_blocks_stream_data_handle",
+			 compressed_blocks_stream_data_handle );
 
 			AGDB_TEST_ASSERT_IS_NOT_NULL(
 			 "error",
@@ -223,21 +223,19 @@ on_error:
 		libcerror_error_free(
 		 &error );
 	}
-	if( source_information != NULL )
+	if( compressed_blocks_stream_data_handle != NULL )
 	{
-		libagdb_source_information_free(
-		 &source_information,
+		libagdb_compressed_blocks_stream_data_handle_free(
+		 &compressed_blocks_stream_data_handle,
 		 NULL );
 	}
 	return( 0 );
 }
 
-#endif /* defined( __GNUC__ ) */
-
-/* Tests the libagdb_source_information_free function
+/* Tests the libagdb_compressed_blocks_stream_data_handle_free function
  * Returns 1 if successful or 0 if not
  */
-int agdb_test_source_information_free(
+int agdb_test_compressed_blocks_stream_data_handle_free(
      void )
 {
 	libcerror_error_t *error = NULL;
@@ -245,7 +243,7 @@ int agdb_test_source_information_free(
 
 	/* Test error cases
 	 */
-	result = libagdb_source_information_free(
+	result = libagdb_compressed_blocks_stream_data_handle_free(
 	          NULL,
 	          &error );
 
@@ -272,6 +270,8 @@ on_error:
 	return( 0 );
 }
 
+#endif /* defined( __GNUC__ ) */
+
 /* The main program
  */
 #if defined( HAVE_WIDE_SYSTEM_CHARACTER )
@@ -290,28 +290,18 @@ int main(
 #if defined( __GNUC__ )
 
 	AGDB_TEST_RUN(
-	 "libagdb_source_information_initialize",
-	 agdb_test_source_information_initialize );
-
-#endif /* defined( __GNUC__ ) */
+	 "libagdb_compressed_blocks_stream_data_handle_initialize",
+	 agdb_test_compressed_blocks_stream_data_handle_initialize );
 
 	AGDB_TEST_RUN(
-	 "libagdb_source_information_free",
-	 agdb_test_source_information_free );
+	 "libagdb_compressed_blocks_stream_data_handle_free",
+	 agdb_test_compressed_blocks_stream_data_handle_free );
 
-#if defined( __GNUC__ )
+	/* TODO: add tests for libagdb_compressed_blocks_stream_data_handle_read_segment_data */
 
-	/* TODO: add tests for libagdb_source_information_read */
+	/* TODO: add tests for libagdb_compressed_blocks_stream_data_handle_seek_segment_offset */
 
 #endif /* defined( __GNUC__ ) */
-
-	/* TODO: add tests for libagdb_source_information_get_utf8_executable_filename_size */
-
-	/* TODO: add tests for libagdb_source_information_get_utf8_executable_filename */
-
-	/* TODO: add tests for libagdb_source_information_get_utf16_executable_filename_size */
-
-	/* TODO: add tests for libagdb_source_information_get_utf16_executable_filename */
 
 	return( EXIT_SUCCESS );
 

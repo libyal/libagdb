@@ -2,9 +2,9 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9,00"
-	Name="agdb_test_notify"
-	ProjectGUID="{2326A89A-926C-4381-8F08-BB7FEC4FA4E6}"
-	RootNamespace="agdb_test_notify"
+	Name="agdb_test_compressed_blocks_stream_data_handle"
+	ProjectGUID="{0A3EF574-FC0B-4743-AFEE-D82B500927F7}"
+	RootNamespace="agdb_test_compressed_blocks_stream_data_handle"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="131072"
 	>
@@ -176,7 +176,11 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath="..\..\tests\agdb_test_notify.c"
+				RelativePath="..\..\tests\agdb_test_compressed_blocks_stream_data_handle.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\tests\agdb_test_memory.c"
 				>
 			</File>
 		</Filter>
@@ -190,7 +194,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\tests\agdb_test_libcerror.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\tests\agdb_test_macros.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\tests\agdb_test_memory.h"
 				>
 			</File>
 			<File

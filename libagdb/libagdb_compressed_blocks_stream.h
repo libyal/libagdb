@@ -33,50 +33,6 @@
 extern "C" {
 #endif
 
-typedef struct libagdb_compressed_blocks_stream_data_handle libagdb_compressed_blocks_stream_data_handle_t;
-
-struct libagdb_compressed_blocks_stream_data_handle
-{
-	/* The current offset
-	 */
-	off64_t current_offset;
-
-	/* The compressed blocks list
-	 */
-	libfdata_list_t *compressed_blocks_list;
-
-	/* The compressed blocks cache
-	 */
-	libfcache_cache_t *compressed_blocks_cache;
-};
-
-int libagdb_compressed_blocks_stream_data_handle_initialize(
-     libagdb_compressed_blocks_stream_data_handle_t **data_handle,
-     libcerror_error_t **error );
-
-int libagdb_compressed_blocks_stream_data_handle_free(
-     libagdb_compressed_blocks_stream_data_handle_t **data_handle,
-     libcerror_error_t **error );
-
-ssize_t libagdb_compressed_blocks_stream_data_handle_read_segment_data(
-         libagdb_compressed_blocks_stream_data_handle_t *data_handle,
-         intptr_t *file_io_handle,
-         int segment_index,
-         int segment_file_index,
-         uint8_t *segment_data,
-         size_t segment_data_size,
-         uint32_t segment_flags,
-         uint8_t read_flags,
-         libcerror_error_t **error );
-
-off64_t libagdb_compressed_blocks_stream_data_handle_seek_segment_offset(
-         libagdb_compressed_blocks_stream_data_handle_t *data_handle,
-         intptr_t *file_io_handle,
-         int segment_index,
-         int segment_file_index,
-         off64_t segment_offset,
-         libcerror_error_t **error );
-
 int libagdb_compressed_blocks_stream_initialize(
      libfdata_stream_t **compressed_blocks_stream,
      libfdata_list_t *compressed_blocks_list,
