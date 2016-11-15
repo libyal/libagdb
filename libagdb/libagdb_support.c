@@ -464,10 +464,12 @@ int libagdb_check_file_signature_file_io_handle(
 	}
 /* TODO improve detection */
 	byte_stream_copy_to_uint32_little_endian(
-	 &( signature[ 0 ] ),
+	 signature,
 	 value32_bit );
 
-	if( value32_bit == 0x0000000eUL )
+	if( ( value32_bit == 0x00000005UL )
+	 || ( value32_bit == 0x0000000eUL )
+	 || ( value32_bit == 0x0000000fUL ) )
 	{
 		byte_stream_copy_to_uint32_little_endian(
 		 &( signature[ 4 ] ),

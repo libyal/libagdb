@@ -1204,12 +1204,12 @@ int libagdb_file_open_read(
 			goto on_error;
 		}
 		read_count = libagdb_volume_information_read(
-		              volume_information,
+		              (libagdb_internal_volume_information_t *) volume_information,
+		              internal_file->io_handle,
 		              internal_file->uncompressed_data_stream,
 		              internal_file->file_io_handle,
-		              internal_file->io_handle,
-		              file_offset,
 		              volume_index,
+		              file_offset,
 		              error );
 
 		if( read_count == -1 )
@@ -1263,12 +1263,12 @@ int libagdb_file_open_read(
 			goto on_error;
 		}
 		read_count = libagdb_source_information_read(
-		              source_information,
+		              (libagdb_internal_source_information_t *) source_information,
+		              internal_file->io_handle,
 		              internal_file->uncompressed_data_stream,
 		              internal_file->file_io_handle,
-		              internal_file->io_handle,
-		              file_offset,
 		              source_index,
+		              file_offset,
 		              error );
 
 		if( read_count == -1 )

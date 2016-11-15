@@ -73,17 +73,26 @@ int libagdb_volume_information_free(
      libcerror_error_t **error );
 
 int libagdb_internal_volume_information_free(
-     libagdb_internal_volume_information_t **volume_information,
+     libagdb_internal_volume_information_t **internal_volume_information,
      libcerror_error_t **error );
 
 ssize64_t libagdb_volume_information_read(
-           libagdb_volume_information_t *volume_information,
+           libagdb_internal_volume_information_t *internal_volume_information,
+           libagdb_io_handle_t *io_handle,
            libfdata_stream_t *uncompressed_data_stream,
            libbfio_handle_t *file_io_handle,
-           libagdb_io_handle_t *io_handle,
-           off64_t file_offset,
            uint32_t volume_index,
+           off64_t file_offset,
            libcerror_error_t **error );
+
+int libagdb_volume_information_read_data(
+     libagdb_internal_volume_information_t *internal_volume_information,
+     libagdb_io_handle_t *io_handle,
+     const uint8_t *data,
+     size_t data_size,
+     uint32_t *number_of_files,
+     uint16_t *device_path_size,
+     libcerror_error_t **error );
 
 LIBAGDB_EXTERN \
 int libagdb_volume_information_get_creation_time(

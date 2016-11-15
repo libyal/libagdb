@@ -60,17 +60,25 @@ int libagdb_source_information_free(
      libcerror_error_t **error );
 
 int libagdb_internal_source_information_free(
-     libagdb_internal_source_information_t **source_information,
+     libagdb_internal_source_information_t **internal_source_information,
      libcerror_error_t **error );
 
 ssize_t libagdb_source_information_read(
-         libagdb_source_information_t *source_information,
-         libfdata_stream_t *uncompressed_data_stream,
-         libbfio_handle_t *source_io_handle,
+         libagdb_internal_source_information_t *internal_source_information,
          libagdb_io_handle_t *io_handle,
-         off64_t file_offset,
+         libfdata_stream_t *uncompressed_data_stream,
+         libbfio_handle_t *file_io_handle,
          uint32_t source_information_index,
+         off64_t file_offset,
          libcerror_error_t **error );
+
+int libagdb_source_information_read_data(
+     libagdb_internal_source_information_t *internal_source_information,
+     libagdb_io_handle_t *io_handle,
+     const uint8_t *data,
+     size_t data_size,
+     uint32_t *number_of_entries,
+     libcerror_error_t **error );
 
 LIBAGDB_EXTERN \
 int libagdb_source_information_get_utf8_executable_filename_size(

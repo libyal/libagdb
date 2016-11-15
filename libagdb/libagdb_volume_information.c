@@ -22,11 +22,9 @@
 #include <common.h>
 #include <byte_stream.h>
 #include <memory.h>
-#include <narrow_string.h>
-#include <system_string.h>
 #include <types.h>
-#include <wide_string.h>
 
+#include "libagdb_debug.h"
 #include "libagdb_definitions.h"
 #include "libagdb_file_information.h"
 #include "libagdb_hash.h"
@@ -162,13 +160,13 @@ int libagdb_volume_information_free(
  * Returns 1 if successful or -1 on error
  */
 int libagdb_internal_volume_information_free(
-     libagdb_internal_volume_information_t **volume_information,
+     libagdb_internal_volume_information_t **internal_volume_information,
      libcerror_error_t **error )
 {
 	static char *function = "libagdb_internal_volume_information_free";
 	int result            = 1;
 
-	if( volume_information == NULL )
+	if( internal_volume_information == NULL )
 	{
 		libcerror_error_set(
 		 error,
@@ -179,15 +177,15 @@ int libagdb_internal_volume_information_free(
 
 		return( -1 );
 	}
-	if( *volume_information != NULL )
+	if( *internal_volume_information != NULL )
 	{
-		if( ( *volume_information )->device_path != NULL )
+		if( ( *internal_volume_information )->device_path != NULL )
 		{
 			memory_free(
-			 ( *volume_information )->device_path );
+			 ( *internal_volume_information )->device_path );
 		}
 		if( libcdata_array_free(
-		     &( ( *volume_information )->files_array ),
+		     &( ( *internal_volume_information )->files_array ),
 		     (int (*)(intptr_t **, libcerror_error_t **)) &libagdb_internal_file_information_free,
 		     error ) != 1 )
 		{
@@ -201,9 +199,9 @@ int libagdb_internal_volume_information_free(
 			result = -1;
 		}
 		memory_free(
-		 *volume_information );
+		 *internal_volume_information );
 
-		*volume_information = NULL;
+		*internal_volume_information = NULL;
 	}
 	return( result );
 }
@@ -212,43 +210,30 @@ int libagdb_internal_volume_information_free(
  * Returns the number of bytes read if successful or -1 on error
  */
 ssize64_t libagdb_volume_information_read(
-           libagdb_volume_information_t *volume_information,
+           libagdb_internal_volume_information_t *internal_volume_information,
+           libagdb_io_handle_t *io_handle,
            libfdata_stream_t *uncompressed_data_stream,
            libbfio_handle_t *file_io_handle,
-           libagdb_io_handle_t *io_handle,
-           off64_t file_offset,
            uint32_t volume_index,
+           off64_t file_offset,
            libcerror_error_t **error )
 {
 	uint8_t alignment_padding_data[ 8 ];
 
-	libagdb_file_information_t *file_information                       = NULL;
-	libagdb_internal_volume_information_t *internal_volume_information = NULL;
-	uint8_t *volume_information_data                                   = NULL;
-	static char *function                                              = "libagdb_volume_information_read";
-	ssize64_t total_read_count                                         = 0;
-	size_t alignment_padding_size                                      = 0;
-	size_t alignment_size                                              = 0;
-	ssize_t read_count                                                 = 0;
-	uint32_t calculated_hash_value                                     = 0;
-	uint32_t file_index                                                = 0;
-	uint32_t number_of_files                                           = 0;
-	uint16_t device_path_size                                          = 0;
-	int entry_index                                                    = 0;
+	libagdb_file_information_t *file_information = NULL;
+	uint8_t *volume_information_data             = NULL;
+	static char *function                        = "libagdb_volume_information_read";
+	ssize64_t total_read_count                   = 0;
+	size_t alignment_padding_size                = 0;
+	size_t alignment_size                        = 0;
+	ssize_t read_count                           = 0;
+	uint32_t calculated_hash_value               = 0;
+	uint32_t file_index                          = 0;
+	uint32_t number_of_files                     = 0;
+	uint16_t device_path_size                    = 0;
+	int entry_index                              = 0;
 
-#if defined( HAVE_DEBUG_OUTPUT )
-	system_character_t filetime_string[ 48 ];
-
-	libfdatetime_filetime_t *filetime                                  = NULL;
-	system_character_t *value_string                                   = NULL;
-	size_t value_string_size                                           = 0;
-	uint64_t value_64bit                                               = 0;
-	uint32_t value_32bit                                               = 0;
-	uint16_t value_16bit                                               = 0;
-	int result                                                         = 0;
-#endif
-
-	if( volume_information == NULL )
+	if( internal_volume_information == NULL )
 	{
 		libcerror_error_set(
 		 error,
@@ -259,8 +244,6 @@ ssize64_t libagdb_volume_information_read(
 
 		return( -1 );
 	}
-	internal_volume_information = (libagdb_internal_volume_information_t *) volume_information;
-
 	if( internal_volume_information->device_path != NULL )
 	{
 		libcerror_error_set(
@@ -362,19 +345,30 @@ ssize64_t libagdb_volume_information_read(
 	total_read_count += read_count;
 	file_offset      += read_count;
 
-#if defined( HAVE_DEBUG_OUTPUT )
-	if( libcnotify_verbose != 0 )
+	if( libagdb_volume_information_read_data(
+	     internal_volume_information,
+	     io_handle,
+	     volume_information_data,
+	     (size_t) io_handle->volume_information_entry_size,
+	     &number_of_files,
+	     &device_path_size,
+	     error ) != 1 )
 	{
-		libcnotify_printf(
-		 "%s: volume: %" PRIu32 " information data:\n",
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_IO,
+		 LIBCERROR_IO_ERROR_READ_FAILED,
+		 "%s: unable to read volume: %" PRIu32 " information.",
 		 function,
 		 volume_index );
-		libcnotify_print_data(
-		 volume_information_data,
-		 (size_t) io_handle->volume_information_entry_size,
-		 0 );
+
+		goto on_error;
 	}
-#endif
+	memory_free(
+	 volume_information_data );
+
+	volume_information_data = NULL;
+
 	if( io_handle->volume_information_entry_size == 56 )
 	{
 		alignment_size = 4;
@@ -395,302 +389,6 @@ ssize64_t libagdb_volume_information_read(
 
 		goto on_error;
 	}
-	if( io_handle->volume_information_entry_size == 56 )
-	{
-		byte_stream_copy_to_uint32_little_endian(
-		 ( (agdb_volume_information_56_t *) volume_information_data )->number_of_files,
-		 number_of_files );
-
-		byte_stream_copy_to_uint64_little_endian(
-		 ( (agdb_volume_information_56_t *) volume_information_data )->creation_time,
-		 internal_volume_information->creation_time );
-
-		byte_stream_copy_to_uint32_little_endian(
-		 ( (agdb_volume_information_56_t *) volume_information_data )->serial_number,
-		 internal_volume_information->serial_number );
-
-		byte_stream_copy_to_uint16_little_endian(
-		 ( (agdb_volume_information_56_t *) volume_information_data )->device_path_number_of_characters,
-		 device_path_size );
-	}
-	else if( io_handle->volume_information_entry_size == 72 )
-	{
-		byte_stream_copy_to_uint32_little_endian(
-		 ( (agdb_volume_information_72_t *) volume_information_data )->number_of_files,
-		 number_of_files );
-
-		byte_stream_copy_to_uint64_little_endian(
-		 ( (agdb_volume_information_72_t *) volume_information_data )->creation_time,
-		 internal_volume_information->creation_time );
-
-		byte_stream_copy_to_uint32_little_endian(
-		 ( (agdb_volume_information_72_t *) volume_information_data )->serial_number,
-		 internal_volume_information->serial_number );
-
-		byte_stream_copy_to_uint16_little_endian(
-		 ( (agdb_volume_information_72_t *) volume_information_data )->device_path_number_of_characters,
-		 device_path_size );
-	}
-#if defined( HAVE_DEBUG_OUTPUT )
-	if( libcnotify_verbose != 0 )
-	{
-		if( libfdatetime_filetime_initialize(
-		     &filetime,
-		     error ) != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-			 "%s: unable to create filetime.",
-			 function );
-
-			goto on_error;
-		}
-		if( io_handle->volume_information_entry_size == 56 )
-		{
-			byte_stream_copy_to_uint32_little_endian(
-			 ( (agdb_volume_information_56_t *) volume_information_data )->unknown1,
-			 value_64bit );
-		}
-		else if( io_handle->volume_information_entry_size == 72 )
-		{
-			byte_stream_copy_to_uint64_little_endian(
-			 ( (agdb_volume_information_72_t *) volume_information_data )->unknown1,
-			 value_64bit );
-		}
-		libcnotify_printf(
-		 "%s: unknown1\t\t\t\t: 0x%08" PRIx64 "\n",
-		 function,
-		 value_64bit );
-
-		if( io_handle->volume_information_entry_size == 56 )
-		{
-			byte_stream_copy_to_uint32_little_endian(
-			 ( (agdb_volume_information_56_t *) volume_information_data )->unknown2,
-			 value_64bit );
-		}
-		else if( io_handle->volume_information_entry_size == 72 )
-		{
-			byte_stream_copy_to_uint64_little_endian(
-			 ( (agdb_volume_information_72_t *) volume_information_data )->unknown2,
-			 value_64bit );
-		}
-		libcnotify_printf(
-		 "%s: unknown2\t\t\t\t: 0x%08" PRIx64 "\n",
-		 function,
-		 value_64bit );
-
-		libcnotify_printf(
-		 "%s: number of files\t\t\t: %" PRIu32 "\n",
-		 function,
-		 number_of_files );
-
-		if( io_handle->volume_information_entry_size == 56 )
-		{
-			byte_stream_copy_to_uint32_little_endian(
-			 ( (agdb_volume_information_56_t *) volume_information_data )->unknown3,
-			 value_32bit );
-		}
-		else if( io_handle->volume_information_entry_size == 72 )
-		{
-			byte_stream_copy_to_uint32_little_endian(
-			 ( (agdb_volume_information_72_t *) volume_information_data )->unknown3,
-			 value_32bit );
-		}
-		libcnotify_printf(
-		 "%s: unknown3\t\t\t\t: 0x%08" PRIx32 "\n",
-		 function,
-		 value_32bit );
-
-		if( io_handle->volume_information_entry_size == 56 )
-		{
-			byte_stream_copy_to_uint64_little_endian(
-			 ( (agdb_volume_information_56_t *) volume_information_data )->unknown4,
-			 value_64bit );
-		}
-		else if( io_handle->volume_information_entry_size == 72 )
-		{
-			byte_stream_copy_to_uint64_little_endian(
-			 ( (agdb_volume_information_72_t *) volume_information_data )->unknown4,
-			 value_64bit );
-		}
-		libcnotify_printf(
-		 "%s: unknown4\t\t\t\t: 0x%08" PRIx64 "\n",
-		 function,
-		 value_64bit );
-
-		if( io_handle->volume_information_entry_size == 56 )
-		{
-			result = libfdatetime_filetime_copy_from_byte_stream(
-			          filetime,
-			          ( (agdb_volume_information_56_t *) volume_information_data )->creation_time,
-			          8,
-			          LIBFDATETIME_ENDIAN_LITTLE,
-			          error );
-		}
-		else if( io_handle->volume_information_entry_size == 72 )
-		{
-			result = libfdatetime_filetime_copy_from_byte_stream(
-			          filetime,
-			          ( (agdb_volume_information_72_t *) volume_information_data )->creation_time,
-			          8,
-			          LIBFDATETIME_ENDIAN_LITTLE,
-			          error );
-		}
-		if( result != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_COPY_FAILED,
-			 "%s: unable to copy byte stream to filetime.",
-			 function );
-
-			goto on_error;
-		}
-#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
-		result = libfdatetime_filetime_copy_to_utf16_string(
-			  filetime,
-			  (uint16_t *) filetime_string,
-			  48,
-			  LIBFDATETIME_STRING_FORMAT_TYPE_CTIME | LIBFDATETIME_STRING_FORMAT_FLAG_DATE_TIME_NANO_SECONDS,
-			  error );
-#else
-		result = libfdatetime_filetime_copy_to_utf8_string(
-			  filetime,
-			  (uint8_t *) filetime_string,
-			  48,
-			  LIBFDATETIME_STRING_FORMAT_TYPE_CTIME | LIBFDATETIME_STRING_FORMAT_FLAG_DATE_TIME_NANO_SECONDS,
-			  error );
-#endif
-		if( result != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_COPY_FAILED,
-			 "%s: unable to copy filetime to string.",
-			 function );
-
-			goto on_error;
-		}
-		libcnotify_printf(
-		 "%s: creation time\t\t\t\t: %" PRIs_SYSTEM " UTC\n",
-		 function,
-		 filetime_string );
-
-		libcnotify_printf(
-		 "%s: serial number\t\t\t\t: 0x%08" PRIx32 "\n",
-		 function,
-		 internal_volume_information->serial_number );
-
-		if( io_handle->volume_information_entry_size == 56 )
-		{
-			byte_stream_copy_to_uint32_little_endian(
-			 ( (agdb_volume_information_56_t *) volume_information_data )->unknown5,
-			 value_32bit );
-		}
-		else if( io_handle->volume_information_entry_size == 72 )
-		{
-			byte_stream_copy_to_uint32_little_endian(
-			 ( (agdb_volume_information_72_t *) volume_information_data )->unknown5,
-			 value_32bit );
-		}
-		libcnotify_printf(
-		 "%s: unknown5\t\t\t\t: 0x%08" PRIx32 "\n",
-		 function,
-		 value_32bit );
-
-		if( io_handle->volume_information_entry_size == 56 )
-		{
-			byte_stream_copy_to_uint32_little_endian(
-			 ( (agdb_volume_information_56_t *) volume_information_data )->unknown6,
-			 value_64bit );
-		}
-		else if( io_handle->volume_information_entry_size == 72 )
-		{
-			byte_stream_copy_to_uint64_little_endian(
-			 ( (agdb_volume_information_72_t *) volume_information_data )->unknown6,
-			 value_64bit );
-		}
-		libcnotify_printf(
-		 "%s: unknown6\t\t\t\t: 0x%08" PRIx64 "\n",
-		 function,
-		 value_64bit );
-
-		libcnotify_printf(
-		 "%s: device path number of characters\t: %" PRIu16 "\n",
-		 function,
-		 device_path_size );
-
-		if( io_handle->volume_information_entry_size == 56 )
-		{
-			byte_stream_copy_to_uint16_little_endian(
-			 ( (agdb_volume_information_56_t *) volume_information_data )->unknown7,
-			 value_16bit );
-		}
-		else if( io_handle->volume_information_entry_size == 72 )
-		{
-			byte_stream_copy_to_uint16_little_endian(
-			 ( (agdb_volume_information_72_t *) volume_information_data )->unknown7,
-			 value_16bit );
-		}
-		libcnotify_printf(
-		 "%s: unknown7\t\t\t\t: 0x%04" PRIx16 "\n",
-		 function,
-		 value_16bit );
-
-		if( io_handle->volume_information_entry_size == 72 )
-		{
-			byte_stream_copy_to_uint32_little_endian(
-			 ( (agdb_volume_information_72_t *) volume_information_data )->unknown8,
-			 value_32bit );
-			libcnotify_printf(
-			 "%s: unknown8\t\t\t\t: 0x%08" PRIx32 "\n",
-			 function,
-			 value_32bit );
-		}
-		if( io_handle->volume_information_entry_size == 56 )
-		{
-			byte_stream_copy_to_uint64_little_endian(
-			 ( (agdb_volume_information_56_t *) volume_information_data )->unknown9,
-			 value_64bit );
-		}
-		else if( io_handle->volume_information_entry_size == 72 )
-		{
-			byte_stream_copy_to_uint64_little_endian(
-			 ( (agdb_volume_information_72_t *) volume_information_data )->unknown9,
-			 value_64bit );
-		}
-		libcnotify_printf(
-		 "%s: unknown9\t\t\t\t: 0x%08" PRIx64 "\n",
-		 function,
-		 value_64bit );
-
-		libcnotify_printf(
-		 "\n" );
-
-		if( libfdatetime_filetime_free(
-		     &filetime,
-		     error ) != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
-			 "%s: unable to free filetime.",
-			 function );
-
-			goto on_error;
-		}
-	}
-#endif
-	memory_free(
-	 volume_information_data );
-
-	volume_information_data = NULL;
-
 	if( device_path_size != 0 )
 	{
 		device_path_size += 1;
@@ -767,91 +465,23 @@ ssize64_t libagdb_volume_information_read(
 #if defined( HAVE_DEBUG_OUTPUT )
 		if( libcnotify_verbose != 0 )
 		{
-#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
-			result = libuna_utf16_string_size_from_utf16_stream(
-				  internal_volume_information->device_path,
-				  internal_volume_information->device_path_size,
-				  LIBUNA_ENDIAN_LITTLE,
-				  &value_string_size,
-				  error );
-#else
-			result = libuna_utf8_string_size_from_utf16_stream(
-				  internal_volume_information->device_path,
-				  internal_volume_information->device_path_size,
-				  LIBUNA_ENDIAN_LITTLE,
-				  &value_string_size,
-				  error );
-#endif
-			if( result != 1 )
+			if( libagdb_debug_print_utf16_string_value(
+			     function,
+			     "volume device path\t\t\t",
+			     internal_volume_information->device_path,
+			     internal_volume_information->device_path_size,
+			     LIBUNA_ENDIAN_LITTLE,
+			     error ) != 1 )
 			{
 				libcerror_error_set(
 				 error,
 				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-				 "%s: unable to determine size of volume device path string.",
+				 LIBCERROR_RUNTIME_ERROR_PRINT_FAILED,
+				 "%s: unable to print UTF-16 string value.",
 				 function );
 
 				goto on_error;
 			}
-			if( ( value_string_size > (size_t) SSIZE_MAX )
-			 || ( ( sizeof( system_character_t ) * value_string_size ) > (size_t) SSIZE_MAX ) )
-			{
-				libcerror_error_set(
-				 error,
-				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBCERROR_RUNTIME_ERROR_VALUE_EXCEEDS_MAXIMUM,
-				 "%s: invalid volume device path string size value exceeds maximum.",
-				 function );
-
-				goto on_error;
-			}
-			value_string = system_string_allocate(
-					value_string_size );
-
-			if( value_string == NULL )
-			{
-				libcerror_error_set(
-				 error,
-				 LIBCERROR_ERROR_DOMAIN_MEMORY,
-				 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
-				 "%s: unable to create volume device path string.",
-				 function );
-
-				goto on_error;
-			}
-#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
-			result = libuna_utf16_string_copy_from_utf16_stream(
-				  (libuna_utf16_character_t *) value_string,
-				  value_string_size,
-				  internal_volume_information->device_path,
-				  internal_volume_information->device_path_size,
-				  LIBUNA_ENDIAN_LITTLE,
-				  error );
-#else
-			result = libuna_utf8_string_copy_from_utf16_stream(
-				  (libuna_utf8_character_t *) value_string,
-				  value_string_size,
-				  internal_volume_information->device_path,
-				  internal_volume_information->device_path_size,
-				  LIBUNA_ENDIAN_LITTLE,
-				  error );
-#endif
-			if( result != 1 )
-			{
-				libcerror_error_set(
-				 error,
-				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
-				 "%s: unable to set volume device path string.",
-				 function );
-
-				goto on_error;
-			}
-			libcnotify_printf(
-			 "%s: volume device path\t\t\t: %" PRIs_SYSTEM "\n",
-			 function,
-			 value_string );
-
 			libcnotify_printf(
 			 "%s: volume device path hash value\t\t: 0x%08" PRIx64 "\n",
 			 function,
@@ -859,11 +489,6 @@ ssize64_t libagdb_volume_information_read(
 
 			libcnotify_printf(
 			 "\n" );
-
-			memory_free(
-			 value_string );
-
-			value_string = NULL;
 		}
 #endif
 		alignment_padding_size = (size_t) ( file_offset % alignment_size );
@@ -938,12 +563,12 @@ ssize64_t libagdb_volume_information_read(
 			goto on_error;
 		}
 		read_count = libagdb_file_information_read(
-		              file_information,
+		              (libagdb_internal_file_information_t *) file_information,
+		              io_handle,
 		              uncompressed_data_stream,
 		              file_io_handle,
-		              io_handle,
-		              file_offset,
 		              file_index,
+		              file_offset,
 		              error );
 
 		if( read_count == -1 )
@@ -982,19 +607,6 @@ ssize64_t libagdb_volume_information_read(
 	return( total_read_count );
 
 on_error:
-#if defined( HAVE_DEBUG_OUTPUT )
-	if( value_string != NULL )
-	{
-		memory_free(
-		 value_string );
-	}
-	if( filetime != NULL )
-	{
-		libfdatetime_filetime_free(
-		 &filetime,
-		 NULL );
-	}
-#endif
 	if( file_information != NULL )
 	{
 		libagdb_internal_file_information_free(
@@ -1016,6 +628,349 @@ on_error:
 		 volume_information_data );
 	}
 	return( -1 );
+}
+
+/* Reads the volume information
+ * Returns the number of bytes read if successful or -1 on error
+ */
+int libagdb_volume_information_read_data(
+     libagdb_internal_volume_information_t *internal_volume_information,
+     libagdb_io_handle_t *io_handle,
+     const uint8_t *data,
+     size_t data_size,
+     uint32_t *number_of_files,
+     uint16_t *device_path_size,
+     libcerror_error_t **error )
+{
+	static char *function  = "libagdb_volume_information_read_data";
+
+#if defined( HAVE_DEBUG_OUTPUT )
+	uint8_t *filetime_data = NULL;
+	uint64_t value_64bit   = 0;
+	uint32_t value_32bit   = 0;
+	uint16_t value_16bit   = 0;
+#endif
+
+	if( internal_volume_information == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid volume information.",
+		 function );
+
+		return( -1 );
+	}
+	if( io_handle == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid IO handle.",
+		 function );
+
+		return( -1 );
+	}
+	if( data == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid data.",
+		 function );
+
+		return( -1 );
+	}
+	if( data_size < io_handle->volume_information_entry_size )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_TOO_SMALL,
+		 "%s: invalid data size value too small.",
+		 function );
+
+		return( -1 );
+	}
+	if( data_size > (size_t) SSIZE_MAX )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_EXCEEDS_MAXIMUM,
+		 "%s: invalid data size value exceeds maximum.",
+		 function );
+
+		return( -1 );
+	}
+	if( number_of_files == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid number of files.",
+		 function );
+
+		return( -1 );
+	}
+	if( device_path_size == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid device path size.",
+		 function );
+
+		return( -1 );
+	}
+#if defined( HAVE_DEBUG_OUTPUT )
+	if( libcnotify_verbose != 0 )
+	{
+		libcnotify_printf(
+		 "%s: volume information data:\n",
+		 function );
+		libcnotify_print_data(
+		 data,
+		 (size_t) io_handle->volume_information_entry_size,
+		 0 );
+	}
+#endif
+	if( io_handle->volume_information_entry_size == 56 )
+	{
+		byte_stream_copy_to_uint32_little_endian(
+		 ( (agdb_volume_information_56_t *) data )->number_of_files,
+		 *number_of_files );
+
+		byte_stream_copy_to_uint64_little_endian(
+		 ( (agdb_volume_information_56_t *) data )->creation_time,
+		 internal_volume_information->creation_time );
+
+		byte_stream_copy_to_uint32_little_endian(
+		 ( (agdb_volume_information_56_t *) data )->serial_number,
+		 internal_volume_information->serial_number );
+
+		byte_stream_copy_to_uint16_little_endian(
+		 ( (agdb_volume_information_56_t *) data )->device_path_number_of_characters,
+		 *device_path_size );
+	}
+	else if( io_handle->volume_information_entry_size == 72 )
+	{
+		byte_stream_copy_to_uint32_little_endian(
+		 ( (agdb_volume_information_72_t *) data )->number_of_files,
+		 *number_of_files );
+
+		byte_stream_copy_to_uint64_little_endian(
+		 ( (agdb_volume_information_72_t *) data )->creation_time,
+		 internal_volume_information->creation_time );
+
+		byte_stream_copy_to_uint32_little_endian(
+		 ( (agdb_volume_information_72_t *) data )->serial_number,
+		 internal_volume_information->serial_number );
+
+		byte_stream_copy_to_uint16_little_endian(
+		 ( (agdb_volume_information_72_t *) data )->device_path_number_of_characters,
+		 *device_path_size );
+	}
+#if defined( HAVE_DEBUG_OUTPUT )
+	if( libcnotify_verbose != 0 )
+	{
+		if( io_handle->volume_information_entry_size == 56 )
+		{
+			byte_stream_copy_to_uint32_little_endian(
+			 ( (agdb_volume_information_56_t *) data )->unknown1,
+			 value_64bit );
+		}
+		else if( io_handle->volume_information_entry_size == 72 )
+		{
+			byte_stream_copy_to_uint64_little_endian(
+			 ( (agdb_volume_information_72_t *) data )->unknown1,
+			 value_64bit );
+		}
+		libcnotify_printf(
+		 "%s: unknown1\t\t\t\t: 0x%08" PRIx64 "\n",
+		 function,
+		 value_64bit );
+
+		if( io_handle->volume_information_entry_size == 56 )
+		{
+			byte_stream_copy_to_uint32_little_endian(
+			 ( (agdb_volume_information_56_t *) data )->unknown2,
+			 value_64bit );
+		}
+		else if( io_handle->volume_information_entry_size == 72 )
+		{
+			byte_stream_copy_to_uint64_little_endian(
+			 ( (agdb_volume_information_72_t *) data )->unknown2,
+			 value_64bit );
+		}
+		libcnotify_printf(
+		 "%s: unknown2\t\t\t\t: 0x%08" PRIx64 "\n",
+		 function,
+		 value_64bit );
+
+		libcnotify_printf(
+		 "%s: number of files\t\t\t: %" PRIu32 "\n",
+		 function,
+		 *number_of_files );
+
+		if( io_handle->volume_information_entry_size == 56 )
+		{
+			byte_stream_copy_to_uint32_little_endian(
+			 ( (agdb_volume_information_56_t *) data )->unknown3,
+			 value_32bit );
+		}
+		else if( io_handle->volume_information_entry_size == 72 )
+		{
+			byte_stream_copy_to_uint32_little_endian(
+			 ( (agdb_volume_information_72_t *) data )->unknown3,
+			 value_32bit );
+		}
+		libcnotify_printf(
+		 "%s: unknown3\t\t\t\t: 0x%08" PRIx32 "\n",
+		 function,
+		 value_32bit );
+
+		if( io_handle->volume_information_entry_size == 56 )
+		{
+			byte_stream_copy_to_uint64_little_endian(
+			 ( (agdb_volume_information_56_t *) data )->unknown4,
+			 value_64bit );
+		}
+		else if( io_handle->volume_information_entry_size == 72 )
+		{
+			byte_stream_copy_to_uint64_little_endian(
+			 ( (agdb_volume_information_72_t *) data )->unknown4,
+			 value_64bit );
+		}
+		libcnotify_printf(
+		 "%s: unknown4\t\t\t\t: 0x%08" PRIx64 "\n",
+		 function,
+		 value_64bit );
+
+		if( io_handle->volume_information_entry_size == 56 )
+		{
+			filetime_data = ( (agdb_volume_information_56_t *) data )->creation_time;
+		}
+		else if( io_handle->volume_information_entry_size == 72 )
+		{
+			filetime_data = ( (agdb_volume_information_72_t *) data )->creation_time;
+		}
+		if( libagdb_debug_print_filetime_value(
+		     function,
+		     "creation time\t\t\t\t",
+		     filetime_data,
+		     8,
+		     LIBFDATETIME_ENDIAN_LITTLE,
+		     LIBFDATETIME_STRING_FORMAT_TYPE_CTIME | LIBFDATETIME_STRING_FORMAT_FLAG_DATE_TIME_NANO_SECONDS,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_PRINT_FAILED,
+			 "%s: unable to print filetime value.",
+			 function );
+
+			return( -1 );
+		}
+		libcnotify_printf(
+		 "%s: serial number\t\t\t\t: 0x%08" PRIx32 "\n",
+		 function,
+		 internal_volume_information->serial_number );
+
+		if( io_handle->volume_information_entry_size == 56 )
+		{
+			byte_stream_copy_to_uint32_little_endian(
+			 ( (agdb_volume_information_56_t *) data )->unknown5,
+			 value_32bit );
+		}
+		else if( io_handle->volume_information_entry_size == 72 )
+		{
+			byte_stream_copy_to_uint32_little_endian(
+			 ( (agdb_volume_information_72_t *) data )->unknown5,
+			 value_32bit );
+		}
+		libcnotify_printf(
+		 "%s: unknown5\t\t\t\t: 0x%08" PRIx32 "\n",
+		 function,
+		 value_32bit );
+
+		if( io_handle->volume_information_entry_size == 56 )
+		{
+			byte_stream_copy_to_uint32_little_endian(
+			 ( (agdb_volume_information_56_t *) data )->unknown6,
+			 value_64bit );
+		}
+		else if( io_handle->volume_information_entry_size == 72 )
+		{
+			byte_stream_copy_to_uint64_little_endian(
+			 ( (agdb_volume_information_72_t *) data )->unknown6,
+			 value_64bit );
+		}
+		libcnotify_printf(
+		 "%s: unknown6\t\t\t\t: 0x%08" PRIx64 "\n",
+		 function,
+		 value_64bit );
+
+		libcnotify_printf(
+		 "%s: device path number of characters\t: %" PRIu16 "\n",
+		 function,
+		 *device_path_size );
+
+		if( io_handle->volume_information_entry_size == 56 )
+		{
+			byte_stream_copy_to_uint16_little_endian(
+			 ( (agdb_volume_information_56_t *) data )->unknown7,
+			 value_16bit );
+		}
+		else if( io_handle->volume_information_entry_size == 72 )
+		{
+			byte_stream_copy_to_uint16_little_endian(
+			 ( (agdb_volume_information_72_t *) data )->unknown7,
+			 value_16bit );
+		}
+		libcnotify_printf(
+		 "%s: unknown7\t\t\t\t: 0x%04" PRIx16 "\n",
+		 function,
+		 value_16bit );
+
+		if( io_handle->volume_information_entry_size == 72 )
+		{
+			byte_stream_copy_to_uint32_little_endian(
+			 ( (agdb_volume_information_72_t *) data )->unknown8,
+			 value_32bit );
+			libcnotify_printf(
+			 "%s: unknown8\t\t\t\t: 0x%08" PRIx32 "\n",
+			 function,
+			 value_32bit );
+		}
+		if( io_handle->volume_information_entry_size == 56 )
+		{
+			byte_stream_copy_to_uint64_little_endian(
+			 ( (agdb_volume_information_56_t *) data )->unknown9,
+			 value_64bit );
+		}
+		else if( io_handle->volume_information_entry_size == 72 )
+		{
+			byte_stream_copy_to_uint64_little_endian(
+			 ( (agdb_volume_information_72_t *) data )->unknown9,
+			 value_64bit );
+		}
+		libcnotify_printf(
+		 "%s: unknown9\t\t\t\t: 0x%08" PRIx64 "\n",
+		 function,
+		 value_64bit );
+
+		libcnotify_printf(
+		 "\n" );
+	}
+#endif
+	return( 1 );
 }
 
 /* Retrieves the 64-bit filetime value containing the volume creation date and time

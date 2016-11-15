@@ -38,7 +38,7 @@
 
 const char *agdb_mem_file_signature_vista = "MEMO";
 const char *agdb_mem_file_signature_win7  = "MEM0";
-const char *agdb_mam_file_signature_win8  = "MAM\x87";
+const char *agdb_mam_file_signature_win8  = "MAM\x84";
 
 /* Creates an IO handle
  * Make sure the value io_handle is referencing, is set to NULL
@@ -341,7 +341,8 @@ int libagdb_io_handle_read_compressed_file_header(
 		{
 /* TODO improve detection */
 			if( ( ( value_32bit != 0x00000005UL )
-			  &&  ( value_32bit != 0x0000000eUL ) )
+			  &&  ( value_32bit != 0x0000000eUL )
+			  &&  ( value_32bit != 0x0000000fUL ) )
 			 || ( io_handle->file_size != (size64_t) io_handle->uncompressed_data_size ) )
 			{
 				libcerror_error_set(
