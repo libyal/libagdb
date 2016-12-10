@@ -33,5 +33,5 @@
 
 #include <libagdb.h>
 
-#endif
+#endif /* !defined( _AGDBTOOLS_LIBAGDB_H ) */
 

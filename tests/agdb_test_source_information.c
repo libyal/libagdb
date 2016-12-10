@@ -272,6 +272,582 @@ on_error:
 	return( 0 );
 }
 
+#if defined( __GNUC__ )
+
+/* Tests the libagdb_source_information_get_utf8_executable_filename_size function
+ * Returns 1 if successful or 0 if not
+ */
+int agdb_test_source_information_get_utf8_executable_filename_size(
+     void )
+{
+	libagdb_source_information_t *source_information = NULL;
+	libcerror_error_t *error                         = NULL;
+	size_t utf8_executable_filename_size             = 0;
+	int result                                       = 0;
+	int utf8_executable_filename_size_is_set         = 0;
+
+	/* Initialize test
+	 */
+	result = libagdb_source_information_initialize(
+	          &source_information,
+	          &error );
+
+	AGDB_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	AGDB_TEST_ASSERT_IS_NOT_NULL(
+	 "source_information",
+	 source_information );
+
+	AGDB_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Test regular cases
+	 */
+	result = libagdb_source_information_get_utf8_executable_filename_size(
+	          source_information,
+	          &utf8_executable_filename_size,
+	          &error );
+
+	AGDB_TEST_ASSERT_NOT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	AGDB_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	utf8_executable_filename_size_is_set = result;
+
+	/* Test error cases
+	 */
+	result = libagdb_source_information_get_utf8_executable_filename_size(
+	          NULL,
+	          &utf8_executable_filename_size,
+	          &error );
+
+	AGDB_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	AGDB_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	if( utf8_executable_filename_size_is_set != 0 )
+	{
+		result = libagdb_source_information_get_utf8_executable_filename_size(
+		          source_information,
+		          NULL,
+		          &error );
+
+		AGDB_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 -1 );
+
+		AGDB_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
+
+		libcerror_error_free(
+		 &error );
+	}
+	/* Clean up
+	 */
+	result = libagdb_source_information_free(
+	          &source_information,
+	          &error );
+
+	AGDB_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	AGDB_TEST_ASSERT_IS_NULL(
+	 "source_information",
+	 source_information );
+
+	AGDB_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	return( 1 );
+
+on_error:
+	if( error != NULL )
+	{
+		libcerror_error_free(
+		 &error );
+	}
+	if( source_information != NULL )
+	{
+		libagdb_source_information_free(
+		 &source_information,
+		 NULL );
+	}
+	return( 0 );
+}
+
+/* Tests the libagdb_source_information_get_utf8_executable_filename function
+ * Returns 1 if successful or 0 if not
+ */
+int agdb_test_source_information_get_utf8_executable_filename(
+     void )
+{
+	uint8_t utf8_executable_filename[ 512 ];
+
+	libagdb_source_information_t *source_information = NULL;
+	libcerror_error_t *error                         = NULL;
+	int result                                       = 0;
+	int utf8_executable_filename_is_set              = 0;
+
+	/* Initialize test
+	 */
+	result = libagdb_source_information_initialize(
+	          &source_information,
+	          &error );
+
+	AGDB_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	AGDB_TEST_ASSERT_IS_NOT_NULL(
+	 "source_information",
+	 source_information );
+
+	AGDB_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Test regular cases
+	 */
+	result = libagdb_source_information_get_utf8_executable_filename(
+	          source_information,
+	          utf8_executable_filename,
+	          512,
+	          &error );
+
+	AGDB_TEST_ASSERT_NOT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	AGDB_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	utf8_executable_filename_is_set = result;
+
+	/* Test error cases
+	 */
+	result = libagdb_source_information_get_utf8_executable_filename(
+	          NULL,
+	          utf8_executable_filename,
+	          512,
+	          &error );
+
+	AGDB_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	AGDB_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	if( utf8_executable_filename_is_set != 0 )
+	{
+		result = libagdb_source_information_get_utf8_executable_filename(
+		          source_information,
+		          NULL,
+		          512,
+		          &error );
+
+		AGDB_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 -1 );
+
+	        AGDB_TEST_ASSERT_IS_NOT_NULL(
+	         "error",
+	         error );
+
+		libcerror_error_free(
+		 &error );
+
+		result = libagdb_source_information_get_utf8_executable_filename(
+		          source_information,
+		          utf8_executable_filename,
+		          0,
+		          &error );
+
+		AGDB_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 -1 );
+
+	        AGDB_TEST_ASSERT_IS_NOT_NULL(
+	         "error",
+	         error );
+
+		libcerror_error_free(
+		 &error );
+
+		result = libagdb_source_information_get_utf8_executable_filename(
+		          source_information,
+		          utf8_executable_filename,
+		          (size_t) SSIZE_MAX + 1,
+		          &error );
+
+		AGDB_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 -1 );
+
+	        AGDB_TEST_ASSERT_IS_NOT_NULL(
+	         "error",
+	         error );
+
+		libcerror_error_free(
+		 &error );
+	}
+	/* Clean up
+	 */
+	result = libagdb_source_information_free(
+	          &source_information,
+	          &error );
+
+	AGDB_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	AGDB_TEST_ASSERT_IS_NULL(
+	 "source_information",
+	 source_information );
+
+	AGDB_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	return( 1 );
+
+on_error:
+	if( error != NULL )
+	{
+		libcerror_error_free(
+		 &error );
+	}
+	if( source_information != NULL )
+	{
+		libagdb_source_information_free(
+		 &source_information,
+		 NULL );
+	}
+	return( 0 );
+}
+
+/* Tests the libagdb_source_information_get_utf16_executable_filename_size function
+ * Returns 1 if successful or 0 if not
+ */
+int agdb_test_source_information_get_utf16_executable_filename_size(
+     void )
+{
+	libagdb_source_information_t *source_information = NULL;
+	libcerror_error_t *error                         = NULL;
+	size_t utf16_executable_filename_size            = 0;
+	int result                                       = 0;
+	int utf16_executable_filename_size_is_set        = 0;
+
+	/* Initialize test
+	 */
+	result = libagdb_source_information_initialize(
+	          &source_information,
+	          &error );
+
+	AGDB_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	AGDB_TEST_ASSERT_IS_NOT_NULL(
+	 "source_information",
+	 source_information );
+
+	AGDB_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Test regular cases
+	 */
+	result = libagdb_source_information_get_utf16_executable_filename_size(
+	          source_information,
+	          &utf16_executable_filename_size,
+	          &error );
+
+	AGDB_TEST_ASSERT_NOT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	AGDB_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	utf16_executable_filename_size_is_set = result;
+
+	/* Test error cases
+	 */
+	result = libagdb_source_information_get_utf16_executable_filename_size(
+	          NULL,
+	          &utf16_executable_filename_size,
+	          &error );
+
+	AGDB_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	AGDB_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	if( utf16_executable_filename_size_is_set != 0 )
+	{
+		result = libagdb_source_information_get_utf16_executable_filename_size(
+		          source_information,
+		          NULL,
+		          &error );
+
+		AGDB_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 -1 );
+
+		AGDB_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
+
+		libcerror_error_free(
+		 &error );
+	}
+	/* Clean up
+	 */
+	result = libagdb_source_information_free(
+	          &source_information,
+	          &error );
+
+	AGDB_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	AGDB_TEST_ASSERT_IS_NULL(
+	 "source_information",
+	 source_information );
+
+	AGDB_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	return( 1 );
+
+on_error:
+	if( error != NULL )
+	{
+		libcerror_error_free(
+		 &error );
+	}
+	if( source_information != NULL )
+	{
+		libagdb_source_information_free(
+		 &source_information,
+		 NULL );
+	}
+	return( 0 );
+}
+
+/* Tests the libagdb_source_information_get_utf16_executable_filename function
+ * Returns 1 if successful or 0 if not
+ */
+int agdb_test_source_information_get_utf16_executable_filename(
+     void )
+{
+	uint16_t utf16_executable_filename[ 512 ];
+
+	libagdb_source_information_t *source_information = NULL;
+	libcerror_error_t *error                         = NULL;
+	int result                                       = 0;
+	int utf16_executable_filename_is_set             = 0;
+
+	/* Initialize test
+	 */
+	result = libagdb_source_information_initialize(
+	          &source_information,
+	          &error );
+
+	AGDB_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	AGDB_TEST_ASSERT_IS_NOT_NULL(
+	 "source_information",
+	 source_information );
+
+	AGDB_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Test regular cases
+	 */
+	result = libagdb_source_information_get_utf16_executable_filename(
+	          source_information,
+	          utf16_executable_filename,
+	          512,
+	          &error );
+
+	AGDB_TEST_ASSERT_NOT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	AGDB_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	utf16_executable_filename_is_set = result;
+
+	/* Test error cases
+	 */
+	result = libagdb_source_information_get_utf16_executable_filename(
+	          NULL,
+	          utf16_executable_filename,
+	          512,
+	          &error );
+
+	AGDB_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	AGDB_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	if( utf16_executable_filename_is_set != 0 )
+	{
+		result = libagdb_source_information_get_utf16_executable_filename(
+		          source_information,
+		          NULL,
+		          512,
+		          &error );
+
+		AGDB_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 -1 );
+
+	        AGDB_TEST_ASSERT_IS_NOT_NULL(
+	         "error",
+	         error );
+
+		libcerror_error_free(
+		 &error );
+
+		result = libagdb_source_information_get_utf16_executable_filename(
+		          source_information,
+		          utf16_executable_filename,
+		          0,
+		          &error );
+
+		AGDB_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 -1 );
+
+	        AGDB_TEST_ASSERT_IS_NOT_NULL(
+	         "error",
+	         error );
+
+		libcerror_error_free(
+		 &error );
+
+		result = libagdb_source_information_get_utf16_executable_filename(
+		          source_information,
+		          utf16_executable_filename,
+		          (size_t) SSIZE_MAX + 1,
+		          &error );
+
+		AGDB_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 -1 );
+
+	        AGDB_TEST_ASSERT_IS_NOT_NULL(
+	         "error",
+	         error );
+
+		libcerror_error_free(
+		 &error );
+	}
+	/* Clean up
+	 */
+	result = libagdb_source_information_free(
+	          &source_information,
+	          &error );
+
+	AGDB_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	AGDB_TEST_ASSERT_IS_NULL(
+	 "source_information",
+	 source_information );
+
+	AGDB_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	return( 1 );
+
+on_error:
+	if( error != NULL )
+	{
+		libcerror_error_free(
+		 &error );
+	}
+	if( source_information != NULL )
+	{
+		libagdb_source_information_free(
+		 &source_information,
+		 NULL );
+	}
+	return( 0 );
+}
+
+#endif /* defined( __GNUC__ ) */
+
 /* The main program
  */
 #if defined( HAVE_WIDE_SYSTEM_CHARACTER )
@@ -299,19 +875,29 @@ int main(
 	 "libagdb_source_information_free",
 	 agdb_test_source_information_free );
 
-#if defined( __GNUC__ )
+#if defined( __GNUC__ ) && defined( TODO )
 
 	/* TODO: add tests for libagdb_source_information_read */
 
-#endif /* defined( __GNUC__ ) */
+	/* TODO: add tests for libagdb_source_information_read_data */
 
-	/* TODO: add tests for libagdb_source_information_get_utf8_executable_filename_size */
+	AGDB_TEST_RUN(
+	 "libagdb_source_information_get_utf8_executable_filename_size",
+	 agdb_test_source_information_get_utf8_executable_filename_size );
 
-	/* TODO: add tests for libagdb_source_information_get_utf8_executable_filename */
+	AGDB_TEST_RUN(
+	 "libagdb_source_information_get_utf8_executable_filename",
+	 agdb_test_source_information_get_utf8_executable_filename );
 
-	/* TODO: add tests for libagdb_source_information_get_utf16_executable_filename_size */
+	AGDB_TEST_RUN(
+	 "libagdb_source_information_get_utf16_executable_filename_size",
+	 agdb_test_source_information_get_utf16_executable_filename_size );
 
-	/* TODO: add tests for libagdb_source_information_get_utf16_executable_filename */
+	AGDB_TEST_RUN(
+	 "libagdb_source_information_get_utf16_executable_filename",
+	 agdb_test_source_information_get_utf16_executable_filename );
+
+#endif /* defined( __GNUC__ ) && defined( TODO ) */
 
 	return( EXIT_SUCCESS );
 
