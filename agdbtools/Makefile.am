@@ -11,7 +11,6 @@ AM_CPPFLAGS = \
 	@LIBCPATH_CPPFLAGS@ \
 	@LIBBFIO_CPPFLAGS@ \
 	@LIBFDATETIME_CPPFLAGS@ \
-	@LIBCSYSTEM_CPPFLAGS@ \
 	@LIBAGDB_DLL_IMPORT@
 
 AM_LDFLAGS = @STATIC_LDFLAGS@
@@ -20,21 +19,22 @@ bin_PROGRAMS = \
 	agdbinfo
 
 agdbinfo_SOURCES = \
-	info_handle.c info_handle.h \
 	agdbinfo.c \
 	agdbinput.c agdbinput.h \
-	agdboutput.c agdboutput.h \
+	agdbtools_getopt.c agdbtools_getopt.h \
+	agdbtools_i18n.h \
 	agdbtools_libagdb.h \
 	agdbtools_libbfio.h \
 	agdbtools_libcerror.h \
 	agdbtools_libclocale.h \
 	agdbtools_libcnotify.h \
-	agdbtools_libcsystem.h \
 	agdbtools_libfdatetime.h \
-	agdbtools_libuna.h
+	agdbtools_libuna.h \
+	agdbtools_output.c agdbtools_output.h \
+	agdbtools_unused.h \
+	info_handle.c info_handle.h
 
 agdbinfo_LDADD = \
-	@LIBCSYSTEM_LIBADD@ \
 	@LIBFDATETIME_LIBADD@ \
 	../libagdb/libagdb.la \
 	@LIBCNOTIFY_LIBADD@ \

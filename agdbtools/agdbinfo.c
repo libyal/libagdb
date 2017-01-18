@@ -33,12 +33,14 @@
 #include <stdlib.h>
 #endif
 
-#include "agdboutput.h"
+#include "agdbtools_getopt.h"
+#include "agdbtools_libagdb.h"
 #include "agdbtools_libcerror.h"
 #include "agdbtools_libclocale.h"
 #include "agdbtools_libcnotify.h"
-#include "agdbtools_libcsystem.h"
-#include "agdbtools_libagdb.h"
+#include "agdbtools_output.h"
+#include "agdbtools_signal.h"
+#include "agdbtools_unused.h"
 #include "info_handle.h"
 
 info_handle_t *agdbinfo_info_handle = NULL;
@@ -68,12 +70,12 @@ void usage_fprint(
 /* Signal handler for agdbinfo
  */
 void agdbinfo_signal_handler(
-      libcsystem_signal_t signal LIBCSYSTEM_ATTRIBUTE_UNUSED )
+      agdbtools_signal_t signal AGDBTOOLS_ATTRIBUTE_UNUSED )
 {
 	libcerror_error_t *error = NULL;
 	static char *function   = "agdbinfo_signal_handler";
 
-	LIBCSYSTEM_UNREFERENCED_PARAMETER( signal )
+	AGDBTOOLS_UNREFERENCED_PARAMETER( signal )
 
 	agdbinfo_abort = 1;
 
@@ -95,8 +97,13 @@ void agdbinfo_signal_handler(
 	}
 	/* Force stdin to close otherwise any function reading it will remain blocked
 	 */
-	if( libcsystem_file_io_close(
+#if defined( WINAPI ) && !defined( __CYGWIN__ )
+	if( _close(
 	     0 ) != 0 )
+#else
+	if( close(
+	     0 ) != 0 )
+#endif
 	{
 		libcnotify_printf(
 		 "%s: unable to close stdin.\n",
@@ -134,13 +141,13 @@ int main( int argc, char * const argv[] )
 
 		goto on_error;
 	}
-	if( libcsystem_initialize(
+	if( agdbtools_output_initialize(
 	     _IONBF,
 	     &error ) != 1 )
 	{
 		fprintf(
 		 stderr,
-		 "Unable to initialize system values.\n" );
+		 "Unable to initialize output settings.\n" );
 
 		goto on_error;
 	}
@@ -148,7 +155,7 @@ int main( int argc, char * const argv[] )
 	 stdout,
 	 program );
 
-	while( ( option = libcsystem_getopt(
+	while( ( option = agdbtools_getopt(
 	                   argc,
 	                   argv,
 	                   _SYSTEM_STRING( "hvV" ) ) ) != (system_integer_t) -1 )
