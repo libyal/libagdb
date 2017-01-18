@@ -1,7 +1,7 @@
 /*
  * Library support functions test program
  *
- * Copyright (C) 2014-2016, Joachim Metz <joachim.metz@gmail.com>
+ * Copyright (C) 2014-2017, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -30,11 +30,11 @@
 #include <stdlib.h>
 #endif
 
+#include "agdb_test_getopt.h"
 #include "agdb_test_libagdb.h"
 #include "agdb_test_libbfio.h"
 #include "agdb_test_libcerror.h"
 #include "agdb_test_libclocale.h"
-#include "agdb_test_libcsystem.h"
 #include "agdb_test_libuna.h"
 #include "agdb_test_macros.h"
 #include "agdb_test_unused.h"
@@ -1018,7 +1018,7 @@ int main(
 	system_character_t *source = NULL;
 	system_integer_t option    = 0;
 
-	while( ( option = libcsystem_getopt(
+	while( ( option = agdb_test_getopt(
 	                   argc,
 	                   argv,
 	                   _SYSTEM_STRING( "" ) ) ) != (system_integer_t) -1 )

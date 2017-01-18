@@ -1,7 +1,7 @@
 /*
  * The internal libagdb header
  *
- * Copyright (C) 2014-2016, Joachim Metz <joachim.metz@gmail.com>
+ * Copyright (C) 2014-2017, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -27,7 +27,7 @@
 /* If Cygwin libtool DLL support is enabled set LIBAGDB_DLL_IMPORT
  * before including libagdb.h
  */
-#if defined( _WIN32 ) && defined( DLL_EXPORT )
+#if defined( _WIN32 ) && defined( DLL_IMPORT ) && !defined( HAVE_STATIC_EXECUTABLES )
 #define LIBAGDB_DLL_IMPORT
 #endif
 
