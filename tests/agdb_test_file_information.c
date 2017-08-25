@@ -72,8 +72,8 @@ int agdb_test_file_information_initialize(
          "error",
          error );
 
-	result = libagdb_file_information_free(
-	          &file_information,
+	result = libagdb_internal_file_information_free(
+	          (libagdb_internal_file_information_t **) &file_information,
 	          &error );
 
 	AGDB_TEST_ASSERT_EQUAL_INT(
@@ -147,8 +147,8 @@ int agdb_test_file_information_initialize(
 
 			if( file_information != NULL )
 			{
-				libagdb_file_information_free(
-				 &file_information,
+				libagdb_internal_file_information_free(
+				 (libagdb_internal_file_information_t **) &file_information,
 				 NULL );
 			}
 		}
@@ -189,8 +189,8 @@ int agdb_test_file_information_initialize(
 
 			if( file_information != NULL )
 			{
-				libagdb_file_information_free(
-				 &file_information,
+				libagdb_internal_file_information_free(
+				 (libagdb_internal_file_information_t **) &file_information,
 				 NULL );
 			}
 		}
@@ -225,8 +225,8 @@ on_error:
 	}
 	if( file_information != NULL )
 	{
-		libagdb_file_information_free(
-		 &file_information,
+		libagdb_internal_file_information_free(
+		 (libagdb_internal_file_information_t **) &file_information,
 		 NULL );
 	}
 	return( 0 );
@@ -363,8 +363,8 @@ int agdb_test_file_information_get_utf8_path_size(
 	}
 	/* Clean up
 	 */
-	result = libagdb_file_information_free(
-	          &file_information,
+	result = libagdb_internal_file_information_free(
+	          (libagdb_internal_file_information_t **) &file_information,
 	          &error );
 
 	AGDB_TEST_ASSERT_EQUAL_INT(
@@ -390,8 +390,8 @@ on_error:
 	}
 	if( file_information != NULL )
 	{
-		libagdb_file_information_free(
-		 &file_information,
+		libagdb_internal_file_information_free(
+		 (libagdb_internal_file_information_t **) &file_information,
 		 NULL );
 	}
 	return( 0 );
@@ -526,8 +526,8 @@ int agdb_test_file_information_get_utf8_path(
 	}
 	/* Clean up
 	 */
-	result = libagdb_file_information_free(
-	          &file_information,
+	result = libagdb_internal_file_information_free(
+	          (libagdb_internal_file_information_t **) &file_information,
 	          &error );
 
 	AGDB_TEST_ASSERT_EQUAL_INT(
@@ -553,8 +553,8 @@ on_error:
 	}
 	if( file_information != NULL )
 	{
-		libagdb_file_information_free(
-		 &file_information,
+		libagdb_internal_file_information_free(
+		 (libagdb_internal_file_information_t **) &file_information,
 		 NULL );
 	}
 	return( 0 );
@@ -649,8 +649,8 @@ int agdb_test_file_information_get_utf16_path_size(
 	}
 	/* Clean up
 	 */
-	result = libagdb_file_information_free(
-	          &file_information,
+	result = libagdb_internal_file_information_free(
+	          (libagdb_internal_file_information_t **) &file_information,
 	          &error );
 
 	AGDB_TEST_ASSERT_EQUAL_INT(
@@ -676,8 +676,8 @@ on_error:
 	}
 	if( file_information != NULL )
 	{
-		libagdb_file_information_free(
-		 &file_information,
+		libagdb_internal_file_information_free(
+		 (libagdb_internal_file_information_t **) &file_information,
 		 NULL );
 	}
 	return( 0 );
@@ -812,8 +812,8 @@ int agdb_test_file_information_get_utf16_path(
 	}
 	/* Clean up
 	 */
-	result = libagdb_file_information_free(
-	          &file_information,
+	result = libagdb_internal_file_information_free(
+	          (libagdb_internal_file_information_t **) &file_information,
 	          &error );
 
 	AGDB_TEST_ASSERT_EQUAL_INT(
@@ -839,8 +839,8 @@ on_error:
 	}
 	if( file_information != NULL )
 	{
-		libagdb_file_information_free(
-		 &file_information,
+		libagdb_internal_file_information_free(
+		 (libagdb_internal_file_information_t **) &file_information,
 		 NULL );
 	}
 	return( 0 );
