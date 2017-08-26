@@ -35,7 +35,7 @@
 
 #include "../libagdb/libagdb_volume_information.h"
 
-#if defined( __GNUC__ )
+#if defined( __GNUC__ ) && !defined( LIBAGDB_DLL_IMPORT )
 
 /* Tests the libagdb_volume_information_initialize function
  * Returns 1 if successful or 0 if not
@@ -232,7 +232,7 @@ on_error:
 	return( 0 );
 }
 
-#endif /* defined( __GNUC__ ) */
+#endif /* defined( __GNUC__ ) && !defined( LIBAGDB_DLL_IMPORT ) */
 
 /* Tests the libagdb_volume_information_free function
  * Returns 1 if successful or 0 if not
@@ -272,7 +272,7 @@ on_error:
 	return( 0 );
 }
 
-#if defined( __GNUC__ )
+#if defined( __GNUC__ ) && !defined( LIBAGDB_DLL_IMPORT )
 
 /* Tests the libagdb_volume_information_get_creation_time function
  * Returns 1 if successful or 0 if not
@@ -1215,7 +1215,7 @@ on_error:
 	return( 0 );
 }
 
-#endif /* defined( __GNUC__ ) */
+#endif /* defined( __GNUC__ ) && !defined( LIBAGDB_DLL_IMPORT ) */
 
 /* The main program
  */
@@ -1232,13 +1232,13 @@ int main(
 	AGDB_TEST_UNREFERENCED_PARAMETER( argc )
 	AGDB_TEST_UNREFERENCED_PARAMETER( argv )
 
-#if defined( __GNUC__ )
+#if defined( __GNUC__ ) && !defined( LIBAGDB_DLL_IMPORT )
 
 	AGDB_TEST_RUN(
 	 "libagdb_volume_information_initialize",
 	 agdb_test_volume_information_initialize );
 
-#endif /* defined( __GNUC__ ) */
+#endif /* defined( __GNUC__ ) && !defined( LIBAGDB_DLL_IMPORT ) */
 
 	AGDB_TEST_RUN(
 	 "libagdb_volume_information_free",

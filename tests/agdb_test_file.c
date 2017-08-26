@@ -1553,11 +1553,11 @@ int main(
 		 agdb_test_file_signal_abort,
 		 file );
 
-#if defined( __GNUC__ )
+#if defined( __GNUC__ ) && !defined( LIBAGDB_DLL_IMPORT )
 
 		/* TODO: add tests for libagdb_file_open_read */
 
-#endif /* defined( __GNUC__ ) */
+#endif /* defined( __GNUC__ ) && !defined( LIBAGDB_DLL_IMPORT ) */
 
 		AGDB_TEST_RUN_WITH_ARGS(
 		 "libagdb_file_get_number_of_volumes",

@@ -35,7 +35,7 @@
 
 #include "../libagdb/libagdb_file_information.h"
 
-#if defined( __GNUC__ )
+#if defined( __GNUC__ ) && !defined( LIBAGDB_DLL_IMPORT )
 
 /* Tests the libagdb_file_information_initialize function
  * Returns 1 if successful or 0 if not
@@ -232,7 +232,7 @@ on_error:
 	return( 0 );
 }
 
-#endif /* defined( __GNUC__ ) */
+#endif /* defined( __GNUC__ ) && !defined( LIBAGDB_DLL_IMPORT ) */
 
 /* Tests the libagdb_file_information_free function
  * Returns 1 if successful or 0 if not
@@ -272,7 +272,7 @@ on_error:
 	return( 0 );
 }
 
-#if defined( __GNUC__ )
+#if defined( __GNUC__ ) && !defined( LIBAGDB_DLL_IMPORT )
 
 /* Tests the libagdb_file_information_get_utf8_path_size function
  * Returns 1 if successful or 0 if not
@@ -846,7 +846,7 @@ on_error:
 	return( 0 );
 }
 
-#endif /* defined( __GNUC__ ) */
+#endif /* defined( __GNUC__ ) && !defined( LIBAGDB_DLL_IMPORT ) */
 
 /* The main program
  */
@@ -863,13 +863,13 @@ int main(
 	AGDB_TEST_UNREFERENCED_PARAMETER( argc )
 	AGDB_TEST_UNREFERENCED_PARAMETER( argv )
 
-#if defined( __GNUC__ )
+#if defined( __GNUC__ ) && !defined( LIBAGDB_DLL_IMPORT )
 
 	AGDB_TEST_RUN(
 	 "libagdb_file_information_initialize",
 	 agdb_test_file_information_initialize );
 
-#endif /* defined( __GNUC__ ) */
+#endif /* defined( __GNUC__ ) && !defined( LIBAGDB_DLL_IMPORT ) */
 
 	AGDB_TEST_RUN(
 	 "libagdb_file_information_free",
