@@ -64,13 +64,13 @@ int agdb_test_source_information_initialize(
 	 result,
 	 1 );
 
-        AGDB_TEST_ASSERT_IS_NOT_NULL(
-         "source_information",
-         source_information );
+	AGDB_TEST_ASSERT_IS_NOT_NULL(
+	 "source_information",
+	 source_information );
 
-        AGDB_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	AGDB_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	result = libagdb_internal_source_information_free(
 	          (libagdb_internal_source_information_t **) &source_information,
@@ -81,13 +81,13 @@ int agdb_test_source_information_initialize(
 	 result,
 	 1 );
 
-        AGDB_TEST_ASSERT_IS_NULL(
-         "source_information",
-         source_information );
+	AGDB_TEST_ASSERT_IS_NULL(
+	 "source_information",
+	 source_information );
 
-        AGDB_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	AGDB_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	/* Test error cases
 	 */
@@ -100,9 +100,9 @@ int agdb_test_source_information_initialize(
 	 result,
 	 -1 );
 
-        AGDB_TEST_ASSERT_IS_NOT_NULL(
-         "error",
-         error );
+	AGDB_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
 
 	libcerror_error_free(
 	 &error );
@@ -118,9 +118,9 @@ int agdb_test_source_information_initialize(
 	 result,
 	 -1 );
 
-        AGDB_TEST_ASSERT_IS_NOT_NULL(
-         "error",
-         error );
+	AGDB_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
 
 	libcerror_error_free(
 	 &error );
@@ -254,9 +254,9 @@ int agdb_test_source_information_free(
 	 result,
 	 -1 );
 
-        AGDB_TEST_ASSERT_IS_NOT_NULL(
-         "error",
-         error );
+	AGDB_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
 
 	libcerror_error_free(
 	 &error );
