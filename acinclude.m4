@@ -1,3 +1,7 @@
+dnl Checks for required headers and functions
+dnl
+dnl Version: 20170911
+
 dnl Function to detect if libagdb dependencies are available
 AC_DEFUN([AX_LIBAGDB_CHECK_LOCAL],
   [dnl Check for internationalization functions in libagdb/libagdb_i18n.c
