@@ -2,7 +2,7 @@ AC_PREREQ( 2.59 )
 
 AC_INIT(
  [libagdb],
- [20170922],
+ [20171008],
  [joachim.metz@gmail.com])
 
 AC_CONFIG_SRCDIR(

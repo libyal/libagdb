@@ -5,13 +5,13 @@ Summary: Library to access the Windows SuperFetch database (AGDB) file format
 Group: System Environment/Libraries
 License: LGPL
 Source: %{name}-%{version}.tar.gz
-URL: https://github.com/libyal/libagdb/
+URL: https://github.com/libyal/libagdb
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 @libagdb_spec_requires@ @ax_libbfio_spec_requires@ @ax_libcdata_spec_requires@ @ax_libcerror_spec_requires@ @ax_libcfile_spec_requires@ @ax_libclocale_spec_requires@ @ax_libcnotify_spec_requires@ @ax_libcpath_spec_requires@ @ax_libcsplit_spec_requires@ @ax_libcthreads_spec_requires@ @ax_libfcache_spec_requires@ @ax_libfdata_spec_requires@ @ax_libfdatetime_spec_requires@ @ax_libfwnt_spec_requires@ @ax_libuna_spec_requires@
 @libagdb_spec_build_requires@ @ax_libbfio_spec_build_requires@ @ax_libcdata_spec_build_requires@ @ax_libcerror_spec_build_requires@ @ax_libcfile_spec_build_requires@ @ax_libclocale_spec_build_requires@ @ax_libcnotify_spec_build_requires@ @ax_libcpath_spec_build_requires@ @ax_libcsplit_spec_build_requires@ @ax_libcthreads_spec_build_requires@ @ax_libfcache_spec_build_requires@ @ax_libfdata_spec_build_requires@ @ax_libfdatetime_spec_build_requires@ @ax_libfwnt_spec_build_requires@ @ax_libuna_spec_build_requires@
 
 %description
-libagdb is a library to access the Windows SuperFetch database (AGDB) file format
+Library to access the Windows SuperFetch database (AGDB) file format
 
 %package devel
 Summary: Header files and libraries for developing applications for libagdb
@@ -22,12 +22,12 @@ Requires: libagdb = %{version}-%{release}
 Header files and libraries for developing applications for libagdb.
 
 %package tools
-Summary: Several tools for accessing Windows SuperFetch database (AGDB) files
+Summary: Several tools for reading Windows SuperFetch database (AGDB) files
 Group: Applications/System
 Requires: libagdb = %{version}-%{release}
 
 %description tools
-Several tools for accessing Windows SuperFetch database (AGDB) files
+Several tools for reading Windows SuperFetch database (AGDB) files
 
 %prep
 %setup -q
@@ -65,7 +65,7 @@ rm -rf %{buildroot}
 %files tools
 %defattr(644,root,root,755)
 %doc AUTHORS COPYING NEWS README
-%attr(755,root,root) %{_bindir}/agdbinfo
+%attr(755,root,root) %{_bindir}/*
 %{_mandir}/man1/*
 
 %changelog
