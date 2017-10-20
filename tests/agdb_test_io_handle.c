@@ -270,6 +270,104 @@ on_error:
 	return( 0 );
 }
 
+/* Tests the libagdb_io_handle_clear function
+ * Returns 1 if successful or 0 if not
+ */
+int agdb_test_io_handle_clear(
+     void )
+{
+	libagdb_io_handle_t *io_handle = NULL;
+	libcerror_error_t *error       = NULL;
+	int result                     = 0;
+
+	/* Initialize test
+	 */
+	result = libagdb_io_handle_initialize(
+	          &io_handle,
+	          &error );
+
+	AGDB_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	AGDB_TEST_ASSERT_IS_NOT_NULL(
+	 "io_handle",
+	 io_handle );
+
+	AGDB_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Test regular cases
+	 */
+	result = libagdb_io_handle_clear(
+	          io_handle,
+	          &error );
+
+	AGDB_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	AGDB_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Test error cases
+	 */
+	result = libagdb_io_handle_clear(
+	          NULL,
+	          &error );
+
+	AGDB_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	AGDB_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	/* Clean up
+	 */
+	result = libagdb_io_handle_free(
+	          &io_handle,
+	          &error );
+
+	AGDB_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	AGDB_TEST_ASSERT_IS_NULL(
+	 "io_handle",
+	 io_handle );
+
+	AGDB_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	return( 1 );
+
+on_error:
+	if( error != NULL )
+	{
+		libcerror_error_free(
+		 &error );
+	}
+	if( io_handle != NULL )
+	{
+		libagdb_io_handle_free(
+		 &io_handle,
+		 NULL );
+	}
+	return( 0 );
+}
+
 #endif /* defined( __GNUC__ ) && !defined( LIBAGDB_DLL_IMPORT ) */
 
 /* The main program
@@ -297,7 +395,9 @@ int main(
 	 "libagdb_io_handle_free",
 	 agdb_test_io_handle_free );
 
-	/* TODO: add tests for libagdb_io_handle_clear */
+	AGDB_TEST_RUN(
+	 "libagdb_io_handle_clear",
+	 agdb_test_io_handle_clear );
 
 	/* TODO: add tests for libagdb_io_handle_read_compressed_file_header */
 

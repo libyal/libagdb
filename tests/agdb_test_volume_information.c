@@ -727,9 +727,9 @@ int agdb_test_volume_information_get_utf8_device_path(
 		 result,
 		 -1 );
 
-	        AGDB_TEST_ASSERT_IS_NOT_NULL(
-	         "error",
-	         error );
+		AGDB_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
 
 		libcerror_error_free(
 		 &error );
@@ -745,9 +745,9 @@ int agdb_test_volume_information_get_utf8_device_path(
 		 result,
 		 -1 );
 
-	        AGDB_TEST_ASSERT_IS_NOT_NULL(
-	         "error",
-	         error );
+		AGDB_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
 
 		libcerror_error_free(
 		 &error );
@@ -763,9 +763,9 @@ int agdb_test_volume_information_get_utf8_device_path(
 		 result,
 		 -1 );
 
-	        AGDB_TEST_ASSERT_IS_NOT_NULL(
-	         "error",
-	         error );
+		AGDB_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
 
 		libcerror_error_free(
 		 &error );
@@ -1013,9 +1013,9 @@ int agdb_test_volume_information_get_utf16_device_path(
 		 result,
 		 -1 );
 
-	        AGDB_TEST_ASSERT_IS_NOT_NULL(
-	         "error",
-	         error );
+		AGDB_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
 
 		libcerror_error_free(
 		 &error );
@@ -1031,9 +1031,9 @@ int agdb_test_volume_information_get_utf16_device_path(
 		 result,
 		 -1 );
 
-	        AGDB_TEST_ASSERT_IS_NOT_NULL(
-	         "error",
-	         error );
+		AGDB_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
 
 		libcerror_error_free(
 		 &error );
@@ -1049,9 +1049,9 @@ int agdb_test_volume_information_get_utf16_device_path(
 		 result,
 		 -1 );
 
-	        AGDB_TEST_ASSERT_IS_NOT_NULL(
-	         "error",
-	         error );
+		AGDB_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
 
 		libcerror_error_free(
 		 &error );

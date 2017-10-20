@@ -481,9 +481,9 @@ int agdb_test_source_information_get_utf8_executable_filename(
 		 result,
 		 -1 );
 
-	        AGDB_TEST_ASSERT_IS_NOT_NULL(
-	         "error",
-	         error );
+		AGDB_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
 
 		libcerror_error_free(
 		 &error );
@@ -499,9 +499,9 @@ int agdb_test_source_information_get_utf8_executable_filename(
 		 result,
 		 -1 );
 
-	        AGDB_TEST_ASSERT_IS_NOT_NULL(
-	         "error",
-	         error );
+		AGDB_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
 
 		libcerror_error_free(
 		 &error );
@@ -517,9 +517,9 @@ int agdb_test_source_information_get_utf8_executable_filename(
 		 result,
 		 -1 );
 
-	        AGDB_TEST_ASSERT_IS_NOT_NULL(
-	         "error",
-	         error );
+		AGDB_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
 
 		libcerror_error_free(
 		 &error );
@@ -767,9 +767,9 @@ int agdb_test_source_information_get_utf16_executable_filename(
 		 result,
 		 -1 );
 
-	        AGDB_TEST_ASSERT_IS_NOT_NULL(
-	         "error",
-	         error );
+		AGDB_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
 
 		libcerror_error_free(
 		 &error );
@@ -785,9 +785,9 @@ int agdb_test_source_information_get_utf16_executable_filename(
 		 result,
 		 -1 );
 
-	        AGDB_TEST_ASSERT_IS_NOT_NULL(
-	         "error",
-	         error );
+		AGDB_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
 
 		libcerror_error_free(
 		 &error );
@@ -803,9 +803,9 @@ int agdb_test_source_information_get_utf16_executable_filename(
 		 result,
 		 -1 );
 
-	        AGDB_TEST_ASSERT_IS_NOT_NULL(
-	         "error",
-	         error );
+		AGDB_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
 
 		libcerror_error_free(
 		 &error );

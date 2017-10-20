@@ -19,9 +19,11 @@ AM_CPPFLAGS = \
 	@LIBAGDB_DLL_IMPORT@
 
 TESTS = \
-	test_library.sh
+	test_library.sh \
+	test_agdbinfo.sh
 
 check_SCRIPTS = \
+	test_agdbinfo.sh \
 	test_library.sh \
 	test_runner.sh
 
@@ -75,17 +77,24 @@ agdb_test_error_LDADD = \
 
 agdb_test_file_SOURCES = \
 	agdb_test_file.c \
+	agdb_test_functions.c agdb_test_functions.h \
 	agdb_test_getopt.c agdb_test_getopt.h \
 	agdb_test_libagdb.h \
+	agdb_test_libbfio.h \
 	agdb_test_libcerror.h \
 	agdb_test_libclocale.h \
 	agdb_test_libcnotify.h \
 	agdb_test_libuna.h \
 	agdb_test_macros.h \
-	agdb_test_memory.c agdb_test_memory.h
+	agdb_test_memory.c agdb_test_memory.h \
+	agdb_test_unused.h
 
 agdb_test_file_LDADD = \
+	@LIBBFIO_LIBADD@ \
+	@LIBCPATH_LIBADD@ \
+	@LIBCFILE_LIBADD@ \
 	@LIBUNA_LIBADD@ \
+	@LIBCSPLIT_LIBADD@ \
 	@LIBCNOTIFY_LIBADD@ \
 	@LIBCLOCALE_LIBADD@ \
 	@LIBCDATA_LIBADD@ \
@@ -140,6 +149,7 @@ agdb_test_source_information_LDADD = \
 	@LIBCERROR_LIBADD@
 
 agdb_test_support_SOURCES = \
+	agdb_test_functions.c agdb_test_functions.h \
 	agdb_test_getopt.c agdb_test_getopt.h \
 	agdb_test_libagdb.h \
 	agdb_test_libbfio.h \
@@ -148,7 +158,8 @@ agdb_test_support_SOURCES = \
 	agdb_test_libcnotify.h \
 	agdb_test_libuna.h \
 	agdb_test_macros.h \
-	agdb_test_support.c
+	agdb_test_support.c \
+	agdb_test_unused.h
 
 agdb_test_support_LDADD = \
 	@LIBBFIO_LIBADD@ \
