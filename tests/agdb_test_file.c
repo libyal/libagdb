@@ -43,7 +43,12 @@
 
 #if !defined( LIBAGDB_HAVE_BFIO )
 
-extern \
+LIBAGDB_EXTERN \
+int libagdb_check_file_signature_file_io_handle(
+     libbfio_handle_t *file_io_handle,
+     libcerror_error_t **error );
+
+LIBAGDB_EXTERN \
 int libagdb_file_open_file_io_handle(
      libagdb_file_t *file,
      libbfio_handle_t *file_io_handle,
@@ -781,7 +786,7 @@ int agdb_test_file_open_file_io_handle(
 	libagdb_file_t *file             = NULL;
 	libbfio_handle_t *file_io_handle = NULL;
 	libcerror_error_t *error         = NULL;
-	size_t source_length             = 0;
+	size_t string_length             = 0;
 	int result                       = 0;
 
 	/* Initialize test
@@ -803,20 +808,20 @@ int agdb_test_file_open_file_io_handle(
          "error",
          error );
 
-	source_length = system_string_length(
+	string_length = system_string_length(
 	                 source );
 
 #if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 	result = libbfio_file_set_name_wide(
 	          file_io_handle,
 	          source,
-	          source_length,
+	          string_length,
 	          &error );
 #else
 	result = libbfio_file_set_name(
 	          file_io_handle,
 	          source,
-	          source_length,
+	          string_length,
 	          &error );
 #endif
 	AGDB_TEST_ASSERT_EQUAL_INT(
@@ -1307,6 +1312,129 @@ on_error:
 	return( 0 );
 }
 
+/* Tests the libagdb_file_get_volume_information function
+ * Returns 1 if successful or 0 if not
+ */
+int agdb_test_file_get_volume_information(
+     libagdb_file_t *file )
+{
+	libagdb_volume_information_t *volume_information = 0;
+	libcerror_error_t *error                         = NULL;
+	int result                                       = 0;
+
+	/* Test regular cases
+	 */
+	result = libagdb_file_get_volume_information(
+	          file,
+	          0,
+	          &volume_information,
+	          &error );
+
+	AGDB_TEST_ASSERT_NOT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	AGDB_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	AGDB_TEST_ASSERT_IS_NOT_NULL(
+	 "volume_information",
+	 volume_information );
+
+	result = libagdb_volume_information_free(
+	          &volume_information,
+	          &error );
+
+	AGDB_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	AGDB_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Test error cases
+	 */
+	result = libagdb_file_get_volume_information(
+	          NULL,
+	          0,
+	          &volume_information,
+	          &error );
+
+	AGDB_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	AGDB_TEST_ASSERT_IS_NULL(
+	 "volume_information",
+	 volume_information );
+
+	AGDB_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = libagdb_file_get_volume_information(
+	          file,
+	          -1,
+	          &volume_information,
+	          &error );
+
+	AGDB_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	AGDB_TEST_ASSERT_IS_NULL(
+	 "volume_information",
+	 volume_information );
+
+	AGDB_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = libagdb_file_get_volume_information(
+	          file,
+	          0,
+	          NULL,
+	          &error );
+
+	AGDB_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	AGDB_TEST_ASSERT_IS_NULL(
+	 "volume_information",
+	 volume_information );
+
+	AGDB_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	return( 1 );
+
+on_error:
+	if( error != NULL )
+	{
+		libcerror_error_free(
+		 &error );
+	}
+	return( 0 );
+}
+
 /* Tests the libagdb_file_get_number_of_sources function
  * Returns 1 if successful or 0 if not
  */
@@ -1385,6 +1513,129 @@ on_error:
 	return( 0 );
 }
 
+/* Tests the libagdb_file_get_source_information function
+ * Returns 1 if successful or 0 if not
+ */
+int agdb_test_file_get_source_information(
+     libagdb_file_t *file )
+{
+	libagdb_source_information_t *source_information = 0;
+	libcerror_error_t *error                         = NULL;
+	int result                                       = 0;
+
+	/* Test regular cases
+	 */
+	result = libagdb_file_get_source_information(
+	          file,
+	          0,
+	          &source_information,
+	          &error );
+
+	AGDB_TEST_ASSERT_NOT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	AGDB_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	AGDB_TEST_ASSERT_IS_NOT_NULL(
+	 "source_information",
+	 source_information );
+
+	result = libagdb_source_information_free(
+	          &source_information,
+	          &error );
+
+	AGDB_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	AGDB_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Test error cases
+	 */
+	result = libagdb_file_get_source_information(
+	          NULL,
+	          0,
+	          &source_information,
+	          &error );
+
+	AGDB_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	AGDB_TEST_ASSERT_IS_NULL(
+	 "source_information",
+	 source_information );
+
+	AGDB_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = libagdb_file_get_source_information(
+	          file,
+	          -1,
+	          &source_information,
+	          &error );
+
+	AGDB_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	AGDB_TEST_ASSERT_IS_NULL(
+	 "source_information",
+	 source_information );
+
+	AGDB_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = libagdb_file_get_source_information(
+	          file,
+	          0,
+	          NULL,
+	          &error );
+
+	AGDB_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	AGDB_TEST_ASSERT_IS_NULL(
+	 "source_information",
+	 source_information );
+
+	AGDB_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	return( 1 );
+
+on_error:
+	if( error != NULL )
+	{
+		libcerror_error_free(
+		 &error );
+	}
+	return( 0 );
+}
+
 /* The main program
  */
 #if defined( HAVE_WIDE_SYSTEM_CHARACTER )
@@ -1445,57 +1696,6 @@ int main(
 #if !defined( __BORLANDC__ ) || ( __BORLANDC__ >= 0x0560 )
 	if( source != NULL )
 	{
-#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
-		result = libagdb_check_file_signature_wide(
-		          source,
-		          &error );
-#else
-		result = libagdb_check_file_signature(
-		          source,
-		          &error );
-#endif
-
-		AGDB_TEST_ASSERT_NOT_EQUAL_INT(
-		 "result",
-		 result,
-		 -1 );
-
-		AGDB_TEST_ASSERT_IS_NULL(
-		 "error",
-		 error );
-	}
-	if( result != 0 )
-	{
-		AGDB_TEST_RUN_WITH_ARGS(
-		 "libagdb_file_open",
-		 agdb_test_file_open,
-		 source );
-
-#if defined( HAVE_WIDE_CHARACTER_TYPE )
-
-		AGDB_TEST_RUN_WITH_ARGS(
-		 "libagdb_file_open_wide",
-		 agdb_test_file_open_wide,
-		 source );
-
-#endif /* defined( HAVE_WIDE_CHARACTER_TYPE ) */
-
-		AGDB_TEST_RUN_WITH_ARGS(
-		 "libagdb_file_open_file_io_handle",
-		 agdb_test_file_open_file_io_handle,
-		 source );
-
-		AGDB_TEST_RUN(
-		 "libagdb_file_close",
-		 agdb_test_file_close );
-
-		AGDB_TEST_RUN_WITH_ARGS(
-		 "libagdb_file_open_close",
-		 agdb_test_file_open_close,
-		 source );
-
-		/* Initialize test
-		 */
 		result = libbfio_file_initialize(
 		          &file_io_handle,
 		          &error );
@@ -1538,6 +1738,51 @@ int main(
 	         "error",
 	         error );
 
+		result = libagdb_check_file_signature_file_io_handle(
+		          file_io_handle,
+		          &error );
+
+		AGDB_TEST_ASSERT_NOT_EQUAL_INT(
+		 "result",
+		 result,
+		 -1 );
+
+		AGDB_TEST_ASSERT_IS_NULL(
+		 "error",
+		 error );
+	}
+	if( result != 0 )
+	{
+		AGDB_TEST_RUN_WITH_ARGS(
+		 "libagdb_file_open",
+		 agdb_test_file_open,
+		 source );
+
+#if defined( HAVE_WIDE_CHARACTER_TYPE )
+
+		AGDB_TEST_RUN_WITH_ARGS(
+		 "libagdb_file_open_wide",
+		 agdb_test_file_open_wide,
+		 source );
+
+#endif /* defined( HAVE_WIDE_CHARACTER_TYPE ) */
+
+		AGDB_TEST_RUN_WITH_ARGS(
+		 "libagdb_file_open_file_io_handle",
+		 agdb_test_file_open_file_io_handle,
+		 source );
+
+		AGDB_TEST_RUN(
+		 "libagdb_file_close",
+		 agdb_test_file_close );
+
+		AGDB_TEST_RUN_WITH_ARGS(
+		 "libagdb_file_open_close",
+		 agdb_test_file_open_close,
+		 source );
+
+		/* Initialize file for tests
+		 */
 		result = agdb_test_file_open_source(
 		          &file,
 		          file_io_handle,
@@ -1572,14 +1817,20 @@ int main(
 		 agdb_test_file_get_number_of_volumes,
 		 file );
 
-		/* TODO: add tests for libagdb_file_get_volume_information */
+		AGDB_TEST_RUN_WITH_ARGS(
+		 "libagdb_file_get_volume_information",
+		 agdb_test_file_get_volume_information,
+		 file );
 
 		AGDB_TEST_RUN_WITH_ARGS(
 		 "libagdb_file_get_number_of_sources",
 		 agdb_test_file_get_number_of_sources,
 		 file );
 
-		/* TODO: add tests for libagdb_file_get_source_information */
+		AGDB_TEST_RUN_WITH_ARGS(
+		 "libagdb_file_get_source_information",
+		 agdb_test_file_get_source_information,
+		 file );
 
 		/* Clean up
 		 */
