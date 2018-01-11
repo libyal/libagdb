@@ -1,7 +1,7 @@
 /*
  * Common output functions for the agdbtools
  *
- * Copyright (C) 2014-2017, Joachim Metz <joachim.metz@gmail.com>
+ * Copyright (C) 2014-2018, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -102,7 +102,7 @@ void agdboutput_copyright_fprint(
 	 */
 	fprintf(
 	 stream,
-	 _( "Copyright (C) 2014-2017, %s.\n" ),
+	 _( "Copyright (C) 2014-2018, %s.\n" ),
 	 _( "Joachim Metz" ) );
 
 	fprintf(
