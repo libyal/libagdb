@@ -129,12 +129,15 @@ agdb_test_io_handle_LDADD = \
 
 agdb_test_notify_SOURCES = \
 	agdb_test_libagdb.h \
+	agdb_test_libcerror.h \
 	agdb_test_macros.h \
 	agdb_test_notify.c \
+	agdb_test_memory.c agdb_test_memory.h \
 	agdb_test_unused.h
 
 agdb_test_notify_LDADD = \
-	../libagdb/libagdb.la
+	../libagdb/libagdb.la \
+	@LIBCERROR_LIBADD@
 
 agdb_test_source_information_SOURCES = \
 	agdb_test_libagdb.h \
@@ -158,6 +161,7 @@ agdb_test_support_SOURCES = \
 	agdb_test_libcnotify.h \
 	agdb_test_libuna.h \
 	agdb_test_macros.h \
+	agdb_test_memory.c agdb_test_memory.h \
 	agdb_test_support.c \
 	agdb_test_unused.h
 

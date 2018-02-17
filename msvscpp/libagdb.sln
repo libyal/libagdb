@@ -55,6 +55,7 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "agdb_test_notify", "agdb_test_notify\agdb_test_notify.vcproj", "{2326A89A-926C-4381-8F08-BB7FEC4FA4E6}"
 	ProjectSection(ProjectDependencies) = postProject
 		{6CEDC6AA-1B60-434A-BD96-3BA83AB22ADE} = {6CEDC6AA-1B60-434A-BD96-3BA83AB22ADE}
+		{DD273836-1A76-4A27-BD8E-6866FD572BA0} = {DD273836-1A76-4A27-BD8E-6866FD572BA0}
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "agdb_test_source_information", "agdb_test_source_information\agdb_test_source_information.vcproj", "{A703FD09-9433-44E5-8B8F-0D0942114BC8}"

@@ -332,6 +332,36 @@ int agdb_test_io_handle_clear(
 	libcerror_error_free(
 	 &error );
 
+#if defined( HAVE_AGDB_TEST_MEMORY )
+
+	/* Test libagdb_io_handle_clear with memset failing
+	 */
+	agdb_test_memset_attempts_before_fail = 0;
+
+	result = libagdb_io_handle_clear(
+	          io_handle,
+	          &error );
+
+	if( agdb_test_memset_attempts_before_fail != -1 )
+	{
+		agdb_test_memset_attempts_before_fail = -1;
+	}
+	else
+	{
+		AGDB_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 -1 );
+
+		AGDB_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
+
+		libcerror_error_free(
+		 &error );
+	}
+#endif /* defined( HAVE_AGDB_TEST_MEMORY ) */
+
 	/* Clean up
 	 */
 	result = libagdb_io_handle_free(
