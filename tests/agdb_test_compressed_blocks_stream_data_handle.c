@@ -113,6 +113,8 @@ int agdb_test_compressed_blocks_stream_data_handle_initialize(
 	          &compressed_blocks_stream_data_handle,
 	          &error );
 
+	compressed_blocks_stream_data_handle = NULL;
+
 	AGDB_TEST_ASSERT_EQUAL_INT(
 	 "result",
 	 result,
@@ -124,8 +126,6 @@ int agdb_test_compressed_blocks_stream_data_handle_initialize(
 
 	libcerror_error_free(
 	 &error );
-
-	compressed_blocks_stream_data_handle = NULL;
 
 #if defined( HAVE_AGDB_TEST_MEMORY )
 

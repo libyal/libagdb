@@ -28,17 +28,13 @@
  */
 #if !defined( HAVE_LOCAL_LIBAGDB )
 
-/* If libtool DLL support is enabled set LIBAGDB_DLL_EXPORT
- * before including libagdb/extern.h
- */
-#if defined( _WIN32 ) && defined( DLL_EXPORT )
-#define LIBAGDB_DLL_EXPORT
-#endif
-
 #include <libagdb/extern.h>
 
+#define LIBAGDB_EXTERN_VARIABLE	LIBAGDB_EXTERN
+
 #else
-#define LIBAGDB_EXTERN	/* extern */
+#define LIBAGDB_EXTERN		/* extern */
+#define LIBAGDB_EXTERN_VARIABLE	extern
 
 #endif /* !defined( HAVE_LOCAL_LIBAGDB ) */
 

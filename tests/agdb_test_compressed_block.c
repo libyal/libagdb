@@ -116,6 +116,8 @@ int agdb_test_compressed_block_initialize(
 	          4096,
 	          &error );
 
+	compressed_block = NULL;
+
 	AGDB_TEST_ASSERT_EQUAL_INT(
 	 "result",
 	 result,
@@ -127,8 +129,6 @@ int agdb_test_compressed_block_initialize(
 
 	libcerror_error_free(
 	 &error );
-
-	compressed_block = NULL;
 
 	result = libagdb_compressed_block_initialize(
 	          &compressed_block,

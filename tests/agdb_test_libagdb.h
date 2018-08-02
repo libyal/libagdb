@@ -1,5 +1,5 @@
 /*
- * The internal libagdb header
+ * The libagdb header wrapper
  *
  * Copyright (C) 2014-2018, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -23,13 +23,6 @@
 #define _AGDB_TEST_LIBAGDB_H
 
 #include <common.h>
-
-/* If Cygwin libtool DLL support is enabled and do not want to create static
- * executables set LIBAGDB_DLL_IMPORT before including libagdb.h
- */
-#if defined( _WIN32 ) && defined( DLL_EXPORT ) && !defined( HAVE_STATIC_EXECUTABLES )
-#define LIBAGDB_DLL_IMPORT
-#endif
 
 #include <libagdb.h>
 

@@ -113,6 +113,8 @@ int agdb_test_source_information_initialize(
 	          &source_information,
 	          &error );
 
+	source_information = NULL;
+
 	AGDB_TEST_ASSERT_EQUAL_INT(
 	 "result",
 	 result,
@@ -124,8 +126,6 @@ int agdb_test_source_information_initialize(
 
 	libcerror_error_free(
 	 &error );
-
-	source_information = NULL;
 
 #if defined( HAVE_AGDB_TEST_MEMORY )
 

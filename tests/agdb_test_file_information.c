@@ -113,6 +113,8 @@ int agdb_test_file_information_initialize(
 	          &file_information,
 	          &error );
 
+	file_information = NULL;
+
 	AGDB_TEST_ASSERT_EQUAL_INT(
 	 "result",
 	 result,
@@ -124,8 +126,6 @@ int agdb_test_file_information_initialize(
 
 	libcerror_error_free(
 	 &error );
-
-	file_information = NULL;
 
 #if defined( HAVE_AGDB_TEST_MEMORY )
 
