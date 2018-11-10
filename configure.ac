@@ -2,7 +2,7 @@ AC_PREREQ( 2.59 )
 
 AC_INIT(
  [libagdb],
- [20180802],
+ [20181110],
  [joachim.metz@gmail.com])
 
 AC_CONFIG_SRCDIR(
@@ -144,9 +144,6 @@ AS_IF(
  [AC_SUBST(
   [libagdb_spec_requires],
   [Requires:])
- AC_SUBST(
-  [libagdb_spec_build_requires],
-  [BuildRequires:])
  ])
 
 dnl Set the date for the dpkg files
