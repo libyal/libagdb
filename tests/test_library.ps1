@@ -1,12 +1,12 @@
 # Tests C library functions and types.
 #
-# Version: 20180805
+# Version: 20181221
 
 $ExitSuccess = 0
 $ExitFailure = 1
 $ExitIgnore = 77
 
-$LibraryTests = "compressed_block compressed_blocks_stream_data_handle error file_information io_handle notify source_information volume_information";
+$LibraryTests = "compressed_block compressed_blocks_stream_data_handle error file_information io_handle notify source_information volume_information"
 $LibraryTestsWithInput = "file support"
 
 $InputGlob = "*"

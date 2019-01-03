@@ -1,7 +1,7 @@
 /*
  * Common output functions for the agdbtools
  *
- * Copyright (C) 2014-2018, Joachim Metz <joachim.metz@gmail.com>
+ * Copyright (C) 2014-2019, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -19,8 +19,8 @@
  * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#if !defined( _AGDBOUTPUT_H )
-#define _AGDBOUTPUT_H
+#if !defined( _AGDBTOOLS_OUTPUT_H )
+#define _AGDBTOOLS_OUTPUT_H
 
 #include <common.h>
 #include <file_stream.h>
@@ -36,14 +36,14 @@ int agdbtools_output_initialize(
      int stdio_mode,
      libcerror_error_t **error );
 
-void agdboutput_copyright_fprint(
+void agdbtools_output_copyright_fprint(
       FILE *stream );
 
-void agdboutput_version_fprint(
+void agdbtools_output_version_fprint(
       FILE *stream,
       const char *program );
 
-void agdboutput_version_detailed_fprint(
+void agdbtools_output_version_detailed_fprint(
       FILE *stream,
       const char *program );
 
@@ -51,5 +51,5 @@ void agdboutput_version_detailed_fprint(
 }
 #endif
 
-#endif /* !defined( _AGDBOUTPUT_H ) */
+#endif /* !defined( _AGDBTOOLS_OUTPUT_H ) */
 
