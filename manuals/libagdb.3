@@ -1,11 +1,9 @@
-.Dd January 18, 2017
+.Dd April 12, 2019
 .Dt libagdb 3
 .Os libagdb
 .Sh NAME
 .Nm libagdb.h
 .Nd Library to access the Windows SuperFetch database (AGDB) file format
-.Sh LIBRARY
-.Lb libagdb
 .Sh SYNOPSIS
 .In libagdb.h
 .Pp
@@ -15,27 +13,27 @@ Support functions
 .Ft int
 .Fn libagdb_get_access_flags_read "void"
 .Ft int
-.Fn libagdb_get_codepage "int *codepage, libagdb_error_t **error"
+.Fn libagdb_get_codepage "int *codepage" "libagdb_error_t **error"
 .Ft int
-.Fn libagdb_set_codepage "int codepage, libagdb_error_t **error"
+.Fn libagdb_set_codepage "int codepage" "libagdb_error_t **error"
 .Ft int
-.Fn libagdb_check_file_signature "const char *filename, libagdb_error_t **error"
+.Fn libagdb_check_file_signature "const char *filename" "libagdb_error_t **error"
 .Pp
 Available when compiled with wide character string support:
 .Ft int
-.Fn libagdb_check_file_signature_wide "const wchar_t *filename, libagdb_error_t **error"
+.Fn libagdb_check_file_signature_wide "const wchar_t *filename" "libagdb_error_t **error"
 .Pp
 Available when compiled with libbfio support:
 .Ft int
-.Fn libagdb_check_file_signature_file_io_handle "libbfio_handle_t *file_io_handle, libagdb_error_t **error"
+.Fn libagdb_check_file_signature_file_io_handle "libbfio_handle_t *file_io_handle" "libagdb_error_t **error"
 .Pp
 Notify functions
 .Ft void
 .Fn libagdb_notify_set_verbose "int verbose"
 .Ft int
-.Fn libagdb_notify_set_stream "FILE *stream, libagdb_error_t **error"
+.Fn libagdb_notify_set_stream "FILE *stream" "libagdb_error_t **error"
 .Ft int
-.Fn libagdb_notify_stream_open "const char *filename, libagdb_error_t **error"
+.Fn libagdb_notify_stream_open "const char *filename" "libagdb_error_t **error"
 .Ft int
 .Fn libagdb_notify_stream_close "libagdb_error_t **error"
 .Pp
@@ -43,85 +41,85 @@ Error functions
 .Ft void
 .Fn libagdb_error_free "libagdb_error_t **error"
 .Ft int
-.Fn libagdb_error_fprint "libagdb_error_t *error, FILE *stream"
+.Fn libagdb_error_fprint "libagdb_error_t *error" "FILE *stream"
 .Ft int
-.Fn libagdb_error_sprint "libagdb_error_t *error, char *string, size_t size"
+.Fn libagdb_error_sprint "libagdb_error_t *error" "char *string" "size_t size"
 .Ft int
-.Fn libagdb_error_backtrace_fprint "libagdb_error_t *error, FILE *stream"
+.Fn libagdb_error_backtrace_fprint "libagdb_error_t *error" "FILE *stream"
 .Ft int
-.Fn libagdb_error_backtrace_sprint "libagdb_error_t *error, char *string, size_t size"
+.Fn libagdb_error_backtrace_sprint "libagdb_error_t *error" "char *string" "size_t size"
 .Pp
 File functions
 .Ft int
-.Fn libagdb_file_initialize "libagdb_file_t **file, libagdb_error_t **error"
+.Fn libagdb_file_initialize "libagdb_file_t **file" "libagdb_error_t **error"
 .Ft int
-.Fn libagdb_file_free "libagdb_file_t **file, libagdb_error_t **error"
+.Fn libagdb_file_free "libagdb_file_t **file" "libagdb_error_t **error"
 .Ft int
-.Fn libagdb_file_signal_abort "libagdb_file_t *file, libagdb_error_t **error"
+.Fn libagdb_file_signal_abort "libagdb_file_t *file" "libagdb_error_t **error"
 .Ft int
-.Fn libagdb_file_open "libagdb_file_t *file, const char *filename, int access_flags, libagdb_error_t **error"
+.Fn libagdb_file_open "libagdb_file_t *file" "const char *filename" "int access_flags" "libagdb_error_t **error"
 .Ft int
-.Fn libagdb_file_close "libagdb_file_t *file, libagdb_error_t **error"
+.Fn libagdb_file_close "libagdb_file_t *file" "libagdb_error_t **error"
 .Ft int
-.Fn libagdb_file_get_number_of_volumes "libagdb_file_t *file, int *number_of_volumes, libagdb_error_t **error"
+.Fn libagdb_file_get_number_of_volumes "libagdb_file_t *file" "int *number_of_volumes" "libagdb_error_t **error"
 .Ft int
-.Fn libagdb_file_get_volume_information "libagdb_file_t *file, int volume_index, libagdb_volume_information_t **volume_information, libagdb_error_t **error"
+.Fn libagdb_file_get_volume_information "libagdb_file_t *file" "int volume_index" "libagdb_volume_information_t **volume_information" "libagdb_error_t **error"
 .Ft int
-.Fn libagdb_file_get_number_of_sources "libagdb_file_t *file, int *number_of_sources, libagdb_error_t **error"
+.Fn libagdb_file_get_number_of_sources "libagdb_file_t *file" "int *number_of_sources" "libagdb_error_t **error"
 .Ft int
-.Fn libagdb_file_get_source_information "libagdb_file_t *file, int source_index, libagdb_source_information_t **source_information, libagdb_error_t **error"
+.Fn libagdb_file_get_source_information "libagdb_file_t *file" "int source_index" "libagdb_source_information_t **source_information" "libagdb_error_t **error"
 .Pp
 Available when compiled with wide character string support:
 .Ft int
-.Fn libagdb_file_open_wide "libagdb_file_t *file, const wchar_t *filename, int access_flags, libagdb_error_t **error"
+.Fn libagdb_file_open_wide "libagdb_file_t *file" "const wchar_t *filename" "int access_flags" "libagdb_error_t **error"
 .Pp
 Available when compiled with libbfio support:
 .Ft int
-.Fn libagdb_file_open_file_io_handle "libagdb_file_t *file, libbfio_handle_t *file_io_handle, int access_flags, libagdb_error_t **error"
+.Fn libagdb_file_open_file_io_handle "libagdb_file_t *file" "libbfio_handle_t *file_io_handle" "int access_flags" "libagdb_error_t **error"
 .Pp
 Volume information functions
 .Ft int
-.Fn libagdb_volume_information_free "libagdb_volume_information_t **volume_information, libagdb_error_t **error"
+.Fn libagdb_volume_information_free "libagdb_volume_information_t **volume_information" "libagdb_error_t **error"
 .Ft int
-.Fn libagdb_volume_information_get_creation_time "libagdb_volume_information_t *volume_information, uint64_t *creation_time, libagdb_error_t **error"
+.Fn libagdb_volume_information_get_creation_time "libagdb_volume_information_t *volume_information" "uint64_t *creation_time" "libagdb_error_t **error"
 .Ft int
-.Fn libagdb_volume_information_get_serial_number "libagdb_volume_information_t *volume_information, uint32_t *serial_number, libagdb_error_t **error"
+.Fn libagdb_volume_information_get_serial_number "libagdb_volume_information_t *volume_information" "uint32_t *serial_number" "libagdb_error_t **error"
 .Ft int
-.Fn libagdb_volume_information_get_utf8_device_path_size "libagdb_volume_information_t *volume_information, size_t *utf8_string_size, libagdb_error_t **error"
+.Fn libagdb_volume_information_get_utf8_device_path_size "libagdb_volume_information_t *volume_information" "size_t *utf8_string_size" "libagdb_error_t **error"
 .Ft int
-.Fn libagdb_volume_information_get_utf8_device_path "libagdb_volume_information_t *volume_information, uint8_t *utf8_string, size_t utf8_string_size, libagdb_error_t **error"
+.Fn libagdb_volume_information_get_utf8_device_path "libagdb_volume_information_t *volume_information" "uint8_t *utf8_string" "size_t utf8_string_size" "libagdb_error_t **error"
 .Ft int
-.Fn libagdb_volume_information_get_utf16_device_path_size "libagdb_volume_information_t *volume_information, size_t *utf16_string_size, libagdb_error_t **error"
+.Fn libagdb_volume_information_get_utf16_device_path_size "libagdb_volume_information_t *volume_information" "size_t *utf16_string_size" "libagdb_error_t **error"
 .Ft int
-.Fn libagdb_volume_information_get_utf16_device_path "libagdb_volume_information_t *volume_information, uint16_t *utf16_string, size_t utf16_string_size, libagdb_error_t **error"
+.Fn libagdb_volume_information_get_utf16_device_path "libagdb_volume_information_t *volume_information" "uint16_t *utf16_string" "size_t utf16_string_size" "libagdb_error_t **error"
 .Ft int
-.Fn libagdb_volume_information_get_number_of_files "libagdb_volume_information_t *volume_information, int *number_of_files, libagdb_error_t **error"
+.Fn libagdb_volume_information_get_number_of_files "libagdb_volume_information_t *volume_information" "int *number_of_files" "libagdb_error_t **error"
 .Ft int
-.Fn libagdb_volume_information_get_file_information "libagdb_volume_information_t *volume_information, int file_index, libagdb_file_information_t **file_information, libagdb_error_t **error"
+.Fn libagdb_volume_information_get_file_information "libagdb_volume_information_t *volume_information" "int file_index" "libagdb_file_information_t **file_information" "libagdb_error_t **error"
 .Pp
 File information functions
 .Ft int
-.Fn libagdb_file_information_free "libagdb_file_information_t **file_information, libagdb_error_t **error"
+.Fn libagdb_file_information_free "libagdb_file_information_t **file_information" "libagdb_error_t **error"
 .Ft int
-.Fn libagdb_file_information_get_utf8_path_size "libagdb_file_information_t *file_information, size_t *utf8_string_size, libagdb_error_t **error"
+.Fn libagdb_file_information_get_utf8_path_size "libagdb_file_information_t *file_information" "size_t *utf8_string_size" "libagdb_error_t **error"
 .Ft int
-.Fn libagdb_file_information_get_utf8_path "libagdb_file_information_t *file_information, uint8_t *utf8_string, size_t utf8_string_size, libagdb_error_t **error"
+.Fn libagdb_file_information_get_utf8_path "libagdb_file_information_t *file_information" "uint8_t *utf8_string" "size_t utf8_string_size" "libagdb_error_t **error"
 .Ft int
-.Fn libagdb_file_information_get_utf16_path_size "libagdb_file_information_t *file_information, size_t *utf16_string_size, libagdb_error_t **error"
+.Fn libagdb_file_information_get_utf16_path_size "libagdb_file_information_t *file_information" "size_t *utf16_string_size" "libagdb_error_t **error"
 .Ft int
-.Fn libagdb_file_information_get_utf16_path "libagdb_file_information_t *file_information, uint16_t *utf16_string, size_t utf16_string_size, libagdb_error_t **error"
+.Fn libagdb_file_information_get_utf16_path "libagdb_file_information_t *file_information" "uint16_t *utf16_string" "size_t utf16_string_size" "libagdb_error_t **error"
 .Pp
 Source information functions
 .Ft int
-.Fn libagdb_source_information_free "libagdb_source_information_t **source_information, libagdb_error_t **error"
+.Fn libagdb_source_information_free "libagdb_source_information_t **source_information" "libagdb_error_t **error"
 .Ft int
-.Fn libagdb_source_information_get_utf8_executable_filename_size "libagdb_source_information_t *source_information, size_t *utf8_string_size, libagdb_error_t **error"
+.Fn libagdb_source_information_get_utf8_executable_filename_size "libagdb_source_information_t *source_information" "size_t *utf8_string_size" "libagdb_error_t **error"
 .Ft int
-.Fn libagdb_source_information_get_utf8_executable_filename "libagdb_source_information_t *source_information, uint8_t *utf8_string, size_t utf8_string_size, libagdb_error_t **error"
+.Fn libagdb_source_information_get_utf8_executable_filename "libagdb_source_information_t *source_information" "uint8_t *utf8_string" "size_t utf8_string_size" "libagdb_error_t **error"
 .Ft int
-.Fn libagdb_source_information_get_utf16_executable_filename_size "libagdb_source_information_t *source_information, size_t *utf16_string_size, libagdb_error_t **error"
+.Fn libagdb_source_information_get_utf16_executable_filename_size "libagdb_source_information_t *source_information" "size_t *utf16_string_size" "libagdb_error_t **error"
 .Ft int
-.Fn libagdb_source_information_get_utf16_executable_filename "libagdb_source_information_t *source_information, uint16_t *utf16_string, size_t utf16_string_size, libagdb_error_t **error"
+.Fn libagdb_source_information_get_utf16_executable_filename "libagdb_source_information_t *source_information" "uint16_t *utf16_string" "size_t utf16_string_size" "libagdb_error_t **error"
 .Sh DESCRIPTION
 The
 .Fn libagdb_get_version
@@ -134,8 +132,8 @@ None
 .Sh FILES
 None
 .Sh NOTES
-libagdb allows to be compiled with wide character support (wchar_t).
-
+libagdb can be compiled with wide character support (wchar_t).
+.sp
 To compile libagdb with wide character support use:
 .Ar ./configure --enable-wide-character-type=yes
  or define:
@@ -143,7 +141,7 @@ To compile libagdb with wide character support use:
  or
 .Ar UNICODE
  during compilation.
-
+.sp
 .Ar LIBAGDB_WIDE_CHARACTER_TYPE
  in libagdb/features.h can be used to determine if libagdb was compiled with wide character support.
 .Sh BUGS
@@ -152,7 +150,7 @@ Please report bugs of any kind on the project issue tracker: https://github.com/
 These man pages are generated from "libagdb.h".
 .Sh COPYRIGHT
 Copyright (C) 2014-2019, Joachim Metz <joachim.metz@gmail.com>.
-
+.sp
 This is free software; see the source for copying conditions.
 There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 .Sh SEE ALSO

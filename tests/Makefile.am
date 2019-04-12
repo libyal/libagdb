@@ -25,6 +25,7 @@ TESTS = \
 check_SCRIPTS = \
 	test_agdbinfo.sh \
 	test_library.sh \
+	test_manpage.sh \
 	test_runner.sh
 
 EXTRA_DIST = \
