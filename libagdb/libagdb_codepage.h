@@ -29,14 +29,14 @@
 extern "C" {
 #endif
 
-#if !defined( HAVE_LOCAL_LIBAGDB )
-
-#include <libagdb/codepage.h>
-
 /* Define HAVE_LOCAL_LIBAGDB for local use of libagdb
  * The definitions in <libagdb/codepage.h> are copied here
  * for local use of libagdb
  */
+#if !defined( HAVE_LOCAL_LIBAGDB )
+
+#include <libagdb/codepage.h>
+
 #else
 
 /* The codepage definitions
