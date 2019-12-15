@@ -9,58 +9,7 @@ TODO:
 * add python bindings
 * update manuals: agdbinfo.1
 
-20161101
-* worked on tests
-
-20160126
-* worked on tests
-* applied updates
-
-20160101
-* 2016 update
-
-20151222
-* applied updates
-
-20150610
-* code clean up
-
-20150105
-* 2015 update
-
-20141129
-* code clean up
-
-20141121
-* code clean up
-
-20141019
-* changes for deployment
-
-20141011
-* removed README.macosx
-* updated dependencies
-
-20140628
-* worked on format
-
-20140505
-* fixes to build static library with mingw and cygwin
-
-20140423
-* worked on format
-
-20140422
-* worked on format
-
-20140418
-* worked on lznt1 compressed database file support
-* worked on uncompressed databae file support
-* worked on format
-
-20140417
-* worked on format
-
 20140415
 * Initial version based on libmdmp
+* see `git log' for more recent change log
 

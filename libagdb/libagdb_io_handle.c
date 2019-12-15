@@ -522,6 +522,17 @@ int libagdb_io_handle_read_compressed_blocks(
 			 compressed_block_size );
 		}
 #endif
+		if( compressed_block_size == 0 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
+			 "%s: invalid compressed block size value out of bounds.",
+			 function );
+
+			return( -1 );
+		}
 		if( libfdata_list_append_element_with_mapped_size(
 		     compressed_blocks_list,
 		     &element_index,
@@ -758,7 +769,7 @@ int libagdb_io_handle_read_uncompressed_file_header(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
-		 "%s: invalid header size  value out of bounds.",
+		 "%s: invalid header size value out of bounds.",
 		 function );
 
 		return( -1 );

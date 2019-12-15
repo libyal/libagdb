@@ -1,4 +1,5 @@
 = Windows SuperFetch database format
+
 Analysis of AGDB
 
 :toc:
@@ -7,6 +8,7 @@ Analysis of AGDB
 :numbered!:
 [abstract]
 == Summary
+
 A Windows SuperFetch database file is used by Microsoft Windows as part of a
 memory management to analyze memory usage patterns over time to optimize memory
 content. This specification is based on earlier work on the format and was
@@ -18,6 +20,7 @@ tooling to be able to process this file type.
 
 [preface]
 == Document information
+
 [cols="1,5"]
 |===
 | Author(s): | Joachim Metz <joachim.metz@gmail.com>
@@ -28,8 +31,9 @@ tooling to be able to process this file type.
 
 [preface]
 == License
+
 ....
-Copyright (C) 2014-2016, Joachim Metz <joachim.metz@gmail.com>.
+Copyright (C) 2014-2019, Joachim Metz <joachim.metz@gmail.com>.
 Permission is granted to copy, distribute and/or modify this document under the
 terms of the GNU Free Documentation License, Version 1.3 or any later version
 published by the Free Software Foundation; with no Invariant Sections, no
@@ -39,6 +43,7 @@ in the section entitled "GNU Free Documentation License".
 
 [preface]
 == Revision history
+
 [cols="1,1,1,5",options="header"]
 |===
 | Version | Author | Date | Comments
@@ -47,10 +52,12 @@ in the section entitled "GNU Free Documentation License".
 | 0.0.3 | J.B. Metz | June 2014 | Additional findings.
 | 0.0.4 | J.B. Metz | December 2014 | Switched to asccidoc format.
 | 0.0.5 | J.B. Metz | November 2016 | Moved compression information to libfwnt documentation.
+| 0.0.6 | J.B. Metz | December 2019 | Changes to formatting.
 |===
 
 :numbered:
 == Overview
+
 A Windows SuperFetch database file is used by Microsoft Windows as part of a
 memory management to analyze memory usage patterns over time to optimize memory
 content.
@@ -78,6 +85,7 @@ Unicode strings are stored in UTF-16 little-endian without the byte order mark (
 |===
 
 === Test version
+
 Files created by the following version of programs were used to test the
 information within this document:
 
@@ -86,6 +94,7 @@ information within this document:
 * Windows 8.1
 
 === SuperFetch files
+
 The SuperFetch files can be found in:
 ....
 C:\Windows\Prefetch\
@@ -170,6 +179,7 @@ Ag*.db.trx
 ....
 
 == Compressed SuperFetch database - MEMO file format
+
 A compressed SuperFetch database - MEMO file consist of the following
 distinguishable elements:
 
@@ -179,6 +189,7 @@ distinguishable elements:
 The compression method is LZNT1
 
 === File header
+
 The file header is 8 bytes of size and consists of:
 
 [cols="1,1,1,5",options="header"]
@@ -190,6 +201,7 @@ The file header is 8 bytes of size and consists of:
 |===
 
 === Compressed block
+
 The compressed block size is the chunk data size, which is part of the LZNT1
 compressed data, + 2 bytes for the size of the chunk header itself.
 
@@ -200,6 +212,7 @@ For more information about LZNT1 see:
 https://github.com/libyal/libfwnt/blob/master/documentation/Compression%20methods.asciidoc[LIBFWNT\]].
 
 == Compressed SuperFetch database - MEM0 file format
+
 A compressed SuperFetch database - MEM0 file consist of the following
 distinguishable elements:
 
@@ -210,6 +223,7 @@ The compression method is Microsoft XPRESS Huffman (or LZXPRESS). Note that
 this is a different compression method as Microsoft XPRESS (LZ77+DIRECT2).
 
 === File header
+
 The file header is 8 bytes of size and consists of:
 
 [cols="1,1,1,5",options="header"]
@@ -221,6 +235,7 @@ The file header is 8 bytes of size and consists of:
 |===
 
 === Compressed block
+
 The compressed block is variable of size and consists of:
 
 [cols="1,1,1,5",options="header"]
@@ -237,6 +252,7 @@ For more information about LZXPRESS Huffman see:
 https://github.com/libyal/libfwnt/blob/master/documentation/Compression%20methods.asciidoc[LIBFWNT\]].
 
 == Compressed SuperFetch database - MAM file format
+
 A compressed SuperFetch database - MAM file consist of the following
 distinguishable elements:
 
@@ -247,6 +263,7 @@ The compression method is Microsoft XPRESS Huffman (or LZXPRESS). Note that
 this is a different compression method as Microsoft XPRESS (LZ77+DIRECT2).
 
 === File header
+
 The file header is 12 bytes of size and consists of:
 
 [cols="1,1,1,5",options="header"]
@@ -259,6 +276,7 @@ The file header is 12 bytes of size and consists of:
 |===
 
 === Compressed stream
+
 The compressed stream is variable of size and consists of:
 
 [cols="1,1,1,5",options="header"]
@@ -275,6 +293,7 @@ For more information about LZXPRESS Huffman see:
 https://github.com/libyal/libfwnt/blob/master/documentation/Compression%20methods.asciidoc[LIBFWNT\]].
 
 == Uncompressed SuperFetch database file format
+
 An uncompressed SuperFetch database consist of the following distinguishable elements:
 
 * file header
@@ -284,7 +303,9 @@ An uncompressed SuperFetch database consist of the following distinguishable ele
 * source information entries
 
 === Common data structures
+
 ==== [[ntfs_file_reference]]NTFS file reference
+
 The NTFS file reference is 8 bytes of size and consists of:
 
 [cols="1,1,1,5",options="header"]
@@ -295,6 +316,7 @@ The NTFS file reference is 8 bytes of size and consists of:
 |===
 
 === File header
+
 The file header is variable of size and consists of:
 
 [cols="1,1,1,5",options="header"]
@@ -311,7 +333,9 @@ The file header is variable of size and consists of:
 |===
 
 ==== Database header
+
 ===== Common database header
+
 The common database header is 60 bytes of size and consists of:
 
 [cols="1,1,1,5",options="header"]
@@ -332,6 +356,7 @@ See section: <<database_types_and_parameters,Database types and parameters>>
 |===
 
 ===== Database header 68 (64-bit)
+
 AgCx_S#_%SID%.snp.db
 ....
 00000000: 0c 00 00 00 48 00 00 00  40 00 00 00 58 00 00 00   ....H... @...X...
@@ -352,6 +377,7 @@ The database header 68 is 68 bytes of size and consists of:
 |===
 
 ===== Database header 116 (32-bit)
+
 The database header 116 is 116 bytes of size and consists of:
 
 [cols="1,1,1,5",options="header"]
@@ -388,6 +414,7 @@ The database header 116 is 116 bytes of size and consists of:
 ....
 
 ===== Database header 156 (64-bit)
+
 The database header 156 is 156 bytes of size and consists of:
 
 AgRobust.db (Windows 7 64-bit)
@@ -405,6 +432,7 @@ AgRobust.db (Windows 7 64-bit)
 ....
 
 ===== Database header 228 (32-bit)
+
 The database header 228 is 228 bytes of size and consists of:
 
 [cols="1,1,1,5",options="header"]
@@ -450,6 +478,7 @@ AgCx_SC1.db (Windows Vista 32-bit)
 ....
 
 ===== Database header 232 (32-bit)
+
 The database header 232 is 232 bytes of size and consists of:
 
 AgGlUAD_P_%SID%.db (Vista)
@@ -468,6 +497,7 @@ AgGlUAD_P_%SID%.db (Vista)
 ....
 
 ===== Database header 236 (64-bit)
+
 The database header 236 is 236 bytes of size and consists of:
 
 [cols="1,1,1,5",options="header"]
@@ -576,6 +606,7 @@ AgGlUAD_P_%SID%.db (Windows 7 64-bit)
 ....
 
 ===== Database header 264 (32-bit and 64-bit)
+
 The database header 264 is 264 bytes of size and consists of:
 
 [cols="1,1,1,5",options="header"]
@@ -741,6 +772,7 @@ AgGlUAD_%SID%.db (Vista)
 ....
 
 ==== [[database_types_and_parameters]]Database types and parameters
+
 `[REWOLF11]` states that the database type is an index of a table that is
 located in sysmain.dll and that the 9x 32-bit values that follow the database
 type are parameters (named database parameters in this document).
@@ -806,6 +838,7 @@ AgCx_SC#_xxxxxxxxxxxxxxxx.db | 236 | 11 | 72, 64, 88, 24, 24, 24, 24, 0, 0
 [yellow-background]*The source information sub entry type size ?*
 
 === Volume information entry
+
 The size of the volume information entry is dependent on the corresponding
 volume information entry size database parameter.
 
@@ -815,6 +848,7 @@ The alignment in the volume information entry varies per architecture.
 The volume information entry itself should start on an 8-byte aligned offset.
 
 ==== Volume information entry 56 (32-bit)
+
 The volume information entry 56 is variable of size and consists of:
 
 [cols="1,1,1,5",options="header"]
@@ -843,6 +877,7 @@ an UTF-16 little-endian string with end-of-string character
 |===
 
 ==== Volume information entry 72 (64-bit)
+
 The volume information entry 72 is variable of size and consists of:
 
 [cols="1,1,1,5",options="header"]
@@ -872,6 +907,7 @@ an UTF-16 little-endian string with end-of-string character
 |===
 
 === File information entry
+
 The size of the file information entry is dependent on the corresponding volume
 information entry size database parameter.
 
@@ -881,6 +917,7 @@ The alignment in the file information entry varies per architecture.
 [yellow-background]*Note is this named section instead of file information entry?*
 
 ==== File information entry 36 (32-bit)
+
 The file information entry 36 is variable of size and consists of:
 
 [cols="1,1,1,5",options="header"]
@@ -909,6 +946,7 @@ The path is relative from the root of the file system on the volume
 |===
 
 ==== File information entry 52 (32-bit)
+
 The file information entry 52 is variable of size and consists of:
 
 [cols="1,1,1,5",options="header"]
@@ -984,6 +1022,7 @@ sub entry: 0 data:
 ....
 
 ==== File information entry 56 (32-bit)
+
 ....
 struct PfRecordHeader_40
 {
@@ -1029,6 +1068,7 @@ The path is relative from the root of the file system on the volume
 |===
 
 ==== File information entry 64 (64-bit)
+
 The file information entry 64 is variable of size and consists of:
 
 [cols="1,1,1,5",options="header"]
@@ -1062,6 +1102,7 @@ The path is relative from the root of the file system on the volume
 |===
 
 ==== File information entry 72 (32-bit)
+
 [yellow-background]*The file information entry 72 is used by the AgRobustdb
 database and contains Least Recently Used file information?*
 
@@ -1106,6 +1147,7 @@ The path is relative from the root of the file system on the volume
 |===
 
 ==== File information entry 88 (64-bit)
+
 The file information entry 88 is variable of size and consists of:
 
 [cols="1,1,1,5",options="header"]
@@ -1144,6 +1186,7 @@ The path is relative from the root of the file system on the volume
 |===
 
 ==== File information entry 112 (64-bit)
+
 [yellow-background]*TODO*
 ....
 struct PfRecordHeader_70
@@ -1211,6 +1254,7 @@ The path is relative from the root of the file system on the volume
 |===
 
 ==== [[hash_function]]Hash function
+
 The file information entry use the following hash function on in pseudo C.
 ....
 *hash_value = 0x00004cb2fUL;
@@ -1252,6 +1296,7 @@ little-endian string without the end-of-string character.
 the lower 32-bit of the name hash seems to be the same as in 32-bit databases.*
 
 ==== Sub entry type 1
+
 ===== Sub entry type 1 - 16
 
 [cols="1,1,1,5",options="header"]
@@ -1277,19 +1322,25 @@ the lower 32-bit of the name hash seems to be the same as in 32-bit databases.*
 |===
 
 ==== Sub entry type 2
+
 ===== Sub entry type 2 - 16
+
 [yellow-background]*TODO*
 
 ===== Sub entry type 2 - 20
+
 [yellow-background]*TODO*
 
 ===== Sub entry type 2 - 24 (64-bit)
+
 [yellow-background]*TODO*
 
 ===== Sub entry type 2 - 32
+
 [yellow-background]*TODO*
 
 === Source information entry
+
 The size of the source information entry is dependent on the corresponding
 volume information entry size database parameter.
 
@@ -1297,6 +1348,7 @@ volume information entry size database parameter.
 [yellow-background]*Type 100 and 112 used in database type 11 (AgRobust.db)*
 
 ==== Source information entry 60 (32-bit)
+
 The source information entry 60 is variable of size and consists of:
 
 [cols="1,1,1,5",options="header"]
@@ -1321,6 +1373,7 @@ Contains a copy of the prefetch hash see `[LIBSCCA]` for information
 Seen in Vista database type 11 files (AgCx_SC#.db).
 
 ==== Source information entry 88 (64-bit)
+
 The source information entry 88 is variable of size and consists of:
 
 [cols="1,1,1,5",options="header"]
@@ -1346,6 +1399,7 @@ Contains a copy of the prefetch hash see `[LIBSCCA]` for information +
 Seen in Windows 7 database type 11 files (AgCx_SC#.db).
 
 ==== Source information entry 100 (32-bit)
+
 ....
 00000000: 64 ba c2 04 89 e2 d4 48  00 00 00 00 08 00 00 00   d......H ........
 00000010: 00 00 00 00 00 00 00 00  00 00 00 00 02 00 00 00   ........ ........
@@ -1404,6 +1458,7 @@ Unused bytes can contain remnant data +
 Note that the executable filename will store a maximum of 15 characters.
 
 ==== Source information entry 144 (64-bit)
+
 ....
 00000000: c9 af f0 08 00 00 00 00  fe 3f 04 00 00 00 00 00   ........ .?......
 00000010: 00 00 00 00 08 00 00 00  00 00 00 00 00 00 00 00   ........ ........
@@ -1456,6 +1511,7 @@ Unused bytes can contain remnant data +
 |===
 
 ==== Sub entry type X
+
 Seen in combination with source information entry 60 and 88
 
 Uncertain which of the sub entry values is this.
@@ -1483,6 +1539,7 @@ Are these the traces?
 |===
 
 == Notes
+
 [yellow-background]*`[MSDN]` claims SuperFetch encrypts using 128-bit Advanced
 Encryption Standard (AES) to ensure security of the data. Or is this only part
 of ReadyBoost?*
@@ -1511,6 +1568,7 @@ PfUD file
 AgRB => ReadyBoot or ReadyBoost ?
 
 === Hash?
+
 SiEntry?
 x = 0x00b15dcb
 x += byte
@@ -1522,6 +1580,7 @@ x *= 0x25
 x += byte
 
 === AgAppLaunch.db
+
 ....
 Number of entries
 
@@ -1560,12 +1619,14 @@ Entry:
 ....
 
 === Unexplained
+
 [yellow-background]*AgGlFaultHistory.db (Vista) with changing file information
 sub entry type size. What in the format marks to use the sub entry type 2 ?*
 
 [yellow-background]*AgGlFaultHistory.db (Windows 7)*
 
 === Database type and parameters
+
 BtDb type
 CrDb type X, 0x54, 0x24, ....
 NvcDb type
@@ -1592,12 +1653,15 @@ XX: PfFileParams 6 dup(<0, 0, 0, 0, 0, 0, 0, 0, 0>)
 ....
 
 === TRX
+
 Does the trx file contain the nvc trace data? Or PfTrx File?
 
 === Trace#.fx
+
 [yellow-background]*Prefetcher trace file*
 
 === Notes
+
 AgCx_S#_%SID%.snp.db
 database parameters: 72, 64, 88, 24, 16, 16, 16, 0, 0
 ....
@@ -1721,6 +1785,7 @@ sub entry type selection?
 
 [appendix]
 == GNU Free Documentation License
+
 Version 1.3, 3 November 2008
 Copyright © 2000, 2001, 2002, 2007, 2008 Free Software Foundation, Inc.
 <http://fsf.org/>
@@ -1729,6 +1794,7 @@ Everyone is permitted to copy and distribute verbatim copies of this license
 document, but changing it is not allowed.
 
 === 0. PREAMBLE
+
 The purpose of this License is to make a manual, textbook, or other functional
 and useful document "free" in the sense of freedom: to assure everyone the
 effective freedom to copy and redistribute it, with or without modifying it,
@@ -1749,6 +1815,7 @@ recommend this License principally for works whose purpose is instruction or
 reference.
 
 === 1. APPLICABILITY AND DEFINITIONS
+
 This License applies to any manual or other work, in any medium, that contains
 a notice placed by the copyright holder saying it can be distributed under the
 terms of this License. Such a notice grants a world-wide, royalty-free license,
@@ -1827,6 +1894,7 @@ disclaiming warranties: any other implication that these Warranty Disclaimers
 may have is void and has no effect on the meaning of this License.
 
 === 2. VERBATIM COPYING
+
 You may copy and distribute the Document in any medium, either commercially or
 noncommercially, provided that this License, the copyright notices, and the
 license notice saying this License applies to the Document are reproduced in
@@ -1840,6 +1908,7 @@ You may also lend copies, under the same conditions stated above, and you may
 publicly display copies.
 
 === 3. COPYING IN QUANTITY
+
 If you publish printed copies (or copies in media that commonly have printed
 covers) of the Document, numbering more than 100, and the Document's license
 notice requires Cover Texts, you must enclose the copies in covers that carry,
@@ -1873,6 +1942,7 @@ well before redistributing any large number of copies, to give them a chance to
 provide you with an updated version of the Document.
 
 === 4. MODIFICATIONS
+
 You may copy and distribute a Modified Version of the Document under the
 conditions of sections 2 and 3 above, provided that you release the Modified
 Version under precisely this License, with the Modified Version filling the
@@ -1965,6 +2035,7 @@ permission to use their names for publicity for or to assert or imply
 endorsement of any Modified Version.
 
 === 5. COMBINING DOCUMENTS
+
 You may combine the Document with other documents released under this License,
 under the terms defined in section 4 above for modified versions, provided that
 you include in the combination all of the Invariant Sections of all of the
@@ -1986,6 +2057,7 @@ combine any sections Entitled "Acknowledgements", and any sections Entitled
 "Dedications". You must delete all sections Entitled "Endorsements".
 
 === 6. COLLECTIONS OF DOCUMENTS
+
 You may make a collection consisting of the Document and other documents
 released under this License, and replace the individual copies of this License
 in the various documents with a single copy that is included in the collection,
@@ -1998,6 +2070,7 @@ into the extracted document, and follow this License in all other respects
 regarding verbatim copying of that document.
 
 === 7. AGGREGATION WITH INDEPENDENT WORKS
+
 A compilation of the Document or its derivatives with other separate and
 independent documents or works, in or on a volume of a storage or distribution
 medium, is called an "aggregate" if the copyright resulting from the
@@ -2014,6 +2087,7 @@ in electronic form. Otherwise they must appear on printed covers that bracket
 the whole aggregate.
 
 === 8. TRANSLATION
+
 Translation is considered a kind of modification, so you may distribute
 translations of the Document under the terms of section 4. Replacing Invariant
 Sections with translations requires special permission from their copyright
@@ -2031,6 +2105,7 @@ If a section in the Document is Entitled "Acknowledgements", "Dedications", or
 typically require changing the actual title.
 
 === 9. TERMINATION
+
 You may not copy, modify, sublicense, or distribute the Document except as
 expressly provided under this License. Any attempt otherwise to copy, modify,
 sublicense, or distribute it is void, and will automatically terminate your
@@ -2054,6 +2129,7 @@ your rights have been terminated and not permanently reinstated, receipt of a
 copy of some or all of the same material does not give you any rights to use it.
 
 === 10. FUTURE REVISIONS OF THIS LICENSE
+
 The Free Software Foundation may publish new, revised versions of the GNU Free
 Documentation License from time to time. Such new versions will be similar in
 spirit to the present version, but may differ in detail to address new problems
@@ -2071,6 +2147,7 @@ License can be used, that proxy's public statement of acceptance of a version
 permanently authorizes you to choose that version for the Document.
 
 === 11. RELICENSING
+
 "Massive Multiauthor Collaboration Site" (or "MMC Site") means any World Wide
 Web server that publishes copyrightable works and also provides prominent
 facilities for anybody to edit those works. A public wiki that anybody can edit

@@ -1240,10 +1240,9 @@ on_error:
 int agdb_test_file_get_number_of_volumes(
      libagdb_file_t *file )
 {
-	libcerror_error_t *error     = NULL;
-	int number_of_volumes        = 0;
-	int number_of_volumes_is_set = 0;
-	int result                   = 0;
+	libcerror_error_t *error = NULL;
+	int number_of_volumes    = 0;
+	int result               = 0;
 
 	/* Test regular cases
 	 */
@@ -1252,16 +1251,14 @@ int agdb_test_file_get_number_of_volumes(
 	          &number_of_volumes,
 	          &error );
 
-	AGDB_TEST_ASSERT_NOT_EQUAL_INT(
+	AGDB_TEST_ASSERT_EQUAL_INT(
 	 "result",
 	 result,
-	 -1 );
+	 1 );
 
 	AGDB_TEST_ASSERT_IS_NULL(
 	 "error",
 	 error );
-
-	number_of_volumes_is_set = result;
 
 	/* Test error cases
 	 */
@@ -1282,25 +1279,23 @@ int agdb_test_file_get_number_of_volumes(
 	libcerror_error_free(
 	 &error );
 
-	if( number_of_volumes_is_set != 0 )
-	{
-		result = libagdb_file_get_number_of_volumes(
-		          file,
-		          NULL,
-		          &error );
+	result = libagdb_file_get_number_of_volumes(
+	          file,
+	          NULL,
+	          &error );
 
-		AGDB_TEST_ASSERT_EQUAL_INT(
-		 "result",
-		 result,
-		 -1 );
+	AGDB_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
 
-		AGDB_TEST_ASSERT_IS_NOT_NULL(
-		 "error",
-		 error );
+	AGDB_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
 
-		libcerror_error_free(
-		 &error );
-	}
+	libcerror_error_free(
+	 &error );
+
 	return( 1 );
 
 on_error:
@@ -1320,8 +1315,29 @@ int agdb_test_file_get_volume_information(
 {
 	libagdb_volume_information_t *volume_information = 0;
 	libcerror_error_t *error                         = NULL;
+	int number_of_volumes                            = 0;
 	int result                                       = 0;
 
+	/* Initialize test
+	 */
+	result = libagdb_file_get_number_of_volumes(
+	          file,
+	          &number_of_volumes,
+	          &error );
+
+	AGDB_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	AGDB_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	if( number_of_volumes == 0 )
+	{
+		return( 1 );
+	}
 	/* Test regular cases
 	 */
 	result = libagdb_file_get_volume_information(
@@ -1330,10 +1346,10 @@ int agdb_test_file_get_volume_information(
 	          &volume_information,
 	          &error );
 
-	AGDB_TEST_ASSERT_NOT_EQUAL_INT(
+	AGDB_TEST_ASSERT_EQUAL_INT(
 	 "result",
 	 result,
-	 -1 );
+	 1 );
 
 	AGDB_TEST_ASSERT_IS_NULL(
 	 "error",
@@ -1441,10 +1457,9 @@ on_error:
 int agdb_test_file_get_number_of_sources(
      libagdb_file_t *file )
 {
-	libcerror_error_t *error     = NULL;
-	int number_of_sources        = 0;
-	int number_of_sources_is_set = 0;
-	int result                   = 0;
+	libcerror_error_t *error = NULL;
+	int number_of_sources    = 0;
+	int result               = 0;
 
 	/* Test regular cases
 	 */
@@ -1453,16 +1468,14 @@ int agdb_test_file_get_number_of_sources(
 	          &number_of_sources,
 	          &error );
 
-	AGDB_TEST_ASSERT_NOT_EQUAL_INT(
+	AGDB_TEST_ASSERT_EQUAL_INT(
 	 "result",
 	 result,
-	 -1 );
+	 1 );
 
 	AGDB_TEST_ASSERT_IS_NULL(
 	 "error",
 	 error );
-
-	number_of_sources_is_set = result;
 
 	/* Test error cases
 	 */
@@ -1483,25 +1496,23 @@ int agdb_test_file_get_number_of_sources(
 	libcerror_error_free(
 	 &error );
 
-	if( number_of_sources_is_set != 0 )
-	{
-		result = libagdb_file_get_number_of_sources(
-		          file,
-		          NULL,
-		          &error );
+	result = libagdb_file_get_number_of_sources(
+	          file,
+	          NULL,
+	          &error );
 
-		AGDB_TEST_ASSERT_EQUAL_INT(
-		 "result",
-		 result,
-		 -1 );
+	AGDB_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
 
-		AGDB_TEST_ASSERT_IS_NOT_NULL(
-		 "error",
-		 error );
+	AGDB_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
 
-		libcerror_error_free(
-		 &error );
-	}
+	libcerror_error_free(
+	 &error );
+
 	return( 1 );
 
 on_error:
@@ -1521,8 +1532,29 @@ int agdb_test_file_get_source_information(
 {
 	libagdb_source_information_t *source_information = 0;
 	libcerror_error_t *error                         = NULL;
+	int number_of_sources                            = 0;
 	int result                                       = 0;
 
+	/* Initialize test
+	 */
+	result = libagdb_file_get_number_of_sources(
+	          file,
+	          &number_of_sources,
+	          &error );
+
+	AGDB_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	AGDB_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	if( number_of_sources == 0 )
+	{
+		return( 1 );
+	}
 	/* Test regular cases
 	 */
 	result = libagdb_file_get_source_information(
@@ -1531,10 +1563,10 @@ int agdb_test_file_get_source_information(
 	          &source_information,
 	          &error );
 
-	AGDB_TEST_ASSERT_NOT_EQUAL_INT(
+	AGDB_TEST_ASSERT_EQUAL_INT(
 	 "result",
 	 result,
-	 -1 );
+	 1 );
 
 	AGDB_TEST_ASSERT_IS_NULL(
 	 "error",
