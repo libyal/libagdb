@@ -106,13 +106,25 @@ agdb_test_file_LDADD = \
 
 agdb_test_file_information_SOURCES = \
 	agdb_test_file_information.c \
+	agdb_test_functions.c agdb_test_functions.h \
+	agdb_test_libbfio.h \
 	agdb_test_libagdb.h \
 	agdb_test_libcerror.h \
+	agdb_test_libfdata.h \
 	agdb_test_macros.h \
 	agdb_test_memory.c agdb_test_memory.h \
 	agdb_test_unused.h
 
 agdb_test_file_information_LDADD = \
+	@LIBFDATA_LIBADD@ \
+	@LIBBFIO_LIBADD@ \
+	@LIBCPATH_LIBADD@ \
+	@LIBCFILE_LIBADD@ \
+	@LIBUNA_LIBADD@ \
+	@LIBCSPLIT_LIBADD@ \
+	@LIBCNOTIFY_LIBADD@ \
+	@LIBCLOCALE_LIBADD@ \
+	@LIBCDATA_LIBADD@ \
 	../libagdb/libagdb.la \
 	@LIBCERROR_LIBADD@
 
@@ -179,14 +191,26 @@ agdb_test_support_LDADD = \
 	@LIBCERROR_LIBADD@
 
 agdb_test_volume_information_SOURCES = \
+	agdb_test_functions.c agdb_test_functions.h \
+	agdb_test_libbfio.h \
 	agdb_test_libagdb.h \
 	agdb_test_libcerror.h \
+	agdb_test_libfdata.h \
 	agdb_test_macros.h \
 	agdb_test_memory.c agdb_test_memory.h \
 	agdb_test_unused.h \
 	agdb_test_volume_information.c
 
 agdb_test_volume_information_LDADD = \
+	@LIBFDATA_LIBADD@ \
+	@LIBBFIO_LIBADD@ \
+	@LIBCPATH_LIBADD@ \
+	@LIBCFILE_LIBADD@ \
+	@LIBUNA_LIBADD@ \
+	@LIBCSPLIT_LIBADD@ \
+	@LIBCNOTIFY_LIBADD@ \
+	@LIBCLOCALE_LIBADD@ \
+	@LIBCDATA_LIBADD@ \
 	../libagdb/libagdb.la \
 	@LIBCERROR_LIBADD@
 

@@ -1203,13 +1203,13 @@ int libagdb_file_open_read(
 
 			goto on_error;
 		}
-		read_count = libagdb_volume_information_read(
+		read_count = libagdb_internal_volume_information_read_file_io_handle(
 		              (libagdb_internal_volume_information_t *) volume_information,
 		              internal_file->io_handle,
 		              internal_file->uncompressed_data_stream,
 		              internal_file->file_io_handle,
-		              volume_index,
 		              file_offset,
+		              volume_index,
 		              error );
 
 		if( read_count == -1 )

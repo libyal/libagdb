@@ -174,32 +174,17 @@ int libagdb_internal_file_information_free(
 	return( 1 );
 }
 
-/* Reads the file information
+/* Reads the file information path data
+ * Note that this function is mainly used for the tests
  * Returns the number of bytes read if successful or -1 on error
  */
-ssize_t libagdb_file_information_read(
-         libagdb_internal_file_information_t *internal_file_information,
-         libagdb_io_handle_t *io_handle,
-         libfdata_stream_t *uncompressed_data_stream,
-         libbfio_handle_t *file_io_handle,
-         uint32_t file_index,
-         off64_t file_offset,
-         libcerror_error_t **error )
+int libagdb_internal_file_information_read_path_data(
+     libagdb_internal_file_information_t *internal_file_information,
+     const uint8_t *data,
+     size_t data_size,
+     libcerror_error_t **error )
 {
-	uint8_t alignment_padding_data[ 8 ];
-	uint8_t sub_entry_data[ 32 ];
-
-	uint8_t *file_information_data = NULL;
-	static char *function          = "libagdb_file_information_read";
-	size_t alignment_padding_size  = 0;
-	size_t alignment_size          = 0;
-	ssize_t read_count             = 0;
-	ssize_t total_read_count       = 0;
-	uint32_t calculated_hash_value = 0;
-	uint32_t entry_index           = 0;
-	uint32_t number_of_entries     = 0;
-	uint32_t path_size             = 0;
-	uint32_t sub_entry_data_size   = 0;
+	static char *function  = "libagdb_internal_file_information_read_path_data";
 
 	if( internal_file_information == NULL )
 	{
@@ -223,153 +208,45 @@ ssize_t libagdb_file_information_read(
 
 		return( -1 );
 	}
-	if( io_handle == NULL )
+	if( data == NULL )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid IO handle.",
+		 "%s: invalid data.",
 		 function );
 
 		return( -1 );
 	}
-#if SIZEOF_SIZE_T <= 4
-	if( (size_t) io_handle->file_information_entry_size > (size_t) SSIZE_MAX )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_VALUE_EXCEEDS_MAXIMUM,
-		 "%s: invalid IO handle - file information entry size value exceeds maximum.",
-		 function );
-
-		return( -1 );
-	}
-#endif
-#if defined( HAVE_DEBUG_OUTPUT )
-	if( libcnotify_verbose != 0 )
-	{
-		libcnotify_printf(
-		 "%s: reading file: %" PRIu32 " information at offset: %" PRIi64 " (0x%08" PRIx64 ")\n",
-		 function,
-		 file_index,
-		 file_offset,
-		 file_offset );
-	}
-#endif
-	if( libfdata_stream_seek_offset(
-	     uncompressed_data_stream,
-	     file_offset,
-	     SEEK_SET,
-	     error ) == -1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_IO,
-		 LIBCERROR_IO_ERROR_SEEK_FAILED,
-		 "%s: unable to seek file: %" PRIu32 " information offset: %" PRIi64 " (0x%08" PRIx64 ").",
-		 function,
-		 file_index,
-		 file_offset,
-		 file_offset );
-
-		goto on_error;
-	}
-	file_information_data = (uint8_t *) memory_allocate(
-	                                     sizeof( uint8_t ) * io_handle->file_information_entry_size );
-
-	if( file_information_data == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_MEMORY,
-		 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
-		 "%s: unable to create file information data.",
-		 function );
-
-		goto on_error;
-	}
-	read_count = libfdata_stream_read_buffer(
-	              uncompressed_data_stream,
-	              (intptr_t *) file_io_handle,
-	              file_information_data,
-	              (size_t) io_handle->file_information_entry_size,
-	              0,
-	              error );
-
-	if( read_count != (ssize_t) io_handle->file_information_entry_size )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_IO,
-		 LIBCERROR_IO_ERROR_READ_FAILED,
-		 "%s: unable to read file: %" PRIu32 " information data.",
-		 function,
-		 file_index );
-
-		goto on_error;
-	}
-	total_read_count += read_count;
-	file_offset      += read_count;
-
-	if( libagdb_file_information_read_data(
-	     internal_file_information,
-	     io_handle,
-	     file_information_data,
-	     (size_t) io_handle->file_information_entry_size,
-	     &number_of_entries,
-	     &path_size,
-	     error ) != 1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_IO,
-		 LIBCERROR_IO_ERROR_READ_FAILED,
-		 "%s: unable to read file: %" PRIu32 " information.",
-		 function,
-		 file_index );
-
-		goto on_error;
-	}
-	memory_free(
-	 file_information_data );
-
-	file_information_data = NULL;
-
-	if( ( io_handle->file_information_entry_size == 36 )
-	 || ( io_handle->file_information_entry_size == 52 )
-	 || ( io_handle->file_information_entry_size == 56 )
-	 || ( io_handle->file_information_entry_size == 72 ) )
-	{
-		alignment_size = 4;
-	}
-	else if( ( io_handle->file_information_entry_size == 64 )
-	      || ( io_handle->file_information_entry_size == 88 )
-	      || ( io_handle->file_information_entry_size == 112 ) )
-	{
-		alignment_size = 8;
-	}
-	else
+	if( ( data_size < internal_file_information->path_size )
+	 || ( data_size > (size_t) SSIZE_MAX ) )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
-		 "%s: unsupported file information entry size: %" PRIu32 ".",
-		 function,
-		 io_handle->file_information_entry_size );
+		 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
+		 "%s: invalid data size value out bounds.",
+		 function );
 
-		goto on_error;
+		return( -1 );
 	}
-	if( path_size != 0 )
+#if defined( HAVE_DEBUG_OUTPUT )
+	if( libcnotify_verbose != 0 )
 	{
-		path_size >>= 2;
-		path_size <<= 1;
-		path_size  += 2;
-
+		libcnotify_printf(
+		 "%s: file information path data:\n",
+		 function );
+		libcnotify_print_data(
+		 data,
+		 (size_t) internal_file_information->path_size,
+		 0 );
+	}
+#endif
+	if( internal_file_information->path_size > 0 )
+	{
 		internal_file_information->path = (uint8_t *) memory_allocate(
-		                                               sizeof( uint8_t ) * path_size );
+		                                               sizeof( uint8_t ) * internal_file_information->path_size );
 
 		if( internal_file_information->path == NULL )
 		{
@@ -382,216 +259,22 @@ ssize_t libagdb_file_information_read(
 
 			goto on_error;
 		}
-		internal_file_information->path_size = path_size;
-
-		read_count = libfdata_stream_read_buffer(
-		              uncompressed_data_stream,
-		              (intptr_t *) file_io_handle,
-		              internal_file_information->path,
-		              internal_file_information->path_size,
-		              0,
-		              error );
-
-		if( read_count != (ssize_t) internal_file_information->path_size )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_IO,
-			 LIBCERROR_IO_ERROR_READ_FAILED,
-			 "%s: unable to read file: %" PRIu32 " path data.",
-			 function,
-			 file_index );
-
-			goto on_error;
-		}
-		total_read_count += read_count;
-		file_offset      += read_count;
-
-#if defined( HAVE_DEBUG_OUTPUT )
-		if( libcnotify_verbose != 0 )
-		{
-			libcnotify_printf(
-			 "%s: file: %" PRIu32 " path data:\n",
-			 function,
-			 file_index );
-			libcnotify_print_data(
-			 internal_file_information->path,
-			 internal_file_information->path_size,
-			 0 );
-		}
-#endif
-		if( libagdb_hash_calculate(
-		     &calculated_hash_value,
+		if( memory_copy(
 		     internal_file_information->path,
-		     internal_file_information->path_size - 2,
-		     error ) != 1 )
+		     data,
+		     sizeof( uint8_t ) * internal_file_information->path_size ) == NULL )
 		{
 			libcerror_error_set(
 			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-			 "%s: unable to retrieve path hash value.",
+			 LIBCERROR_ERROR_DOMAIN_MEMORY,
+			 LIBCERROR_MEMORY_ERROR_COPY_FAILED,
+			 "%s: unable to copy path.",
 			 function );
 
 			goto on_error;
 		}
-#if defined( HAVE_DEBUG_OUTPUT )
-		if( libcnotify_verbose != 0 )
-		{
-			if( libagdb_debug_print_utf16_string_value(
-			     function,
-			     "file path\t\t\t\t",
-			     internal_file_information->path,
-			     internal_file_information->path_size,
-			     LIBUNA_ENDIAN_LITTLE,
-			     error ) != 1 )
-			{
-				libcerror_error_set(
-				 error,
-				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBCERROR_RUNTIME_ERROR_PRINT_FAILED,
-				 "%s: unable to print UTF-16 string value.",
-				 function );
-
-				goto on_error;
-			}
-			libcnotify_printf(
-			 "%s: file path hash value\t\t\t: 0x%08" PRIx64 "\n",
-			 function,
-			 calculated_hash_value );
-
-			libcnotify_printf(
-			 "\n" );
-		}
-#endif
-		alignment_padding_size = (size_t) ( file_offset % alignment_size );
-
-		if( alignment_padding_size != 0 )
-		{
-			alignment_padding_size = alignment_size - alignment_padding_size;
-
-#if defined( HAVE_DEBUG_OUTPUT )
-			if( libcnotify_verbose != 0 )
-			{
-				libcnotify_printf(
-				 "%s: alignment padding size\t\t\t: %" PRIzd "\n",
-				 function,
-				 alignment_padding_size );
-			}
-#endif
-			read_count = libfdata_stream_read_buffer(
-			              uncompressed_data_stream,
-			              (intptr_t *) file_io_handle,
-			              alignment_padding_data,
-			              alignment_padding_size,
-			              0,
-			              error );
-
-			if( read_count != (ssize_t) alignment_padding_size )
-			{
-				libcerror_error_set(
-				 error,
-				 LIBCERROR_ERROR_DOMAIN_IO,
-				 LIBCERROR_IO_ERROR_READ_FAILED,
-				 "%s: unable to read file: %" PRIu32 " alignment padding data.",
-				 function,
-				 file_index );
-
-				goto on_error;
-			}
-			total_read_count += read_count;
-			file_offset      += read_count;
-
-#if defined( HAVE_DEBUG_OUTPUT )
-			if( libcnotify_verbose != 0 )
-			{
-				libcnotify_printf(
-				 "%s: file: %" PRIu32 " alignment padding data:\n",
-				 function,
-				 file_index );
-				libcnotify_print_data(
-				 alignment_padding_data,
-				 alignment_padding_size,
-				 0 );
-			}
-#endif
-		}
 	}
-	if( number_of_entries > 0 )
-	{
-		if( ( io_handle->file_information_sub_entry_type1_size != 16 )
-		 && ( io_handle->file_information_sub_entry_type1_size != 24 ) )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
-			 "%s: unsupported file information sub entry type 1 size: %" PRIu32 ".",
-			 function,
-			 io_handle->file_information_sub_entry_type1_size );
-
-			return( -1 );
-		}
-		if( ( io_handle->file_information_sub_entry_type2_size != 16 )
-		 && ( io_handle->file_information_sub_entry_type2_size != 20 )
-		 && ( io_handle->file_information_sub_entry_type2_size != 24 )
-		 && ( io_handle->file_information_sub_entry_type2_size != 32 ) )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
-			 "%s: unsupported file information sub entry type 2 size: %" PRIu32 ".",
-			 function,
-			 io_handle->file_information_sub_entry_type2_size );
-
-			return( -1 );
-		}
-		sub_entry_data_size = io_handle->file_information_sub_entry_type1_size;
-
-		for( entry_index = 0;
-		     entry_index < number_of_entries;
-		     entry_index++ )
-		{
-			read_count = libfdata_stream_read_buffer(
-				      uncompressed_data_stream,
-				      (intptr_t *) file_io_handle,
-				      sub_entry_data,
-				      (size_t) sub_entry_data_size,
-				      0,
-				      error );
-
-			if( read_count != (ssize_t) sub_entry_data_size )
-			{
-				libcerror_error_set(
-				 error,
-				 LIBCERROR_ERROR_DOMAIN_IO,
-				 LIBCERROR_IO_ERROR_READ_FAILED,
-				 "%s: unable to read sub entry: %" PRIu32 " data.",
-				 function,
-				 entry_index );
-
-				goto on_error;
-			}
-			total_read_count += read_count;
-			file_offset      += read_count;
-
-#if defined( HAVE_DEBUG_OUTPUT )
-			if( libcnotify_verbose != 0 )
-			{
-				libcnotify_printf(
-				 "%s: sub entry: %" PRIu32 " data:\n",
-				 function,
-				 entry_index );
-				libcnotify_print_data(
-				 sub_entry_data,
-				 (size_t) sub_entry_data_size,
-				 0 );
-			}
-#endif
-		}
-	}
-	return( total_read_count );
+	return( 1 );
 
 on_error:
 	if( internal_file_information->path != NULL )
@@ -603,27 +286,20 @@ on_error:
 	}
 	internal_file_information->path_size = 0;
 
-	if( file_information_data != NULL )
-	{
-		memory_free(
-		 file_information_data );
-	}
 	return( -1 );
 }
 
 /* Reads the file information
  * Returns the number of bytes read if successful or -1 on error
  */
-int libagdb_file_information_read_data(
+int libagdb_internal_file_information_read_data(
      libagdb_internal_file_information_t *internal_file_information,
      libagdb_io_handle_t *io_handle,
      const uint8_t *data,
      size_t data_size,
-     uint32_t *number_of_entries,
-     uint32_t *path_size,
      libcerror_error_t **error )
 {
-	static char *function = "libagdb_file_information_read_data";
+	static char *function = "libagdb_internal_file_information_read_data";
 	uint32_t flags        = 0;
 	uint8_t mode          = 0;
 
@@ -688,28 +364,6 @@ int libagdb_file_information_read_data(
 
 		return( -1 );
 	}
-	if( number_of_entries == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid number of entries.",
-		 function );
-
-		return( -1 );
-	}
-	if( path_size == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid path size.",
-		 function );
-
-		return( -1 );
-	}
 #if defined( HAVE_DEBUG_OUTPUT )
 	if( libcnotify_verbose != 0 )
 	{
@@ -751,7 +405,7 @@ int libagdb_file_information_read_data(
 	{
 		byte_stream_copy_to_uint32_little_endian(
 		 ( (agdb_file_information_36_t *) data )->number_of_entries,
-		 *number_of_entries );
+		 internal_file_information->number_of_entries );
 
 		byte_stream_copy_to_uint32_little_endian(
 		 ( (agdb_file_information_36_t *) data )->flags,
@@ -759,13 +413,13 @@ int libagdb_file_information_read_data(
 
 		byte_stream_copy_to_uint32_little_endian(
 		 ( (agdb_file_information_36_t *) data )->path_number_of_characters,
-		 *path_size );
+		 internal_file_information->path_size );
 	}
 	else if( mode == 64 )
 	{
 		byte_stream_copy_to_uint32_little_endian(
 		 ( (agdb_file_information_64_t *) data )->number_of_entries,
-		 *number_of_entries );
+		 internal_file_information->number_of_entries );
 
 		byte_stream_copy_to_uint32_little_endian(
 		 ( (agdb_file_information_64_t *) data )->flags,
@@ -773,7 +427,7 @@ int libagdb_file_information_read_data(
 
 		byte_stream_copy_to_uint32_little_endian(
 		 ( (agdb_file_information_64_t *) data )->path_number_of_characters,
-		 *path_size );
+		 internal_file_information->path_size );
 	}
 #if defined( HAVE_DEBUG_OUTPUT )
 	if( libcnotify_verbose != 0 )
@@ -791,7 +445,7 @@ int libagdb_file_information_read_data(
 			 value_64bit );
 		}
 		libcnotify_printf(
-		 "%s: unknown1\t\t\t\t\t: 0x%08" PRIx64 "\n",
+		 "%s: unknown1\t\t\t\t: 0x%08" PRIx64 "\n",
 		 function,
 		 value_64bit );
 
@@ -815,10 +469,10 @@ int libagdb_file_information_read_data(
 		libcnotify_printf(
 		 "%s: number of entries\t\t\t: %" PRIu32 "\n",
 		 function,
-		 *number_of_entries );
+		 internal_file_information->number_of_entries );
 
 		libcnotify_printf(
-		 "%s: flags\t\t\t\t\t: 0x%08" PRIx32 "\n",
+		 "%s: flags\t\t\t\t: 0x%08" PRIx32 "\n",
 		 function,
 		 flags );
 
@@ -953,9 +607,9 @@ int libagdb_file_information_read_data(
 		libcnotify_printf(
 		 "%s: path number of characters\t\t: 0x%08" PRIx32 " (number of characters: %" PRIu32 ", lower bits: 0x%02" PRIx32 ")\n",
 		 function,
-		 *path_size,
-		 *path_size >> 2,
-		 *path_size & 0x00000001UL );
+		 internal_file_information->path_size,
+		 internal_file_information->path_size >> 2,
+		 internal_file_information->path_size & 0x00000001UL );
 
 		if( mode == 64 )
 		{
@@ -973,7 +627,7 @@ int libagdb_file_information_read_data(
 			 ( (agdb_file_information_36_t *) data )->unknown7,
 			 value_32bit );
 			libcnotify_printf(
-			 "%s: unknown7\t\t\t\t\t: 0x%08" PRIx32 "\n",
+			 "%s: unknown7\t\t\t\t: 0x%08" PRIx32 "\n",
 			 function,
 			 value_32bit );
 		}
@@ -1010,7 +664,7 @@ int libagdb_file_information_read_data(
 				 value_64bit );
 			}
 			libcnotify_printf(
-			 "%s: unknown7\t\t\t\t\t: 0x%08" PRIx64 "\n",
+			 "%s: unknown7\t\t\t\t: 0x%08" PRIx64 "\n",
 			 function,
 			 value_64bit );
 		}
@@ -1020,7 +674,7 @@ int libagdb_file_information_read_data(
 			 ( (agdb_file_information_52_t *) data )->unknown8,
 			 value_16bit );
 			libcnotify_printf(
-			 "%s: unknown8\t\t\t\t\t: 0x%04" PRIx16 "\n",
+			 "%s: unknown8\t\t\t\t: 0x%04" PRIx16 "\n",
 			 function,
 			 value_16bit );
 
@@ -1028,7 +682,7 @@ int libagdb_file_information_read_data(
 			 ( (agdb_file_information_52_t *) data )->unknown9,
 			 value_16bit );
 			libcnotify_printf(
-			 "%s: unknown9\t\t\t\t\t: 0x%04" PRIx16 "\n",
+			 "%s: unknown9\t\t\t\t: 0x%04" PRIx16 "\n",
 			 function,
 			 value_16bit );
 
@@ -1255,8 +909,442 @@ int libagdb_file_information_read_data(
 		libcnotify_printf(
 		 "\n" );
 	}
-#endif
+#endif /* defined( HAVE_DEBUG_OUTPUT ) */
+
+	if( internal_file_information->path_size != 0 )
+	{
+		internal_file_information->path_size >>= 2;
+		internal_file_information->path_size <<= 1;
+		internal_file_information->path_size  += 2;
+	}
 	return( 1 );
+}
+
+/* Reads the file information
+ * Returns the number of bytes read if successful or -1 on error
+ */
+ssize_t libagdb_internal_file_information_read_file_io_handle(
+         libagdb_internal_file_information_t *internal_file_information,
+         libagdb_io_handle_t *io_handle,
+         libfdata_stream_t *data_stream,
+         libbfio_handle_t *file_io_handle,
+         off64_t file_offset,
+         uint32_t file_index,
+         libcerror_error_t **error )
+{
+	uint8_t alignment_padding_data[ 8 ];
+	uint8_t sub_entry_data[ 32 ];
+
+	uint8_t *file_information_data = NULL;
+	static char *function          = "libagdb_internal_file_information_read_file_io_handle";
+	size_t alignment_padding_size  = 0;
+	size_t alignment_size          = 0;
+	ssize_t read_count             = 0;
+	ssize_t total_read_count       = 0;
+	uint32_t calculated_hash_value = 0;
+	uint32_t entry_index           = 0;
+	uint32_t sub_entry_data_size   = 0;
+
+	if( internal_file_information == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid file information.",
+		 function );
+
+		return( -1 );
+	}
+	if( internal_file_information->path != NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
+		 "%s: invalid file information - path value already set.",
+		 function );
+
+		return( -1 );
+	}
+	if( io_handle == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid IO handle.",
+		 function );
+
+		return( -1 );
+	}
+#if SIZEOF_SIZE_T <= 4
+	if( (size_t) io_handle->file_information_entry_size > (size_t) SSIZE_MAX )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_EXCEEDS_MAXIMUM,
+		 "%s: invalid IO handle - file information entry size value exceeds maximum.",
+		 function );
+
+		return( -1 );
+	}
+#endif
+#if defined( HAVE_DEBUG_OUTPUT )
+	if( libcnotify_verbose != 0 )
+	{
+		libcnotify_printf(
+		 "%s: reading file: %" PRIu32 " information at offset: %" PRIi64 " (0x%08" PRIx64 ")\n",
+		 function,
+		 file_index,
+		 file_offset,
+		 file_offset );
+	}
+#endif
+	if( libfdata_stream_seek_offset(
+	     data_stream,
+	     file_offset,
+	     SEEK_SET,
+	     error ) == -1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_IO,
+		 LIBCERROR_IO_ERROR_SEEK_FAILED,
+		 "%s: unable to seek file: %" PRIu32 " information offset: %" PRIi64 " (0x%08" PRIx64 ").",
+		 function,
+		 file_index,
+		 file_offset,
+		 file_offset );
+
+		goto on_error;
+	}
+	file_information_data = (uint8_t *) memory_allocate(
+	                                     sizeof( uint8_t ) * io_handle->file_information_entry_size );
+
+	if( file_information_data == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_MEMORY,
+		 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
+		 "%s: unable to create file information data.",
+		 function );
+
+		goto on_error;
+	}
+	read_count = libfdata_stream_read_buffer(
+	              data_stream,
+	              (intptr_t *) file_io_handle,
+	              file_information_data,
+	              (size_t) io_handle->file_information_entry_size,
+	              0,
+	              error );
+
+	if( read_count != (ssize_t) io_handle->file_information_entry_size )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_IO,
+		 LIBCERROR_IO_ERROR_READ_FAILED,
+		 "%s: unable to read file: %" PRIu32 " information data.",
+		 function,
+		 file_index );
+
+		goto on_error;
+	}
+	total_read_count += read_count;
+	file_offset      += read_count;
+
+	if( libagdb_internal_file_information_read_data(
+	     internal_file_information,
+	     io_handle,
+	     file_information_data,
+	     (size_t) io_handle->file_information_entry_size,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_IO,
+		 LIBCERROR_IO_ERROR_READ_FAILED,
+		 "%s: unable to read file: %" PRIu32 " information.",
+		 function,
+		 file_index );
+
+		goto on_error;
+	}
+	memory_free(
+	 file_information_data );
+
+	file_information_data = NULL;
+
+	if( ( io_handle->file_information_entry_size == 36 )
+	 || ( io_handle->file_information_entry_size == 52 )
+	 || ( io_handle->file_information_entry_size == 56 )
+	 || ( io_handle->file_information_entry_size == 72 ) )
+	{
+		alignment_size = 4;
+	}
+	else if( ( io_handle->file_information_entry_size == 64 )
+	      || ( io_handle->file_information_entry_size == 88 )
+	      || ( io_handle->file_information_entry_size == 112 ) )
+	{
+		alignment_size = 8;
+	}
+	else
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
+		 "%s: unsupported file information entry size: %" PRIu32 ".",
+		 function,
+		 io_handle->file_information_entry_size );
+
+		goto on_error;
+	}
+	if( internal_file_information->path_size != 0 )
+	{
+		internal_file_information->path = (uint8_t *) memory_allocate(
+		                                               sizeof( uint8_t ) * internal_file_information->path_size );
+
+		if( internal_file_information->path == NULL )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_MEMORY,
+			 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
+			 "%s: unable to create path.",
+			 function );
+
+			goto on_error;
+		}
+		read_count = libfdata_stream_read_buffer(
+		              data_stream,
+		              (intptr_t *) file_io_handle,
+		              internal_file_information->path,
+		              internal_file_information->path_size,
+		              0,
+		              error );
+
+		if( read_count != (ssize_t) internal_file_information->path_size )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_IO,
+			 LIBCERROR_IO_ERROR_READ_FAILED,
+			 "%s: unable to read file: %" PRIu32 " path data.",
+			 function,
+			 file_index );
+
+			goto on_error;
+		}
+		total_read_count += read_count;
+		file_offset      += read_count;
+
+#if defined( HAVE_DEBUG_OUTPUT )
+		if( libcnotify_verbose != 0 )
+		{
+			libcnotify_printf(
+			 "%s: file: %" PRIu32 " path data:\n",
+			 function,
+			 file_index );
+			libcnotify_print_data(
+			 internal_file_information->path,
+			 internal_file_information->path_size,
+			 0 );
+		}
+#endif
+		if( libagdb_hash_calculate(
+		     &calculated_hash_value,
+		     internal_file_information->path,
+		     internal_file_information->path_size - 2,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve path hash value.",
+			 function );
+
+			goto on_error;
+		}
+#if defined( HAVE_DEBUG_OUTPUT )
+		if( libcnotify_verbose != 0 )
+		{
+			if( libagdb_debug_print_utf16_string_value(
+			     function,
+			     "file path\t\t\t\t",
+			     internal_file_information->path,
+			     internal_file_information->path_size,
+			     LIBUNA_ENDIAN_LITTLE,
+			     error ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_PRINT_FAILED,
+				 "%s: unable to print UTF-16 string value.",
+				 function );
+
+				goto on_error;
+			}
+			libcnotify_printf(
+			 "%s: file path hash value\t\t\t: 0x%08" PRIx64 "\n",
+			 function,
+			 calculated_hash_value );
+
+			libcnotify_printf(
+			 "\n" );
+		}
+#endif
+		alignment_padding_size = (size_t) ( file_offset % alignment_size );
+
+		if( alignment_padding_size != 0 )
+		{
+			alignment_padding_size = alignment_size - alignment_padding_size;
+
+#if defined( HAVE_DEBUG_OUTPUT )
+			if( libcnotify_verbose != 0 )
+			{
+				libcnotify_printf(
+				 "%s: alignment padding size\t\t\t: %" PRIzd "\n",
+				 function,
+				 alignment_padding_size );
+			}
+#endif
+			read_count = libfdata_stream_read_buffer(
+			              data_stream,
+			              (intptr_t *) file_io_handle,
+			              alignment_padding_data,
+			              alignment_padding_size,
+			              0,
+			              error );
+
+			if( read_count != (ssize_t) alignment_padding_size )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_IO,
+				 LIBCERROR_IO_ERROR_READ_FAILED,
+				 "%s: unable to read file: %" PRIu32 " alignment padding data.",
+				 function,
+				 file_index );
+
+				goto on_error;
+			}
+			total_read_count += read_count;
+			file_offset      += read_count;
+
+#if defined( HAVE_DEBUG_OUTPUT )
+			if( libcnotify_verbose != 0 )
+			{
+				libcnotify_printf(
+				 "%s: file: %" PRIu32 " alignment padding data:\n",
+				 function,
+				 file_index );
+				libcnotify_print_data(
+				 alignment_padding_data,
+				 alignment_padding_size,
+				 0 );
+			}
+#endif
+		}
+	}
+	if( internal_file_information->number_of_entries > 0 )
+	{
+		if( ( io_handle->file_information_sub_entry_type1_size != 16 )
+		 && ( io_handle->file_information_sub_entry_type1_size != 24 ) )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
+			 "%s: unsupported file information sub entry type 1 size: %" PRIu32 ".",
+			 function,
+			 io_handle->file_information_sub_entry_type1_size );
+
+			return( -1 );
+		}
+		if( ( io_handle->file_information_sub_entry_type2_size != 16 )
+		 && ( io_handle->file_information_sub_entry_type2_size != 20 )
+		 && ( io_handle->file_information_sub_entry_type2_size != 24 )
+		 && ( io_handle->file_information_sub_entry_type2_size != 32 ) )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
+			 "%s: unsupported file information sub entry type 2 size: %" PRIu32 ".",
+			 function,
+			 io_handle->file_information_sub_entry_type2_size );
+
+			return( -1 );
+		}
+		sub_entry_data_size = io_handle->file_information_sub_entry_type1_size;
+
+		for( entry_index = 0;
+		     entry_index < internal_file_information->number_of_entries;
+		     entry_index++ )
+		{
+			read_count = libfdata_stream_read_buffer(
+				      data_stream,
+				      (intptr_t *) file_io_handle,
+				      sub_entry_data,
+				      (size_t) sub_entry_data_size,
+				      0,
+				      error );
+
+			if( read_count != (ssize_t) sub_entry_data_size )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_IO,
+				 LIBCERROR_IO_ERROR_READ_FAILED,
+				 "%s: unable to read sub entry: %" PRIu32 " data.",
+				 function,
+				 entry_index );
+
+				goto on_error;
+			}
+			total_read_count += read_count;
+			file_offset      += read_count;
+
+#if defined( HAVE_DEBUG_OUTPUT )
+			if( libcnotify_verbose != 0 )
+			{
+				libcnotify_printf(
+				 "%s: sub entry: %" PRIu32 " data:\n",
+				 function,
+				 entry_index );
+				libcnotify_print_data(
+				 sub_entry_data,
+				 (size_t) sub_entry_data_size,
+				 0 );
+			}
+#endif
+		}
+	}
+	return( total_read_count );
+
+on_error:
+	if( internal_file_information->path != NULL )
+	{
+		memory_free(
+		 internal_file_information->path );
+
+		internal_file_information->path = NULL;
+	}
+	internal_file_information->path_size = 0;
+
+	if( file_information_data != NULL )
+	{
+		memory_free(
+		 file_information_data );
+	}
+	return( -1 );
 }
 
 /* Retrieves the size of the UTF-8 encoded path

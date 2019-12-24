@@ -1,5 +1,5 @@
 /*
- * The libfwnt header wrapper
+ * The libfdata header wrapper
  *
  * Copyright (C) 2014-2019, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -19,40 +19,38 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#if !defined( _LIBAGDB_LIBFWNT_H )
-#define _LIBAGDB_LIBFWNT_H
+#if !defined( _AGDB_TEST_LIBFDATA_H )
+#define _AGDB_TEST_LIBFDATA_H
 
 #include <common.h>
 
-/* Define HAVE_LOCAL_LIBFWNT for local use of libfwnt
+/* Define HAVE_LOCAL_LIBFDATA for local use of libfdata
  */
-#if defined( HAVE_LOCAL_LIBFWNT )
+#if defined( HAVE_LOCAL_LIBFDATA )
 
-#include <libfwnt_access_control_entry.h>
-#include <libfwnt_access_control_list.h>
-#include <libfwnt_bit_stream.h>
-#include <libfwnt_definitions.h>
-#include <libfwnt_huffman_tree.h>
-#include <libfwnt_locale_identifier.h>
-#include <libfwnt_lznt1.h>
-#include <libfwnt_lzx.h>
-#include <libfwnt_lzxpress.h>
-#include <libfwnt_security_descriptor.h>
-#include <libfwnt_security_identifier.h>
-#include <libfwnt_types.h>
+#include <libfdata_area.h>
+#include <libfdata_definitions.h>
+#include <libfdata_list.h>
+#include <libfdata_list_element.h>
+#include <libfdata_range_list.h>
+#include <libfdata_stream.h>
+#include <libfdata_tree.h>
+#include <libfdata_tree_node.h>
+#include <libfdata_types.h>
+#include <libfdata_vector.h>
 
 #else
 
-/* If libtool DLL support is enabled set LIBFWNT_DLL_IMPORT
- * before including libfwnt.h
+/* If libtool DLL support is enabled set LIBFDATA_DLL_IMPORT
+ * before including libfdata.h
  */
 #if defined( _WIN32 ) && defined( DLL_IMPORT )
-#define LIBFWNT_DLL_IMPORT
+#define LIBFDATA_DLL_IMPORT
 #endif
 
-#include <libfwnt.h>
+#include <libfdata.h>
 
-#endif /* defined( HAVE_LOCAL_LIBFWNT ) */
+#endif /* defined( HAVE_LOCAL_LIBFDATA ) */
 
-#endif /* !defined( _LIBAGDB_LIBFWNT_H ) */
+#endif /* !defined( _AGDB_TEST_LIBFDATA_H ) */
 

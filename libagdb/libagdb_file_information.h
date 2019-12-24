@@ -48,6 +48,10 @@ struct libagdb_internal_file_information
 	/* The file path size
 	 */
 	uint32_t path_size;
+
+	/* The number of entries
+	 */
+	uint32_t number_of_entries;
 };
 
 int libagdb_file_information_initialize(
@@ -63,23 +67,27 @@ int libagdb_internal_file_information_free(
      libagdb_internal_file_information_t **internal_file_information,
      libcerror_error_t **error );
 
-ssize_t libagdb_file_information_read(
-         libagdb_internal_file_information_t *internal_file_information,
-         libagdb_io_handle_t *io_handle,
-         libfdata_stream_t *uncompressed_data_stream,
-         libbfio_handle_t *file_io_handle,
-         uint32_t file_index,
-         off64_t file_offset,
-         libcerror_error_t **error );
-
-int libagdb_file_information_read_data(
+int libagdb_internal_file_information_read_data(
      libagdb_internal_file_information_t *internal_file_information,
      libagdb_io_handle_t *io_handle,
      const uint8_t *data,
      size_t data_size,
-     uint32_t *number_of_entries,
-     uint32_t *path_size,
      libcerror_error_t **error );
+
+int libagdb_internal_file_information_read_path_data(
+     libagdb_internal_file_information_t *internal_file_information,
+     const uint8_t *data,
+     size_t data_size,
+     libcerror_error_t **error );
+
+ssize_t libagdb_internal_file_information_read_file_io_handle(
+         libagdb_internal_file_information_t *internal_file_information,
+         libagdb_io_handle_t *io_handle,
+         libfdata_stream_t *data_stream,
+         libbfio_handle_t *file_io_handle,
+         off64_t file_offset,
+         uint32_t file_index,
+         libcerror_error_t **error );
 
 LIBAGDB_EXTERN \
 int libagdb_file_information_get_utf8_path_size(
