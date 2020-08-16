@@ -592,6 +592,17 @@ int libagdb_internal_volume_information_read_device_path_data(
 #endif
 	if( internal_volume_information->device_path_size > 0 )
 	{
+		if( internal_volume_information->device_path_size > (size_t) MEMORY_MAXIMUM_ALLOCATION_SIZE )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_VALUE_EXCEEDS_MAXIMUM,
+			 "%s: invalid volume information - device path size value exceeds maximum allocation size.",
+			 function );
+
+			goto on_error;
+		}
 		internal_volume_information->device_path = (uint8_t *) memory_allocate(
 		                                                        sizeof( uint8_t ) * internal_volume_information->device_path_size );
 
@@ -694,19 +705,18 @@ ssize64_t libagdb_internal_volume_information_read_file_io_handle(
 
 		return( -1 );
 	}
-#if SIZEOF_SIZE_T <= 4
-	if( (size_t) io_handle->volume_information_entry_size > (size_t) SSIZE_MAX )
+	if( ( io_handle->volume_information_entry_size == 0 )
+	 || ( io_handle->volume_information_entry_size > (uint32_t) MEMORY_MAXIMUM_ALLOCATION_SIZE ) )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_VALUE_EXCEEDS_MAXIMUM,
-		 "%s: invalid IO handle - volume information entry size value exceeds maximum.",
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_OUT_OF_BOUNDS,
+		 "%s: invalid IO handle - volume information entry size value out of bounds.",
 		 function );
 
 		return( -1 );
 	}
-#endif
 #if defined( HAVE_DEBUG_OUTPUT )
 	if( libcnotify_verbose != 0 )
 	{
@@ -737,7 +747,7 @@ ssize64_t libagdb_internal_volume_information_read_file_io_handle(
 		goto on_error;
 	}
 	volume_information_data = (uint8_t *) memory_allocate(
-	                                       sizeof( uint8_t ) * io_handle->volume_information_entry_size );
+	                                       sizeof( uint8_t ) * (size_t) io_handle->volume_information_entry_size );
 
 	if( volume_information_data == NULL )
 	{
@@ -817,6 +827,17 @@ ssize64_t libagdb_internal_volume_information_read_file_io_handle(
 	}
 	if( internal_volume_information->device_path_size > 0 )
 	{
+		if( internal_volume_information->device_path_size > (size_t) MEMORY_MAXIMUM_ALLOCATION_SIZE )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_VALUE_EXCEEDS_MAXIMUM,
+			 "%s: invalid volume information - device path size value exceeds maximum allocation size.",
+			 function );
+
+			goto on_error;
+		}
 		internal_volume_information->device_path = (uint8_t *) memory_allocate(
 		                                                        sizeof( uint8_t ) * internal_volume_information->device_path_size );
 

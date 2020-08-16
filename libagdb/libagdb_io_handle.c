@@ -656,7 +656,7 @@ int libagdb_io_handle_read_uncompressed_file_header(
 		 "%s: unable to retrieve uncompressed data stream size.",
 		 function );
 
-		return( -1 );
+		goto on_error;
 	}
 #if defined( HAVE_DEBUG_OUTPUT )
 	if( libcnotify_verbose != 0 )
@@ -679,7 +679,7 @@ int libagdb_io_handle_read_uncompressed_file_header(
 		 "%s: unable to seek file header offset: 0.",
 		 function );
 
-		return( -1 );
+		goto on_error;
 	}
 	read_count = libfdata_stream_read_buffer(
 	              uncompressed_data_stream,
@@ -698,7 +698,7 @@ int libagdb_io_handle_read_uncompressed_file_header(
 		 "%s: unable to read file header data.",
 		 function );
 
-		return( -1 );
+		goto on_error;
 	}
 #if defined( HAVE_DEBUG_OUTPUT )
 	if( libcnotify_verbose != 0 )
@@ -726,7 +726,7 @@ int libagdb_io_handle_read_uncompressed_file_header(
 		 "%s: invalid data size.",
 		 function );
 
-		return( -1 );
+		goto on_error;
 	}
 	byte_stream_copy_to_uint32_little_endian(
 	 file_header_data.unknown1,
@@ -763,7 +763,7 @@ int libagdb_io_handle_read_uncompressed_file_header(
 		 "\n" );
 	}
 #endif
-	if( header_size < sizeof( agdb_file_header_t ) )
+	if( (size_t) header_size < sizeof( agdb_file_header_t ) )
 	{
 		libcerror_error_set(
 		 error,
@@ -772,10 +772,22 @@ int libagdb_io_handle_read_uncompressed_file_header(
 		 "%s: invalid header size value out of bounds.",
 		 function );
 
-		return( -1 );
+		goto on_error;
 	}
-	database_header_size = header_size - sizeof( agdb_file_header_t );
+	database_header_size = (size_t) header_size - sizeof( agdb_file_header_t );
 
+	if( ( database_header_size < 60 )
+	 || ( database_header_size > (uint32_t) MEMORY_MAXIMUM_ALLOCATION_SIZE ) )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
+		 "%s: invalid database header size value out of bounds.",
+		 function );
+
+		goto on_error;
+	}
 	database_header_data = (uint8_t *) memory_allocate(
 	                                    sizeof( uint8_t ) * database_header_size );
 
@@ -807,7 +819,7 @@ int libagdb_io_handle_read_uncompressed_file_header(
 		 "%s: unable to read database header data.",
 		 function );
 
-		return( -1 );
+		goto on_error;
 	}
 #if defined( HAVE_DEBUG_OUTPUT )
 	if( libcnotify_verbose != 0 )
@@ -1100,7 +1112,8 @@ int libagdb_io_handle_read_uncompressed_file_header(
 		libcnotify_printf(
 		 "\n" );
 	}
-#endif
+#endif /* defined( HAVE_DEBUG_OUTPUT ) */
+
 	memory_free(
 	 database_header_data );
 

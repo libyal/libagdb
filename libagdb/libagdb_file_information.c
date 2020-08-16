@@ -245,6 +245,17 @@ int libagdb_internal_file_information_read_path_data(
 #endif
 	if( internal_file_information->path_size > 0 )
 	{
+		if( internal_file_information->path_size > (size_t) MEMORY_MAXIMUM_ALLOCATION_SIZE )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_VALUE_EXCEEDS_MAXIMUM,
+			 "%s: invalid file information - path size value exceeds maximum allocation size.",
+			 function );
+
+			goto on_error;
+		}
 		internal_file_information->path = (uint8_t *) memory_allocate(
 		                                               sizeof( uint8_t ) * internal_file_information->path_size );
 
@@ -978,19 +989,18 @@ ssize_t libagdb_internal_file_information_read_file_io_handle(
 
 		return( -1 );
 	}
-#if SIZEOF_SIZE_T <= 4
-	if( (size_t) io_handle->file_information_entry_size > (size_t) SSIZE_MAX )
+	if( ( io_handle->file_information_entry_size == 0 )
+	 || ( io_handle->file_information_entry_size > (uint32_t) MEMORY_MAXIMUM_ALLOCATION_SIZE ) )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_VALUE_EXCEEDS_MAXIMUM,
-		 "%s: invalid IO handle - file information entry size value exceeds maximum.",
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_OUT_OF_BOUNDS,
+		 "%s: invalid IO handle - file information entry size value out of bounds.",
 		 function );
 
 		return( -1 );
 	}
-#endif
 #if defined( HAVE_DEBUG_OUTPUT )
 	if( libcnotify_verbose != 0 )
 	{
@@ -1021,7 +1031,7 @@ ssize_t libagdb_internal_file_information_read_file_io_handle(
 		goto on_error;
 	}
 	file_information_data = (uint8_t *) memory_allocate(
-	                                     sizeof( uint8_t ) * io_handle->file_information_entry_size );
+	                                     sizeof( uint8_t ) * (size_t) io_handle->file_information_entry_size );
 
 	if( file_information_data == NULL )
 	{
@@ -1104,8 +1114,19 @@ ssize_t libagdb_internal_file_information_read_file_io_handle(
 
 		goto on_error;
 	}
-	if( internal_file_information->path_size != 0 )
+	if( internal_file_information->path_size > 0 )
 	{
+		if( internal_file_information->path_size > (size_t) MEMORY_MAXIMUM_ALLOCATION_SIZE )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_VALUE_EXCEEDS_MAXIMUM,
+			 "%s: invalid file information - path size value exceeds maximum allocation size.",
+			 function );
+
+			goto on_error;
+		}
 		internal_file_information->path = (uint8_t *) memory_allocate(
 		                                               sizeof( uint8_t ) * internal_file_information->path_size );
 

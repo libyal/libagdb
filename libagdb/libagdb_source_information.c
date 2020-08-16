@@ -213,19 +213,18 @@ ssize_t libagdb_source_information_read(
 
 		return( -1 );
 	}
-#if SIZEOF_SIZE_T <= 4
-	if( (size_t) io_handle->source_information_entry_size > (size_t) SSIZE_MAX )
+	if( ( io_handle->source_information_entry_size == 0 )
+	 || ( io_handle->source_information_entry_size > (uint32_t) MEMORY_MAXIMUM_ALLOCATION_SIZE ) )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_VALUE_EXCEEDS_MAXIMUM,
-		 "%s: invalid IO handle - source information entry size value exceeds maximum.",
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_OUT_OF_BOUNDS,
+		 "%s: invalid IO handle - source information entry size value out of bounds.",
 		 function );
 
 		return( -1 );
 	}
-#endif
 #if defined( HAVE_DEBUG_OUTPUT )
 	if( libcnotify_verbose != 0 )
 	{
@@ -256,7 +255,7 @@ ssize_t libagdb_source_information_read(
 		goto on_error;
 	}
 	source_information_data = (uint8_t *) memory_allocate(
-	                                       sizeof( uint8_t ) * io_handle->source_information_entry_size );
+	                                       sizeof( uint8_t ) * (size_t) io_handle->source_information_entry_size );
 
 	if( source_information_data == NULL )
 	{
