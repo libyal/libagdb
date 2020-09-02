@@ -1,5 +1,5 @@
 /*
- * Library io_handle type test program
+ * Library compressed_file_header type test program
  *
  * Copyright (C) 2014-2020, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -27,36 +27,38 @@
 #include <stdlib.h>
 #endif
 
+#include "agdb_test_functions.h"
 #include "agdb_test_libagdb.h"
+#include "agdb_test_libbfio.h"
 #include "agdb_test_libcerror.h"
 #include "agdb_test_macros.h"
 #include "agdb_test_memory.h"
 #include "agdb_test_unused.h"
 
-#include "../libagdb/libagdb_io_handle.h"
+#include "../libagdb/libagdb_compressed_file_header.h"
 
 #if defined( __GNUC__ ) && !defined( LIBAGDB_DLL_IMPORT )
 
-/* Tests the libagdb_io_handle_initialize function
+/* Tests the libagdb_compressed_file_header_initialize function
  * Returns 1 if successful or 0 if not
  */
-int agdb_test_io_handle_initialize(
+int agdb_test_compressed_file_header_initialize(
      void )
 {
-	libagdb_io_handle_t *io_handle  = NULL;
-	libcerror_error_t *error        = NULL;
-	int result                      = 0;
+	libagdb_compressed_file_header_t *compressed_file_header = NULL;
+	libcerror_error_t *error                                 = NULL;
+	int result                                               = 0;
 
 #if defined( HAVE_AGDB_TEST_MEMORY )
-	int number_of_malloc_fail_tests = 1;
-	int number_of_memset_fail_tests = 1;
-	int test_number                 = 0;
+	int number_of_malloc_fail_tests                          = 1;
+	int number_of_memset_fail_tests                          = 1;
+	int test_number                                          = 0;
 #endif
 
 	/* Test regular cases
 	 */
-	result = libagdb_io_handle_initialize(
-	          &io_handle,
+	result = libagdb_compressed_file_header_initialize(
+	          &compressed_file_header,
 	          &error );
 
 	AGDB_TEST_ASSERT_EQUAL_INT(
@@ -65,15 +67,15 @@ int agdb_test_io_handle_initialize(
 	 1 );
 
 	AGDB_TEST_ASSERT_IS_NOT_NULL(
-	 "io_handle",
-	 io_handle );
+	 "compressed_file_header",
+	 compressed_file_header );
 
 	AGDB_TEST_ASSERT_IS_NULL(
 	 "error",
 	 error );
 
-	result = libagdb_io_handle_free(
-	          &io_handle,
+	result = libagdb_compressed_file_header_free(
+	          &compressed_file_header,
 	          &error );
 
 	AGDB_TEST_ASSERT_EQUAL_INT(
@@ -82,8 +84,8 @@ int agdb_test_io_handle_initialize(
 	 1 );
 
 	AGDB_TEST_ASSERT_IS_NULL(
-	 "io_handle",
-	 io_handle );
+	 "compressed_file_header",
+	 compressed_file_header );
 
 	AGDB_TEST_ASSERT_IS_NULL(
 	 "error",
@@ -91,7 +93,7 @@ int agdb_test_io_handle_initialize(
 
 	/* Test error cases
 	 */
-	result = libagdb_io_handle_initialize(
+	result = libagdb_compressed_file_header_initialize(
 	          NULL,
 	          &error );
 
@@ -107,13 +109,13 @@ int agdb_test_io_handle_initialize(
 	libcerror_error_free(
 	 &error );
 
-	io_handle = (libagdb_io_handle_t *) 0x12345678UL;
+	compressed_file_header = (libagdb_compressed_file_header_t *) 0x12345678UL;
 
-	result = libagdb_io_handle_initialize(
-	          &io_handle,
+	result = libagdb_compressed_file_header_initialize(
+	          &compressed_file_header,
 	          &error );
 
-	io_handle = NULL;
+	compressed_file_header = NULL;
 
 	AGDB_TEST_ASSERT_EQUAL_INT(
 	 "result",
@@ -133,22 +135,22 @@ int agdb_test_io_handle_initialize(
 	     test_number < number_of_malloc_fail_tests;
 	     test_number++ )
 	{
-		/* Test libagdb_io_handle_initialize with malloc failing
+		/* Test libagdb_compressed_file_header_initialize with malloc failing
 		 */
 		agdb_test_malloc_attempts_before_fail = test_number;
 
-		result = libagdb_io_handle_initialize(
-		          &io_handle,
+		result = libagdb_compressed_file_header_initialize(
+		          &compressed_file_header,
 		          &error );
 
 		if( agdb_test_malloc_attempts_before_fail != -1 )
 		{
 			agdb_test_malloc_attempts_before_fail = -1;
 
-			if( io_handle != NULL )
+			if( compressed_file_header != NULL )
 			{
-				libagdb_io_handle_free(
-				 &io_handle,
+				libagdb_compressed_file_header_free(
+				 &compressed_file_header,
 				 NULL );
 			}
 		}
@@ -160,8 +162,8 @@ int agdb_test_io_handle_initialize(
 			 -1 );
 
 			AGDB_TEST_ASSERT_IS_NULL(
-			 "io_handle",
-			 io_handle );
+			 "compressed_file_header",
+			 compressed_file_header );
 
 			AGDB_TEST_ASSERT_IS_NOT_NULL(
 			 "error",
@@ -175,22 +177,22 @@ int agdb_test_io_handle_initialize(
 	     test_number < number_of_memset_fail_tests;
 	     test_number++ )
 	{
-		/* Test libagdb_io_handle_initialize with memset failing
+		/* Test libagdb_compressed_file_header_initialize with memset failing
 		 */
 		agdb_test_memset_attempts_before_fail = test_number;
 
-		result = libagdb_io_handle_initialize(
-		          &io_handle,
+		result = libagdb_compressed_file_header_initialize(
+		          &compressed_file_header,
 		          &error );
 
 		if( agdb_test_memset_attempts_before_fail != -1 )
 		{
 			agdb_test_memset_attempts_before_fail = -1;
 
-			if( io_handle != NULL )
+			if( compressed_file_header != NULL )
 			{
-				libagdb_io_handle_free(
-				 &io_handle,
+				libagdb_compressed_file_header_free(
+				 &compressed_file_header,
 				 NULL );
 			}
 		}
@@ -202,8 +204,8 @@ int agdb_test_io_handle_initialize(
 			 -1 );
 
 			AGDB_TEST_ASSERT_IS_NULL(
-			 "io_handle",
-			 io_handle );
+			 "compressed_file_header",
+			 compressed_file_header );
 
 			AGDB_TEST_ASSERT_IS_NOT_NULL(
 			 "error",
@@ -223,19 +225,19 @@ on_error:
 		libcerror_error_free(
 		 &error );
 	}
-	if( io_handle != NULL )
+	if( compressed_file_header != NULL )
 	{
-		libagdb_io_handle_free(
-		 &io_handle,
+		libagdb_compressed_file_header_free(
+		 &compressed_file_header,
 		 NULL );
 	}
 	return( 0 );
 }
 
-/* Tests the libagdb_io_handle_free function
+/* Tests the libagdb_compressed_file_header_free function
  * Returns 1 if successful or 0 if not
  */
-int agdb_test_io_handle_free(
+int agdb_test_compressed_file_header_free(
      void )
 {
 	libcerror_error_t *error = NULL;
@@ -243,7 +245,7 @@ int agdb_test_io_handle_free(
 
 	/* Test error cases
 	 */
-	result = libagdb_io_handle_free(
+	result = libagdb_compressed_file_header_free(
 	          NULL,
 	          &error );
 
@@ -266,134 +268,6 @@ on_error:
 	{
 		libcerror_error_free(
 		 &error );
-	}
-	return( 0 );
-}
-
-/* Tests the libagdb_io_handle_clear function
- * Returns 1 if successful or 0 if not
- */
-int agdb_test_io_handle_clear(
-     void )
-{
-	libagdb_io_handle_t *io_handle = NULL;
-	libcerror_error_t *error       = NULL;
-	int result                     = 0;
-
-	/* Initialize test
-	 */
-	result = libagdb_io_handle_initialize(
-	          &io_handle,
-	          &error );
-
-	AGDB_TEST_ASSERT_EQUAL_INT(
-	 "result",
-	 result,
-	 1 );
-
-	AGDB_TEST_ASSERT_IS_NOT_NULL(
-	 "io_handle",
-	 io_handle );
-
-	AGDB_TEST_ASSERT_IS_NULL(
-	 "error",
-	 error );
-
-	/* Test regular cases
-	 */
-	result = libagdb_io_handle_clear(
-	          io_handle,
-	          &error );
-
-	AGDB_TEST_ASSERT_EQUAL_INT(
-	 "result",
-	 result,
-	 1 );
-
-	AGDB_TEST_ASSERT_IS_NULL(
-	 "error",
-	 error );
-
-	/* Test error cases
-	 */
-	result = libagdb_io_handle_clear(
-	          NULL,
-	          &error );
-
-	AGDB_TEST_ASSERT_EQUAL_INT(
-	 "result",
-	 result,
-	 -1 );
-
-	AGDB_TEST_ASSERT_IS_NOT_NULL(
-	 "error",
-	 error );
-
-	libcerror_error_free(
-	 &error );
-
-#if defined( HAVE_AGDB_TEST_MEMORY )
-
-	/* Test libagdb_io_handle_clear with memset failing
-	 */
-	agdb_test_memset_attempts_before_fail = 0;
-
-	result = libagdb_io_handle_clear(
-	          io_handle,
-	          &error );
-
-	if( agdb_test_memset_attempts_before_fail != -1 )
-	{
-		agdb_test_memset_attempts_before_fail = -1;
-	}
-	else
-	{
-		AGDB_TEST_ASSERT_EQUAL_INT(
-		 "result",
-		 result,
-		 -1 );
-
-		AGDB_TEST_ASSERT_IS_NOT_NULL(
-		 "error",
-		 error );
-
-		libcerror_error_free(
-		 &error );
-	}
-#endif /* defined( HAVE_AGDB_TEST_MEMORY ) */
-
-	/* Clean up
-	 */
-	result = libagdb_io_handle_free(
-	          &io_handle,
-	          &error );
-
-	AGDB_TEST_ASSERT_EQUAL_INT(
-	 "result",
-	 result,
-	 1 );
-
-	AGDB_TEST_ASSERT_IS_NULL(
-	 "io_handle",
-	 io_handle );
-
-	AGDB_TEST_ASSERT_IS_NULL(
-	 "error",
-	 error );
-
-	return( 1 );
-
-on_error:
-	if( error != NULL )
-	{
-		libcerror_error_free(
-		 &error );
-	}
-	if( io_handle != NULL )
-	{
-		libagdb_io_handle_free(
-		 &io_handle,
-		 NULL );
 	}
 	return( 0 );
 }
@@ -418,24 +292,16 @@ int main(
 #if defined( __GNUC__ ) && !defined( LIBAGDB_DLL_IMPORT )
 
 	AGDB_TEST_RUN(
-	 "libagdb_io_handle_initialize",
-	 agdb_test_io_handle_initialize );
+	 "libagdb_compressed_file_header_initialize",
+	 agdb_test_compressed_file_header_initialize );
 
 	AGDB_TEST_RUN(
-	 "libagdb_io_handle_free",
-	 agdb_test_io_handle_free );
+	 "libagdb_compressed_file_header_free",
+	 agdb_test_compressed_file_header_free );
 
-	AGDB_TEST_RUN(
-	 "libagdb_io_handle_clear",
-	 agdb_test_io_handle_clear );
+	/* TODO: add tests for libagdb_compressed_file_header_read_data */
 
-	/* TODO: add tests for libagdb_io_handle_read_compressed_blocks */
-
-	/* TODO: add tests for libagdb_io_handle_read_uncompressed_file_header */
-
-	/* TODO: add tests for libagdb_io_handle_read_segment_data */
-
-	/* TODO: add tests for libagdb_io_handle_seek_segment_offset */
+	/* TODO: add tests for libagdb_compressed_file_header_read_file_io_handle */
 
 #endif /* defined( __GNUC__ ) && !defined( LIBAGDB_DLL_IMPORT ) */
 

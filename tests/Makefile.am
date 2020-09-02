@@ -34,6 +34,7 @@ EXTRA_DIST = \
 check_PROGRAMS = \
 	agdb_test_compressed_block \
 	agdb_test_compressed_blocks_stream_data_handle \
+	agdb_test_compressed_file_header \
 	agdb_test_error \
 	agdb_test_file \
 	agdb_test_file_information \
@@ -64,6 +65,18 @@ agdb_test_compressed_blocks_stream_data_handle_SOURCES = \
 	agdb_test_unused.h
 
 agdb_test_compressed_blocks_stream_data_handle_LDADD = \
+	../libagdb/libagdb.la \
+	@LIBCERROR_LIBADD@
+
+agdb_test_compressed_file_header_SOURCES = \
+	agdb_test_compressed_file_header.c \
+	agdb_test_libagdb.h \
+	agdb_test_libcerror.h \
+	agdb_test_macros.h \
+	agdb_test_memory.c agdb_test_memory.h \
+	agdb_test_unused.h
+
+agdb_test_compressed_file_header_LDADD = \
 	../libagdb/libagdb.la \
 	@LIBCERROR_LIBADD@
 

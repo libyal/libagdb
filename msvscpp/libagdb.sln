@@ -20,6 +20,12 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "agdb_test_compressed_blocks
 		{DD273836-1A76-4A27-BD8E-6866FD572BA0} = {DD273836-1A76-4A27-BD8E-6866FD572BA0}
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "agdb_test_compressed_file_header", "agdb_test_compressed_file_header\agdb_test_compressed_file_header.vcproj", "{01DD2757-7DE8-4743-A1F4-9F4252739983}"
+	ProjectSection(ProjectDependencies) = postProject
+		{6CEDC6AA-1B60-434A-BD96-3BA83AB22ADE} = {6CEDC6AA-1B60-434A-BD96-3BA83AB22ADE}
+		{DD273836-1A76-4A27-BD8E-6866FD572BA0} = {DD273836-1A76-4A27-BD8E-6866FD572BA0}
+	EndProjectSection
+EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "agdb_test_error", "agdb_test_error\agdb_test_error.vcproj", "{AAAADD84-B054-4E76-81BD-CDB970A47FA4}"
 	ProjectSection(ProjectDependencies) = postProject
 		{6CEDC6AA-1B60-434A-BD96-3BA83AB22ADE} = {6CEDC6AA-1B60-434A-BD96-3BA83AB22ADE}
@@ -231,6 +237,10 @@ Global
 		{0A3EF574-FC0B-4743-AFEE-D82B500927F7}.Release|Win32.Build.0 = Release|Win32
 		{0A3EF574-FC0B-4743-AFEE-D82B500927F7}.VSDebug|Win32.ActiveCfg = VSDebug|Win32
 		{0A3EF574-FC0B-4743-AFEE-D82B500927F7}.VSDebug|Win32.Build.0 = VSDebug|Win32
+		{01DD2757-7DE8-4743-A1F4-9F4252739983}.Release|Win32.ActiveCfg = Release|Win32
+		{01DD2757-7DE8-4743-A1F4-9F4252739983}.Release|Win32.Build.0 = Release|Win32
+		{01DD2757-7DE8-4743-A1F4-9F4252739983}.VSDebug|Win32.ActiveCfg = VSDebug|Win32
+		{01DD2757-7DE8-4743-A1F4-9F4252739983}.VSDebug|Win32.Build.0 = VSDebug|Win32
 		{AAAADD84-B054-4E76-81BD-CDB970A47FA4}.Release|Win32.ActiveCfg = Release|Win32
 		{AAAADD84-B054-4E76-81BD-CDB970A47FA4}.Release|Win32.Build.0 = Release|Win32
 		{AAAADD84-B054-4E76-81BD-CDB970A47FA4}.VSDebug|Win32.ActiveCfg = VSDebug|Win32

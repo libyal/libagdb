@@ -127,6 +127,7 @@ stamp-h[1-9]
 /tests/*.exe
 /tests/agdb_test_compressed_block
 /tests/agdb_test_compressed_blocks_stream_data_handle
+/tests/agdb_test_compressed_file_header
 /tests/agdb_test_error
 /tests/agdb_test_file
 /tests/agdb_test_file_information

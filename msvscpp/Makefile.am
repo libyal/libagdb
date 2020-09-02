@@ -1,6 +1,7 @@
 MSVSCPP_FILES = \
 	agdb_test_compressed_block/agdb_test_compressed_block.vcproj \
 	agdb_test_compressed_blocks_stream_data_handle/agdb_test_compressed_blocks_stream_data_handle.vcproj \
+	agdb_test_compressed_file_header/agdb_test_compressed_file_header.vcproj \
 	agdb_test_error/agdb_test_error.vcproj \
 	agdb_test_file/agdb_test_file.vcproj \
 	agdb_test_file_information/agdb_test_file_information.vcproj \

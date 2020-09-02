@@ -37,9 +37,16 @@
 #include "agdb_test_libcerror.h"
 #include "agdb_test_macros.h"
 #include "agdb_test_memory.h"
-#include "agdb_test_unused.h"
 
 #include "../libagdb/libagdb_file.h"
+
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER ) && SIZEOF_WCHAR_T != 2 && SIZEOF_WCHAR_T != 4
+#error Unsupported size of wchar_t
+#endif
+
+/* Define to make agdb_test_file generate verbose output
+#define AGDB_TEST_FILE_VERBOSE
+ */
 
 #if !defined( LIBAGDB_HAVE_BFIO )
 
@@ -56,14 +63,6 @@ int libagdb_file_open_file_io_handle(
      libagdb_error_t **error );
 
 #endif /* !defined( LIBAGDB_HAVE_BFIO ) */
-
-#if defined( HAVE_WIDE_SYSTEM_CHARACTER ) && SIZEOF_WCHAR_T != 2 && SIZEOF_WCHAR_T != 4
-#error Unsupported size of wchar_t
-#endif
-
-/* Define to make agdb_test_file generate verbose output
-#define AGDB_TEST_FILE_VERBOSE
- */
 
 /* Creates and opens a source file
  * Returns 1 if successful or -1 on error
@@ -800,13 +799,13 @@ int agdb_test_file_open_file_io_handle(
 	 result,
 	 1 );
 
-        AGDB_TEST_ASSERT_IS_NOT_NULL(
-         "file_io_handle",
-         file_io_handle );
+	AGDB_TEST_ASSERT_IS_NOT_NULL(
+	 "file_io_handle",
+	 file_io_handle );
 
-        AGDB_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	AGDB_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	string_length = system_string_length(
 	                 source );
@@ -829,9 +828,9 @@ int agdb_test_file_open_file_io_handle(
 	 result,
 	 1 );
 
-        AGDB_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	AGDB_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	result = libagdb_file_initialize(
 	          &file,
@@ -972,12 +971,12 @@ int agdb_test_file_open_file_io_handle(
 	 1 );
 
 	AGDB_TEST_ASSERT_IS_NULL(
-         "file_io_handle",
-         file_io_handle );
+	 "file_io_handle",
+	 file_io_handle );
 
-        AGDB_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	AGDB_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	return( 1 );
 

@@ -30,6 +30,7 @@ libagdb_la_SOURCES = \
 	libagdb_compressed_block.c libagdb_compressed_block.h \
 	libagdb_compressed_blocks_stream.c libagdb_compressed_blocks_stream.h \
 	libagdb_compressed_blocks_stream_data_handle.c libagdb_compressed_blocks_stream_data_handle.h \
+	libagdb_compressed_file_header.c libagdb_compressed_file_header.h \
 	libagdb_debug.c libagdb_debug.h \
 	libagdb_definitions.h \
 	libagdb_error.c libagdb_error.h \

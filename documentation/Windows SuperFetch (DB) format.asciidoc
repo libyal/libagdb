@@ -195,8 +195,7 @@ The file header is 8 bytes of size and consists of:
 [cols="1,1,1,5",options="header"]
 |===
 | Offset | Size | Value | Description
-| 0 | 4 | "MEMO" | Signature +
-0x4d, 0x45, 0x4d, 0x4f
+| 0 | 4 | "MEMO" (0x4d, 0x45, 0x4d, 0x4f) | Signature
 | 4 | 4 | | Total uncompressed data size
 |===
 
@@ -229,8 +228,7 @@ The file header is 8 bytes of size and consists of:
 [cols="1,1,1,5",options="header"]
 |===
 | Offset | Size | Value | Description
-| 0 | 4 | "MEM0" | Signature +
-0x4d, 0x45, 0x4d, 0x30
+| 0 | 4 | "MEM0" (0x4d, 0x45, 0x4d, 0x30) | Signature
 | 4 | 4 | | Total uncompressed data size
 |===
 
@@ -269,8 +267,7 @@ The file header is 12 bytes of size and consists of:
 [cols="1,1,1,5",options="header"]
 |===
 | Offset | Size | Value | Description
-| 0 | 4 | "MAM\x84" | Signature +
-0x4d, 0x41, 0x4d, 0x84
+| 0 | 4 | "MAM\x84" (0x4d, 0x41, 0x4d, 0x84) | Signature
 | 4 | 4 | | Total uncompressed data size
 | 8 | 4 | | [yellow-background]*Unknown (checksum?)*
 |===

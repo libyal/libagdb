@@ -437,7 +437,7 @@ int info_handle_file_fprint(
 			 "%s: unable to retrieve volume information.",
 			 function );
 
-			return( -1 );
+			goto on_error;
 		}
 		fprintf(
 		 info_handle->notify_stream,
@@ -642,7 +642,7 @@ int info_handle_file_fprint(
 				 "%s: unable to retrieve file information.",
 				 function );
 
-				return( -1 );
+				goto on_error;
 			}
 			fprintf(
 			 info_handle->notify_stream,
@@ -755,6 +755,19 @@ int info_handle_file_fprint(
 		 info_handle->notify_stream,
 		 "\n" );
 	}
+	if( libfdatetime_filetime_free(
+	     &filetime,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+		 "%s: unable to free filetime.",
+		 function );
+
+		goto on_error;
+	}
 	fprintf(
 	 info_handle->notify_stream,
 	 "Sources:\n" );
@@ -799,7 +812,7 @@ int info_handle_file_fprint(
 			 "%s: unable to retrieve source information.",
 			 function );
 
-			return( -1 );
+			goto on_error;
 		}
 		fprintf(
 		 info_handle->notify_stream,

@@ -27,6 +27,7 @@
 
 #include "libagdb_compressed_block.h"
 #include "libagdb_compressed_blocks_stream.h"
+#include "libagdb_compressed_file_header.h"
 #include "libagdb_debug.h"
 #include "libagdb_definitions.h"
 #include "libagdb_io_handle.h"
@@ -922,18 +923,19 @@ int libagdb_file_open_read(
 {
 	uint8_t alignment_padding_data[ 8 ];
 
-	libagdb_source_information_t *source_information = NULL;
-	libagdb_volume_information_t *volume_information = NULL;
-	static char *function                            = "libagdb_file_open_read";
-	off64_t file_offset                              = 0;
-	ssize64_t read_count                             = 0;
-	size_t alignment_padding_size                    = 0;
-	uint32_t number_of_volumes                       = 0;
-	uint32_t number_of_sources                       = 0;
-	uint32_t source_index                            = 0;
-	uint32_t volume_index                            = 0;
-	int entry_index                                  = 0;
-	int segment_index                                = 0;
+	libagdb_compressed_file_header_t *compressed_file_header = NULL;
+	libagdb_source_information_t *source_information         = NULL;
+	libagdb_volume_information_t *volume_information         = NULL;
+	static char *function                                    = "libagdb_file_open_read";
+	ssize64_t read_count                                     = 0;
+	size_t alignment_padding_size                            = 0;
+	off64_t file_offset                                      = 0;
+	uint32_t number_of_sources                               = 0;
+	uint32_t number_of_volumes                               = 0;
+	uint32_t source_index                                    = 0;
+	uint32_t volume_index                                    = 0;
+	int entry_index                                          = 0;
+	int segment_index                                        = 0;
 
 	if( internal_file == NULL )
 	{
@@ -990,8 +992,21 @@ int libagdb_file_open_read(
 		 "Reading file header:\n" );
 	}
 #endif
-	if( libagdb_io_handle_read_compressed_file_header(
-	     internal_file->io_handle,
+	if( libagdb_compressed_file_header_initialize(
+	     &compressed_file_header,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+		 "%s: unable to create compressed file header.",
+		 function );
+
+		goto on_error;
+	}
+	if( libagdb_compressed_file_header_read_file_io_handle(
+	     compressed_file_header,
 	     file_io_handle,
 	     error ) != 1 )
 	{
@@ -999,7 +1014,25 @@ int libagdb_file_open_read(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_IO,
 		 LIBCERROR_IO_ERROR_READ_FAILED,
-		 "%s: unable to read file header.",
+		 "%s: unable to read compressed file header.",
+		 function );
+
+		goto on_error;
+	}
+	internal_file->io_handle->file_type               = compressed_file_header->file_type;
+	internal_file->io_handle->file_size               = compressed_file_header->file_size;
+	internal_file->io_handle->uncompressed_block_size = compressed_file_header->uncompressed_block_size;
+	internal_file->io_handle->uncompressed_data_size  = compressed_file_header->uncompressed_data_size;
+
+	if( libagdb_compressed_file_header_free(
+	     &compressed_file_header,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+		 "%s: unable to free compressed file header.",
 		 function );
 
 		goto on_error;
@@ -1371,6 +1404,12 @@ on_error:
 	{
 		libfdata_list_free(
 		 &( internal_file->compressed_blocks_list ),
+		 NULL );
+	}
+	if( compressed_file_header != NULL )
+	{
+		libagdb_compressed_file_header_free(
+		 &compressed_file_header,
 		 NULL );
 	}
 	return( -1 );

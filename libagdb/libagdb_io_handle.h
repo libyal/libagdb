@@ -99,11 +99,6 @@ int libagdb_io_handle_clear(
      libagdb_io_handle_t *io_handle,
      libcerror_error_t **error );
 
-int libagdb_io_handle_read_compressed_file_header(
-     libagdb_io_handle_t *io_handle,
-     libbfio_handle_t *file_io_handle,
-     libcerror_error_t **error );
-
 int libagdb_io_handle_read_compressed_blocks(
      libagdb_io_handle_t *io_handle,
      libbfio_handle_t *file_io_handle,

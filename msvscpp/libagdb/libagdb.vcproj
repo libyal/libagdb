@@ -186,6 +186,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\libagdb\libagdb_compressed_file_header.c"
+				>
+			</File>
+			<File
 				RelativePath="..\..\libagdb\libagdb_debug.c"
 				>
 			</File>
@@ -261,6 +265,10 @@
 			</File>
 			<File
 				RelativePath="..\..\libagdb\libagdb_compressed_blocks_stream_data_handle.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libagdb\libagdb_compressed_file_header.h"
 				>
 			</File>
 			<File
