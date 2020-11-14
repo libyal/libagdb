@@ -361,6 +361,10 @@ int libagdb_io_handle_read_compressed_blocks(
 		file_offset            += compressed_block_size;
 		uncompressed_data_size -= uncompressed_block_size;
 
+		if( uncompressed_data_size == 0 )
+		{
+			break;
+		}
 		compressed_block_index++;
 	}
 #if defined( HAVE_DEBUG_OUTPUT )
@@ -374,7 +378,8 @@ int libagdb_io_handle_read_compressed_blocks(
 			 io_handle->file_size - (size64_t) file_offset );
 		}
 	}
-#endif
+#endif /* defined( HAVE_DEBUG_OUTPUT ) */
+
 	return( 1 );
 }
 

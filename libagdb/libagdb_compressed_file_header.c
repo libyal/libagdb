@@ -227,7 +227,7 @@ int libagdb_compressed_file_header_read_data(
 		 || ( compressed_file_header->file_type == LIBAGDB_FILE_TYPE_COMPRESSED_WINDOWS7 ) )
 		{
 			libcnotify_printf(
-			 "%s: signature\t\t: %c%c%c%c\n",
+			 "%s: signature\t\t\t: %c%c%c%c\n",
 			 function,
 			 data[ 0 ],
 			 data[ 1 ],
@@ -237,7 +237,7 @@ int libagdb_compressed_file_header_read_data(
 		else if( compressed_file_header->file_type == LIBAGDB_FILE_TYPE_COMPRESSED_WINDOWS8 )
 		{
 			libcnotify_printf(
-			 "%s: signature\t\t: %c%c%c\\x%02x\n",
+			 "%s: signature\t\t\t: %c%c%c\\x%02x\n",
 			 function,
 			 data[ 0 ],
 			 data[ 1 ],
