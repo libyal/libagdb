@@ -211,22 +211,6 @@ int libagdb_compressed_block_read(
 
 		return( -1 );
 	}
-	if( libbfio_handle_seek_offset(
-	     file_io_handle,
-	     compressed_block_offset,
-	     SEEK_SET,
-	     error ) == -1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_IO,
-		 LIBCERROR_IO_ERROR_SEEK_FAILED,
-		 "%s: unable to seek compressed block offset: %" PRIi64 ".",
-		 function,
-		 compressed_block_offset );
-
-		goto on_error;
-	}
 	compressed_data = (uint8_t *) memory_allocate(
 	                               sizeof( uint8_t ) * compressed_block_size );
 
@@ -241,10 +225,11 @@ int libagdb_compressed_block_read(
 
 		goto on_error;
 	}
-	read_count = libbfio_handle_read_buffer(
+	read_count = libbfio_handle_read_buffer_at_offset(
 		      file_io_handle,
 		      compressed_data,
 		      compressed_block_size,
+		      compressed_block_offset,
 		      error );
 
 	if( read_count != (ssize_t) compressed_block_size )
@@ -253,8 +238,10 @@ int libagdb_compressed_block_read(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_IO,
 		 LIBCERROR_IO_ERROR_READ_FAILED,
-		 "%s: unable to read compressed block.",
-		 function );
+		 "%s: unable to read compressed block at offset: %" PRIi64 " (0x%08" PRIx64 ").",
+		 function,
+		 compressed_block_size,
+		 compressed_block_size );
 
 		goto on_error;
 	}

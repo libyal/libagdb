@@ -225,35 +225,6 @@ ssize_t libagdb_source_information_read(
 
 		return( -1 );
 	}
-#if defined( HAVE_DEBUG_OUTPUT )
-	if( libcnotify_verbose != 0 )
-	{
-		libcnotify_printf(
-		 "%s: reading source: %" PRIu32 " information at offset: %" PRIi64 " (0x%08" PRIx64 ")\n",
-		 function,
-		 source_information_index,
-		 file_offset,
-		 file_offset );
-	}
-#endif
-	if( libfdata_stream_seek_offset(
-	     uncompressed_data_stream,
-	     file_offset,
-	     SEEK_SET,
-	     error ) == -1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_IO,
-		 LIBCERROR_IO_ERROR_SEEK_FAILED,
-		 "%s: unable to seek source: %" PRIu32 " information offset: %" PRIi64 " (0x%08" PRIx64 ").",
-		 function,
-		 source_information_index,
-		 file_offset,
-		 file_offset );
-
-		goto on_error;
-	}
 	source_information_data = (uint8_t *) memory_allocate(
 	                                       sizeof( uint8_t ) * (size_t) io_handle->source_information_entry_size );
 
@@ -268,11 +239,23 @@ ssize_t libagdb_source_information_read(
 
 		goto on_error;
 	}
-	read_count = libfdata_stream_read_buffer(
+#if defined( HAVE_DEBUG_OUTPUT )
+	if( libcnotify_verbose != 0 )
+	{
+		libcnotify_printf(
+		 "%s: reading source: %" PRIu32 " information at offset: %" PRIi64 " (0x%08" PRIx64 ")\n",
+		 function,
+		 source_information_index,
+		 file_offset,
+		 file_offset );
+	}
+#endif
+	read_count = libfdata_stream_read_buffer_at_offset(
 	              uncompressed_data_stream,
 	              (intptr_t *) file_io_handle,
 	              source_information_data,
 	              (size_t) io_handle->source_information_entry_size,
+	              file_offset,
 	              0,
 	              error );
 
@@ -282,9 +265,11 @@ ssize_t libagdb_source_information_read(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_IO,
 		 LIBCERROR_IO_ERROR_READ_FAILED,
-		 "%s: unable to read source: %" PRIu32 " information data.",
+		 "%s: unable to read source: %" PRIu32 " information data at offset: %" PRIi64 " (0x%08" PRIx64 ").",
 		 function,
-		 source_information_index );
+		 source_information_index,
+		 file_offset,
+		 file_offset );
 
 		goto on_error;
 	}

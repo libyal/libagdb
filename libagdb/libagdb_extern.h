@@ -30,7 +30,7 @@
 
 #include <libagdb/extern.h>
 
-#if defined( __CYGWIN__ )
+#if defined( __CYGWIN__ ) || defined( __MINGW32__ )
 #define LIBAGDB_EXTERN_VARIABLE	extern
 #else
 #define LIBAGDB_EXTERN_VARIABLE	LIBAGDB_EXTERN
