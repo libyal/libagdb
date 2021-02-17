@@ -281,6 +281,17 @@ int libagdb_io_handle_read_compressed_blocks(
 			 compressed_block_data,
 			 compressed_block_size );
 
+			if( compressed_block_size == 0 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
+				 "%s: invalid compressed block size value out of bounds.",
+				 function );
+
+				return( -1 );
+			}
 			compressed_block_size &= 0x0fff;
 			compressed_block_size += 3;
 		}
