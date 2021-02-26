@@ -9,6 +9,9 @@ MSVSCPP_FILES = \
 	agdb_test_notify/agdb_test_notify.vcproj \
 	agdb_test_source_information/agdb_test_source_information.vcproj \
 	agdb_test_support/agdb_test_support.vcproj \
+	agdb_test_tools_info_handle/agdb_test_tools_info_handle.vcproj \
+	agdb_test_tools_output/agdb_test_tools_output.vcproj \
+	agdb_test_tools_signal/agdb_test_tools_signal.vcproj \
 	agdb_test_volume_information/agdb_test_volume_information.vcproj \
 	agdbinfo/agdbinfo.vcproj \
 	libagdb/libagdb.vcproj \

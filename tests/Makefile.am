@@ -20,13 +20,15 @@ AM_CPPFLAGS = \
 
 TESTS = \
 	test_library.sh \
+	test_tools.sh \
 	test_agdbinfo.sh
 
 check_SCRIPTS = \
 	test_agdbinfo.sh \
 	test_library.sh \
 	test_manpage.sh \
-	test_runner.sh
+	test_runner.sh \
+	test_tools.sh
 
 EXTRA_DIST = \
 	$(check_SCRIPTS)
@@ -42,6 +44,9 @@ check_PROGRAMS = \
 	agdb_test_notify \
 	agdb_test_source_information \
 	agdb_test_support \
+	agdb_test_tools_info_handle \
+	agdb_test_tools_output \
+	agdb_test_tools_signal \
 	agdb_test_volume_information
 
 agdb_test_compressed_block_SOURCES = \
@@ -200,6 +205,43 @@ agdb_test_support_LDADD = \
 	@LIBCNOTIFY_LIBADD@ \
 	@LIBCLOCALE_LIBADD@ \
 	@LIBCDATA_LIBADD@ \
+	../libagdb/libagdb.la \
+	@LIBCERROR_LIBADD@
+
+agdb_test_tools_info_handle_SOURCES = \
+	../agdbtools/agdbinput.c ../agdbtools/agdbinput.h \
+	../agdbtools/info_handle.c ../agdbtools/info_handle.h \
+	agdb_test_libcerror.h \
+	agdb_test_macros.h \
+	agdb_test_memory.c agdb_test_memory.h \
+	agdb_test_tools_info_handle.c \
+	agdb_test_unused.h
+
+agdb_test_tools_info_handle_LDADD = \
+	@LIBFDATETIME_LIBADD@ \
+	@LIBCLOCALE_LIBADD@ \
+	../libagdb/libagdb.la \
+	@LIBCERROR_LIBADD@
+
+agdb_test_tools_output_SOURCES = \
+	../agdbtools/agdbtools_output.c ../agdbtools/agdbtools_output.h \
+	agdb_test_libcerror.h \
+	agdb_test_macros.h \
+	agdb_test_tools_output.c \
+	agdb_test_unused.h
+
+agdb_test_tools_output_LDADD = \
+	../libagdb/libagdb.la \
+	@LIBCERROR_LIBADD@
+
+agdb_test_tools_signal_SOURCES = \
+	../agdbtools/agdbtools_signal.c ../agdbtools/agdbtools_signal.h \
+	agdb_test_libcerror.h \
+	agdb_test_macros.h \
+	agdb_test_tools_signal.c \
+	agdb_test_unused.h
+
+agdb_test_tools_signal_LDADD = \
 	../libagdb/libagdb.la \
 	@LIBCERROR_LIBADD@
 
