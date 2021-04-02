@@ -39,7 +39,7 @@
 
 #include "../agdbtools/agdbtools_output.h"
 
-/* Tests the agdbtools_output_initialize and function
+/* Tests the agdbtools_output_initialize function
  * Returns 1 if successful or 0 if not
  */
 int agdb_test_tools_output_initialize(
