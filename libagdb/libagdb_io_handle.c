@@ -281,6 +281,8 @@ int libagdb_io_handle_read_compressed_blocks(
 			 compressed_block_data,
 			 compressed_block_size );
 
+			compressed_block_size &= 0x0fff;
+
 			if( compressed_block_size == 0 )
 			{
 				libcerror_error_set(
@@ -292,7 +294,6 @@ int libagdb_io_handle_read_compressed_blocks(
 
 				return( -1 );
 			}
-			compressed_block_size &= 0x0fff;
 			compressed_block_size += 3;
 		}
 		else if( io_handle->file_type == LIBAGDB_FILE_TYPE_COMPRESSED_WINDOWS7 )
