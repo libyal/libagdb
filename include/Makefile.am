@@ -19,9 +19,9 @@ MAINTAINERCLEANFILES = \
 	Makefile.in
 
 distclean: clean
-	/bin/rm -f libagdb.h
-	/bin/rm -f libagdb/definitions.h
-	/bin/rm -f libagdb/features.h
-	/bin/rm -f libagdb/types.h
-	/bin/rm -f Makefile
+	-rm -f libagdb.h
+	-rm -f libagdb/definitions.h
+	-rm -f libagdb/features.h
+	-rm -f libagdb/types.h
+	-rm -f Makefile
 
