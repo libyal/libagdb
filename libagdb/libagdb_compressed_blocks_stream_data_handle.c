@@ -1,7 +1,7 @@
 /*
  * The compressed blocks stream data handle functions
  *
- * Copyright (C) 2014-2023, Joachim Metz <joachim.metz@gmail.com>
+ * Copyright (C) 2014-2024, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
