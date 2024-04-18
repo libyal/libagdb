@@ -6,9 +6,7 @@ EXTRA_DIST = \
 	agdbinfo.1 \
 	libagdb.3
 
-MAINTAINERCLEANFILES = \
+DISTCLEANFILES = \
+	Makefile \
 	Makefile.in
-
-distclean: clean
-	-rm -f Makefile
 

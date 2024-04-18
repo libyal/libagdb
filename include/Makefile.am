@@ -15,13 +15,11 @@ EXTRA_DIST = \
 	libagdb/features.h.in \
 	libagdb/types.h.in
 
-MAINTAINERCLEANFILES = \
+DISTCLEANFILES = \
+	libagdb.h \
+	libagdb/definitions.h \
+	libagdb/features.h \
+	libagdb/types.h \
+	Makefile \
 	Makefile.in
-
-distclean: clean
-	-rm -f libagdb.h
-	-rm -f libagdb/definitions.h
-	-rm -f libagdb/features.h
-	-rm -f libagdb/types.h
-	-rm -f Makefile
 
