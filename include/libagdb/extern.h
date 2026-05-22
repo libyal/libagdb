@@ -31,14 +31,17 @@
  */
 #if defined( LIBAGDB_DLL_EXPORT )
 #define LIBAGDB_EXTERN __declspec(dllexport)
+#define LIBAGDB_EXTERN_VARIABLE extern __declspec(dllexport)
 
 #elif defined( LIBAGDB_DLL_IMPORT )
-#define LIBAGDB_EXTERN extern __declspec(dllimport)
+#define LIBAGDB_EXTERN __declspec(dllimport)
+#define LIBAGDB_EXTERN_VARIABLE extern __declspec(dllimport)
 
 #else
 #define LIBAGDB_EXTERN extern
+#define LIBAGDB_EXTERN_VARIABLE extern
 
-#endif
+#endif /* defined( LIBAGDB_DLL_EXPORT ) */
 
 #endif /* !defined( _LIBAGDB_EXTERN_H ) */
 
