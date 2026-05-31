@@ -20,6 +20,9 @@ AM_CPPFLAGS = \
 	@PTHREAD_CPPFLAGS@ \
 	@LIBAGDB_DLL_IMPORT@
 
+AM_TESTS_ENVIRONMENT = \
+	export TESTS_USE_WINAPI="@TESTS_USE_WINAPI@";
+
 TESTS = \
 	test_library.sh \
 	test_tools.sh \
@@ -234,7 +237,8 @@ agdb_test_tools_output_SOURCES = \
 
 agdb_test_tools_output_LDADD = \
 	../libagdb/libagdb.la \
-	@LIBCERROR_LIBADD@
+	@LIBCERROR_LIBADD@ \
+	@LIBINTL@
 
 agdb_test_tools_signal_SOURCES = \
 	../agdbtools/agdbtools_signal.c ../agdbtools/agdbtools_signal.h \

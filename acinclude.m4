@@ -1,6 +1,6 @@
 dnl Checks for required headers and functions
 dnl
-dnl Version: 20200713
+dnl Version: 20260531
 
 dnl Function to detect if libagdb dependencies are available
 AC_DEFUN([AX_LIBAGDB_CHECK_LOCAL],
@@ -44,7 +44,7 @@ AC_DEFUN([AX_LIBAGDB_CHECK_DLL_SUPPORT],
       AC_SUBST(
         [LIBAGDB_DLL_IMPORT],
         ["-DLIBAGDB_DLL_IMPORT"])
-      ])
     ])
   ])
+])
 

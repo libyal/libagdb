@@ -311,13 +311,13 @@ int libagdb_internal_file_information_read_data(
      libcerror_error_t **error )
 {
 	static char *function = "libagdb_internal_file_information_read_data";
-	uint32_t flags        = 0;
 	uint8_t mode          = 0;
 
 #if defined( HAVE_DEBUG_OUTPUT )
 	uint64_t value_64bit  = 0;
 	uint32_t value_32bit  = 0;
 	uint16_t value_16bit  = 0;
+	uint32_t flags        = 0;
 #endif
 
 	if( internal_file_information == NULL )
@@ -418,9 +418,11 @@ int libagdb_internal_file_information_read_data(
 		 ( (agdb_file_information_36_t *) data )->number_of_entries,
 		 internal_file_information->number_of_entries );
 
+#if defined( HAVE_DEBUG_OUTPUT )
 		byte_stream_copy_to_uint32_little_endian(
 		 ( (agdb_file_information_36_t *) data )->flags,
 		 flags );
+#endif
 
 		byte_stream_copy_to_uint32_little_endian(
 		 ( (agdb_file_information_36_t *) data )->path_number_of_characters,
@@ -432,9 +434,11 @@ int libagdb_internal_file_information_read_data(
 		 ( (agdb_file_information_64_t *) data )->number_of_entries,
 		 internal_file_information->number_of_entries );
 
+#if defined( HAVE_DEBUG_OUTPUT )
 		byte_stream_copy_to_uint32_little_endian(
 		 ( (agdb_file_information_64_t *) data )->flags,
 		 flags );
+#endif
 
 		byte_stream_copy_to_uint32_little_endian(
 		 ( (agdb_file_information_64_t *) data )->path_number_of_characters,
