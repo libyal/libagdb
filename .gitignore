@@ -1,6 +1,6 @@
 # Files to ignore by git
 #
-# Version: 20251129
+# Version: 20260604
 
 # Generic auto-generated build files
 *~
@@ -129,7 +129,10 @@ stamp-h[1-9]
 /libagdb/libagdb_definitions.h
 /agdbtools/*.exe
 /agdbtools/agdbinfo
+/tests/*.dir
 /tests/*.exe
+/tests/*.log
+/tests/*.tmp
 /tests/agdb_test_compressed_block
 /tests/agdb_test_compressed_blocks_stream_data_handle
 /tests/agdb_test_compressed_file_header
@@ -144,8 +147,15 @@ stamp-h[1-9]
 /tests/agdb_test_tools_output
 /tests/agdb_test_tools_signal
 /tests/agdb_test_volume_information
+/tests/atconfig
+/tests/atlocal
 /tests/input
 /tests/notify_stream.log
+/tests/package.m4
+/tests/test_inputs_*.at
+/tests/test_library
+/tests/test_manpages
+/tests/test_tools
 /tests/tmp*
 
 # Local library dependencies specific files

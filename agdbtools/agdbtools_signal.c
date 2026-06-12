@@ -40,7 +40,7 @@ void (*agdbtools_signal_signal_handler)( agdbtools_signal_t ) = NULL;
 /* Signal handler for Ctrl+C or Ctrl+Break signals
  */
 BOOL WINAPI agdbtools_signal_handler(
-             unsigned long signal )
+             agdbtools_signal_t signal )
 {
 	static char *function = "agdbtools_signal_handler";
 
@@ -112,7 +112,7 @@ int agdbtools_signal_attach(
 	agdbtools_signal_signal_handler = signal_handler;
 
 	if( SetConsoleCtrlHandler(
-	     agdbtools_signal_handler,
+	     (PHANDLER_ROUTINE) agdbtools_signal_handler,
 	     TRUE ) == 0 )
 	{
 		libcerror_error_set(
@@ -179,7 +179,7 @@ int agdbtools_signal_detach(
 	static char *function = "agdbtools_signal_detach";
 
 	if( SetConsoleCtrlHandler(
-	     agdbtools_signal_handler,
+	     (PHANDLER_ROUTINE) agdbtools_signal_handler,
 	     FALSE ) == 0 )
 	{
 		libcerror_error_set(
