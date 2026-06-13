@@ -117,7 +117,7 @@ void agdbtools_output_copyright_fprint(
 	 */
 	fprintf(
 	 stream,
-	 _( "Report bugs to <%s>.\n" ),
+	 _( "Report issues via: %s\n" ),
 	 PACKAGE_BUGREPORT );
 }
 
