@@ -36,6 +36,7 @@ libagdb_la_SOURCES = \
 	libagdb_error.c libagdb_error.h \
 	libagdb_extern.h \
 	libagdb_file.c libagdb_file.h \
+	libagdb_file_header.c libagdb_file_header.h \
 	libagdb_file_information.c libagdb_file_information.h \
 	libagdb_hash.c libagdb_hash.h \
 	libagdb_io_handle.c libagdb_io_handle.h \

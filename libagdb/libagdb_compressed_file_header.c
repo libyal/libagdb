@@ -143,8 +143,9 @@ int libagdb_compressed_file_header_read_data(
      size_t data_size,
      libcerror_error_t **error )
 {
-	static char *function = "libagdb_compressed_file_header_read_data";
-	uint32_t value_32bit  = 0;
+	static char *function           = "libagdb_compressed_file_header_read_data";
+	uint32_t uncompressed_data_size = 0;
+	uint32_t value_32bit            = 0;
 
 	if( compressed_file_header == NULL )
 	{
@@ -247,25 +248,22 @@ int libagdb_compressed_file_header_read_data(
 	}
 #endif /* defined( HAVE_DEBUG_OUTPUT ) */
 
-	if( ( compressed_file_header->file_type == LIBAGDB_FILE_TYPE_UNCOMPRESSED )
-	 || ( compressed_file_header->file_type == LIBAGDB_FILE_TYPE_COMPRESSED_VISTA )
-	 || ( compressed_file_header->file_type == LIBAGDB_FILE_TYPE_COMPRESSED_WINDOWS7 ) )
+	byte_stream_copy_to_uint32_little_endian(
+	 &( data[ 4 ] ),
+	 uncompressed_data_size );
+
+	if( compressed_file_header->file_type == LIBAGDB_FILE_TYPE_UNCOMPRESSED )
 	{
 		byte_stream_copy_to_uint32_little_endian(
 		 &( data[ 0 ] ),
 		 value_32bit );
 
-		byte_stream_copy_to_uint32_little_endian(
-		 &( data[ 4 ] ),
-		 compressed_file_header->uncompressed_data_size );
-
-		if( compressed_file_header->file_type == LIBAGDB_FILE_TYPE_UNCOMPRESSED )
-		{
 /* TODO improve detection */
-			if( ( ( value_32bit != 0x00000005UL )
-			  &&  ( value_32bit != 0x0000000eUL )
-			  &&  ( value_32bit != 0x0000000fUL ) )
-			 || ( compressed_file_header->file_size != (size64_t) compressed_file_header->uncompressed_data_size ) )
+		if( ( value_32bit != 0x00000005UL )
+		 && ( value_32bit != 0x0000000eUL )
+		 && ( value_32bit != 0x0000000fUL ) )
+		{
+			if( compressed_file_header->file_size != (size64_t) uncompressed_data_size )
 			{
 				libcerror_error_set(
 				 error,
@@ -277,13 +275,41 @@ int libagdb_compressed_file_header_read_data(
 				return( -1 );
 			}
 		}
+	}
+	compressed_file_header->uncompressed_data_size = uncompressed_data_size;
+
+#if defined( HAVE_DEBUG_OUTPUT )
+	if( libcnotify_verbose != 0 )
+	{
+		libcnotify_printf(
+		 "%s: uncompressed data size\t: %" PRIu32 "\n",
+		 function,
+		 compressed_file_header->uncompressed_data_size );
+	}
+#endif
+	if( compressed_file_header->file_type == LIBAGDB_FILE_TYPE_COMPRESSED_WINDOWS8 )
+	{
+		if( data_size < 12 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
+			 "%s: invalid data size value out of bounds.",
+			 function );
+
+			return( -1 );
+		}
 #if defined( HAVE_DEBUG_OUTPUT )
 		if( libcnotify_verbose != 0 )
 		{
+			byte_stream_copy_to_uint32_little_endian(
+			 &( data[ 8 ] ),
+			 value_32bit );
 			libcnotify_printf(
-			 "%s: uncompressed data size\t: %" PRIu32 "\n",
+			 "%s: checksum\t\t\t: 0x%08" PRIx32 "\n",
 			 function,
-			 compressed_file_header->uncompressed_data_size );
+			 value_32bit );
 		}
 #endif
 	}
@@ -305,7 +331,7 @@ int libagdb_compressed_file_header_read_file_io_handle(
      libbfio_handle_t *file_io_handle,
      libcerror_error_t **error )
 {
-	uint8_t compressed_file_header_data[ 8 ];
+	uint8_t compressed_file_header_data[ 12 ];
 
 	static char *function = "libagdb_compressed_file_header_read_file_io_handle";
 	ssize_t read_count    = 0;
@@ -346,11 +372,11 @@ int libagdb_compressed_file_header_read_file_io_handle(
 	read_count = libbfio_handle_read_buffer_at_offset(
 	              file_io_handle,
 	              compressed_file_header_data,
-	              8,
+	              12,
 	              0,
 	              error );
 
-	if( read_count != (ssize_t) 8 )
+	if( read_count != (ssize_t) 12 )
 	{
 		libcerror_error_set(
 		 error,
@@ -365,7 +391,7 @@ int libagdb_compressed_file_header_read_file_io_handle(
 	if( libagdb_compressed_file_header_read_data(
 	     compressed_file_header,
 	     compressed_file_header_data,
-	     8,
+	     12,
 	     error ) != 1 )
 	{
 		libcerror_error_set(

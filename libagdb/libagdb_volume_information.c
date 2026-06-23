@@ -300,7 +300,8 @@ int libagdb_internal_volume_information_read_data(
 		 ( (agdb_volume_information_56_t *) data )->device_path_number_of_characters,
 		 internal_volume_information->device_path_size );
 	}
-	else if( io_handle->volume_information_entry_size == 72 )
+	else if( ( io_handle->volume_information_entry_size == 72 )
+	      || ( io_handle->volume_information_entry_size == 96 ) )
 	{
 		byte_stream_copy_to_uint32_little_endian(
 		 ( (agdb_volume_information_72_t *) data )->number_of_files,
@@ -327,7 +328,8 @@ int libagdb_internal_volume_information_read_data(
 			 ( (agdb_volume_information_56_t *) data )->unknown1,
 			 value_64bit );
 		}
-		else if( io_handle->volume_information_entry_size == 72 )
+		else if( ( io_handle->volume_information_entry_size == 72 )
+		      || ( io_handle->volume_information_entry_size == 96 ) )
 		{
 			byte_stream_copy_to_uint64_little_endian(
 			 ( (agdb_volume_information_72_t *) data )->unknown1,
@@ -344,7 +346,8 @@ int libagdb_internal_volume_information_read_data(
 			 ( (agdb_volume_information_56_t *) data )->unknown2,
 			 value_64bit );
 		}
-		else if( io_handle->volume_information_entry_size == 72 )
+		else if( ( io_handle->volume_information_entry_size == 72 )
+		      || ( io_handle->volume_information_entry_size == 96 ) )
 		{
 			byte_stream_copy_to_uint64_little_endian(
 			 ( (agdb_volume_information_72_t *) data )->unknown2,
@@ -366,7 +369,8 @@ int libagdb_internal_volume_information_read_data(
 			 ( (agdb_volume_information_56_t *) data )->unknown3,
 			 value_32bit );
 		}
-		else if( io_handle->volume_information_entry_size == 72 )
+		else if( ( io_handle->volume_information_entry_size == 72 )
+		      || ( io_handle->volume_information_entry_size == 96 ) )
 		{
 			byte_stream_copy_to_uint32_little_endian(
 			 ( (agdb_volume_information_72_t *) data )->unknown3,
@@ -383,7 +387,8 @@ int libagdb_internal_volume_information_read_data(
 			 ( (agdb_volume_information_56_t *) data )->unknown4,
 			 value_64bit );
 		}
-		else if( io_handle->volume_information_entry_size == 72 )
+		else if( ( io_handle->volume_information_entry_size == 72 )
+		      || ( io_handle->volume_information_entry_size == 96 ) )
 		{
 			byte_stream_copy_to_uint64_little_endian(
 			 ( (agdb_volume_information_72_t *) data )->unknown4,
@@ -398,7 +403,8 @@ int libagdb_internal_volume_information_read_data(
 		{
 			filetime_data = ( (agdb_volume_information_56_t *) data )->creation_time;
 		}
-		else if( io_handle->volume_information_entry_size == 72 )
+		else if( ( io_handle->volume_information_entry_size == 72 )
+		      || ( io_handle->volume_information_entry_size == 96 ) )
 		{
 			filetime_data = ( (agdb_volume_information_72_t *) data )->creation_time;
 		}
@@ -431,7 +437,8 @@ int libagdb_internal_volume_information_read_data(
 			 ( (agdb_volume_information_56_t *) data )->unknown5,
 			 value_32bit );
 		}
-		else if( io_handle->volume_information_entry_size == 72 )
+		else if( ( io_handle->volume_information_entry_size == 72 )
+		      || ( io_handle->volume_information_entry_size == 96 ) )
 		{
 			byte_stream_copy_to_uint32_little_endian(
 			 ( (agdb_volume_information_72_t *) data )->unknown5,
@@ -448,7 +455,8 @@ int libagdb_internal_volume_information_read_data(
 			 ( (agdb_volume_information_56_t *) data )->unknown6,
 			 value_64bit );
 		}
-		else if( io_handle->volume_information_entry_size == 72 )
+		else if( ( io_handle->volume_information_entry_size == 72 )
+		      || ( io_handle->volume_information_entry_size == 96 ) )
 		{
 			byte_stream_copy_to_uint64_little_endian(
 			 ( (agdb_volume_information_72_t *) data )->unknown6,
@@ -470,7 +478,8 @@ int libagdb_internal_volume_information_read_data(
 			 ( (agdb_volume_information_56_t *) data )->unknown7,
 			 value_16bit );
 		}
-		else if( io_handle->volume_information_entry_size == 72 )
+		else if( ( io_handle->volume_information_entry_size == 72 )
+		      || ( io_handle->volume_information_entry_size == 96 ) )
 		{
 			byte_stream_copy_to_uint16_little_endian(
 			 ( (agdb_volume_information_72_t *) data )->unknown7,
@@ -481,7 +490,8 @@ int libagdb_internal_volume_information_read_data(
 		 function,
 		 value_16bit );
 
-		if( io_handle->volume_information_entry_size == 72 )
+		if( ( io_handle->volume_information_entry_size == 72 )
+		 || ( io_handle->volume_information_entry_size == 96 ) )
 		{
 			byte_stream_copy_to_uint32_little_endian(
 			 ( (agdb_volume_information_72_t *) data )->unknown8,
@@ -497,7 +507,8 @@ int libagdb_internal_volume_information_read_data(
 			 ( (agdb_volume_information_56_t *) data )->unknown9,
 			 value_64bit );
 		}
-		else if( io_handle->volume_information_entry_size == 72 )
+		else if( ( io_handle->volume_information_entry_size == 72 )
+		      || ( io_handle->volume_information_entry_size == 96 ) )
 		{
 			byte_stream_copy_to_uint64_little_endian(
 			 ( (agdb_volume_information_72_t *) data )->unknown9,
@@ -508,6 +519,32 @@ int libagdb_internal_volume_information_read_data(
 		 function,
 		 value_64bit );
 
+		if( io_handle->volume_information_entry_size == 96 )
+		{
+			byte_stream_copy_to_uint64_little_endian(
+			 ( (agdb_volume_information_96_t *) data )->unknown10,
+			 value_64bit );
+			libcnotify_printf(
+			 "%s: unknown10\t\t\t: 0x%08" PRIx64 "\n",
+			 function,
+			 value_64bit );
+
+			byte_stream_copy_to_uint64_little_endian(
+			 ( (agdb_volume_information_96_t *) data )->unknown11,
+			 value_64bit );
+			libcnotify_printf(
+			 "%s: unknown11\t\t\t: 0x%08" PRIx64 "\n",
+			 function,
+			 value_64bit );
+
+			byte_stream_copy_to_uint64_little_endian(
+			 ( (agdb_volume_information_96_t *) data )->unknown12,
+			 value_64bit );
+			libcnotify_printf(
+			 "%s: unknown12\t\t\t: 0x%08" PRIx64 "\n",
+			 function,
+			 value_64bit );
+		}
 		libcnotify_printf(
 		 "\n" );
 	}
@@ -795,7 +832,8 @@ ssize64_t libagdb_internal_volume_information_read_file_io_handle(
 	{
 		alignment_size = 4;
 	}
-	else if( io_handle->volume_information_entry_size == 72 )
+	else if( ( io_handle->volume_information_entry_size == 72 )
+	      || ( io_handle->volume_information_entry_size == 96 ) )
 	{
 		alignment_size = 8;
 	}

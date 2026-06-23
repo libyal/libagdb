@@ -395,6 +395,7 @@ int libagdb_internal_file_information_read_data(
 		mode = 32;
 	}
 	else if( ( io_handle->file_information_entry_size == 64 )
+	      || ( io_handle->file_information_entry_size == 80 )
 	      || ( io_handle->file_information_entry_size == 88 )
 	      || ( io_handle->file_information_entry_size == 112 ) )
 	{
@@ -615,7 +616,7 @@ int libagdb_internal_file_information_read_data(
 				 value_64bit );
 			}
 			libcnotify_printf(
-			 "%s: unknown5\t\t\t\t\t: 0x%08" PRIx64 "\n",
+			 "%s: unknown5\t\t\t\t: 0x%08" PRIx64 "\n",
 			 function,
 			 value_64bit );
 		}
@@ -632,7 +633,7 @@ int libagdb_internal_file_information_read_data(
 			 ( (agdb_file_information_64_t *) data )->unknown6,
 			 value_32bit );
 			libcnotify_printf(
-			 "%s: unknown6\t\t\t\t\t: 0x%08" PRIx32 "\n",
+			 "%s: unknown6\t\t\t\t: 0x%08" PRIx32 "\n",
 			 function,
 			 value_32bit );
 		}
@@ -822,14 +823,14 @@ int libagdb_internal_file_information_read_data(
 			if( value_64bit == 0 )
 			{
 				libcnotify_printf(
-				 "%s: file reference\t\t\t\t: %" PRIu64 "\n",
+				 "%s: file reference\t\t\t: %" PRIu64 "\n",
 				 function,
 				 value_64bit );
 			}
 			else
 			{
 				libcnotify_printf(
-				 "%s: file reference\t\t\t\t: MFT entry: %" PRIu64 ", sequence: %" PRIu64 "\n",
+				 "%s: file reference\t\t\t: MFT entry: %" PRIu64 ", sequence: %" PRIu64 "\n",
 				 function,
 				 value_64bit & 0xffffffffffffUL,
 				 value_64bit >> 48 );
@@ -1081,7 +1082,8 @@ ssize_t libagdb_internal_file_information_read_file_io_handle(
 	if( ( io_handle->file_information_entry_size == 36 )
 	 || ( io_handle->file_information_entry_size == 52 )
 	 || ( io_handle->file_information_entry_size == 56 )
-	 || ( io_handle->file_information_entry_size == 72 ) )
+	 || ( io_handle->file_information_entry_size == 72 )
+	 || ( io_handle->file_information_entry_size == 80 ) )
 	{
 		alignment_size = 4;
 	}
@@ -1102,6 +1104,10 @@ ssize_t libagdb_internal_file_information_read_file_io_handle(
 		 io_handle->file_information_entry_size );
 
 		goto on_error;
+	}
+	if( io_handle->file_information_entry_size == 80 )
+	{
+		internal_file_information->path_size = 120;
 	}
 	if( internal_file_information->path_size > 0 )
 	{
@@ -1186,7 +1192,7 @@ ssize_t libagdb_internal_file_information_read_file_io_handle(
 		{
 			if( libagdb_debug_print_utf16_string_value(
 			     function,
-			     "file path\t\t\t\t",
+			     "file path\t\t",
 			     internal_file_information->path,
 			     internal_file_information->path_size,
 			     LIBUNA_ENDIAN_LITTLE,
@@ -1202,7 +1208,7 @@ ssize_t libagdb_internal_file_information_read_file_io_handle(
 				goto on_error;
 			}
 			libcnotify_printf(
-			 "%s: file path hash value\t\t\t: 0x%08" PRIx64 "\n",
+			 "%s: file path hash value\t: 0x%08" PRIx64 "\n",
 			 function,
 			 calculated_hash_value );
 
@@ -1220,7 +1226,7 @@ ssize_t libagdb_internal_file_information_read_file_io_handle(
 			if( libcnotify_verbose != 0 )
 			{
 				libcnotify_printf(
-				 "%s: alignment padding size\t\t\t: %" PRIzd "\n",
+				 "%s: alignment padding size\t: %" PRIzd "\n",
 				 function,
 				 alignment_padding_size );
 			}

@@ -32,6 +32,7 @@
 #include "libagdb_definitions.h"
 #include "libagdb_io_handle.h"
 #include "libagdb_file.h"
+#include "libagdb_file_header.h"
 #include "libagdb_libbfio.h"
 #include "libagdb_libcdata.h"
 #include "libagdb_libcerror.h"
@@ -924,14 +925,13 @@ int libagdb_file_open_read(
 	uint8_t alignment_padding_data[ 8 ];
 
 	libagdb_compressed_file_header_t *compressed_file_header = NULL;
+	libagdb_file_header_t *file_header                       = NULL;
 	libagdb_source_information_t *source_information         = NULL;
 	libagdb_volume_information_t *volume_information         = NULL;
 	static char *function                                    = "libagdb_file_open_read";
 	ssize64_t read_count                                     = 0;
 	size_t alignment_padding_size                            = 0;
 	off64_t file_offset                                      = 0;
-	uint32_t number_of_sources                               = 0;
-	uint32_t number_of_volumes                               = 0;
 	uint32_t source_index                                    = 0;
 	uint32_t volume_index                                    = 0;
 	int entry_index                                          = 0;
@@ -1152,13 +1152,24 @@ int libagdb_file_open_read(
 			goto on_error;
 		}
 	}
-	if( libagdb_io_handle_read_uncompressed_file_header(
+	if( libagdb_file_header_initialize(
+	     &file_header,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+		 "%s: unable to create file header.",
+		 function );
+
+		goto on_error;
+	}
+	if( libagdb_file_header_read_stream(
+	     file_header,
 	     internal_file->io_handle,
 	     internal_file->uncompressed_data_stream,
 	     file_io_handle,
-	     &file_offset,
-	     &number_of_volumes,
-	     &number_of_sources,
 	     error ) != 1 )
 	{
 		libcerror_error_set(
@@ -1170,8 +1181,10 @@ int libagdb_file_open_read(
 
 		goto on_error;
 	}
+	file_offset = (off64_t) file_header->size;
+
 	for( volume_index = 0;
-	     volume_index < number_of_volumes;
+	     volume_index < file_header->number_of_volumes;
 	     volume_index++ )
 	{
 		alignment_padding_size = (size_t) ( file_offset % 8 );
@@ -1278,7 +1291,7 @@ int libagdb_file_open_read(
 		volume_information = NULL;
 	}
 	for( source_index = 0;
-	     source_index < number_of_sources;
+	     source_index < file_header->number_of_sources;
 	     source_index++ )
 	{
 		if( libagdb_source_information_initialize(
@@ -1335,6 +1348,19 @@ int libagdb_file_open_read(
 			goto on_error;
 		}
 		source_information = NULL;
+	}
+	if( libagdb_file_header_free(
+	     &file_header,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+		 "%s: unable to free file header.",
+		 function );
+
+		goto on_error;
 	}
 /* TODO remove use offset instead */
 #if defined( HAVE_DEBUG_OUTPUT )
@@ -1404,6 +1430,12 @@ on_error:
 	{
 		libfdata_list_free(
 		 &( internal_file->compressed_blocks_list ),
+		 NULL );
+	}
+	if( file_header != NULL )
+	{
+		libagdb_file_header_free(
+		 &file_header,
 		 NULL );
 	}
 	if( compressed_file_header != NULL )

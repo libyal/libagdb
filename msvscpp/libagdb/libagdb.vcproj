@@ -202,6 +202,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\libagdb\libagdb_file_header.c"
+				>
+			</File>
+			<File
 				RelativePath="..\..\libagdb\libagdb_file_information.c"
 				>
 			</File>
@@ -289,6 +293,10 @@
 			</File>
 			<File
 				RelativePath="..\..\libagdb\libagdb_file.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libagdb\libagdb_file_header.h"
 				>
 			</File>
 			<File

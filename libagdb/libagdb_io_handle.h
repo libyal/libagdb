@@ -105,15 +105,6 @@ int libagdb_io_handle_read_compressed_blocks(
      libfdata_list_t *compressed_blocks_list,
      libcerror_error_t **error );
 
-int libagdb_io_handle_read_uncompressed_file_header(
-     libagdb_io_handle_t *io_handle,
-     libfdata_stream_t *uncompressed_data_stream,
-     libbfio_handle_t *file_io_handle,
-     off64_t *volumes_information_offset,
-     uint32_t *number_of_volumes,
-     uint32_t *number_of_sources,
-     libcerror_error_t **error );
-
 ssize_t libagdb_io_handle_read_segment_data(
          intptr_t *data_handle,
          intptr_t *file_io_handle,
