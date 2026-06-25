@@ -3,8 +3,7 @@ man_MANS = \
 	libagdb.3
 
 EXTRA_DIST = \
-	agdbinfo.1 \
-	libagdb.3
+	$(man_MANS)
 
 DISTCLEANFILES = \
 	Makefile \
