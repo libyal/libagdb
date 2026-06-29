@@ -25,6 +25,7 @@
 #include <common.h>
 #include <types.h>
 
+#include "libagdb_extern.h"
 #include "libagdb_libbfio.h"
 #include "libagdb_libcerror.h"
 #include "libagdb_libfcache.h"
@@ -34,14 +35,26 @@
 extern "C" {
 #endif
 
-extern const char *agdb_mem_file_signature_vista;
-extern const char *agdb_mem_file_signature_win7;
-extern const char *agdb_mam_file_signature_win8;
+LIBAGDB_INTERNAL \
+const char *agdb_mem_file_signature_vista;
+
+LIBAGDB_INTERNAL \
+const char *agdb_mem_file_signature_win7;
+
+LIBAGDB_INTERNAL \
+const char *agdb_mem_file_signature_win8_0;
+
+LIBAGDB_INTERNAL \
+const char *agdb_mam_file_signature_win8_1;
 
 typedef struct libagdb_io_handle libagdb_io_handle_t;
 
 struct libagdb_io_handle
 {
+	/* The (uncompressed) file header signature
+	 */
+	uint32_t file_header_signature;
+
 	/* The file type
 	 */
 	uint8_t file_type;

@@ -442,7 +442,14 @@ int libagdb_check_file_signature_file_io_handle(
 		return( 1 );
 	}
 	else if( memory_compare(
-	          agdb_mam_file_signature_win8,
+	          agdb_mem_file_signature_win8_0,
+	          signature,
+	          4 ) == 0 )
+	{
+		return( 1 );
+	}
+	else if( memory_compare(
+	          agdb_mam_file_signature_win8_1,
 	          signature,
 	          4 ) == 0 )
 	{

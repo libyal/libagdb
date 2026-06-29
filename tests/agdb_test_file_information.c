@@ -448,7 +448,11 @@ int agdb_test_internal_file_information_read_data(
 	 "error",
 	 error );
 
-	io_handle->file_information_entry_size = 52;
+	io_handle->file_header_signature                 = 0x0000000eUL;
+	io_handle->volume_information_entry_size         = 56;
+	io_handle->file_information_entry_size           = 52;
+	io_handle->file_information_sub_entry_type1_size = 16;
+	io_handle->file_information_sub_entry_type2_size = 20;
 
 	result = libagdb_file_information_initialize(
 	          &file_information,
@@ -474,6 +478,7 @@ int agdb_test_internal_file_information_read_data(
 	          io_handle,
 	          agdb_test_file_information_data1,
 	          52,
+	          32,
 	          &error );
 
 	AGDB_TEST_ASSERT_EQUAL_INT(
@@ -492,6 +497,7 @@ int agdb_test_internal_file_information_read_data(
 	          io_handle,
 	          agdb_test_file_information_data1,
 	          52,
+	          32,
 	          &error );
 
 	AGDB_TEST_ASSERT_EQUAL_INT(
@@ -511,6 +517,7 @@ int agdb_test_internal_file_information_read_data(
 	          NULL,
 	          agdb_test_file_information_data1,
 	          52,
+	          32,
 	          &error );
 
 	AGDB_TEST_ASSERT_EQUAL_INT(
@@ -530,6 +537,7 @@ int agdb_test_internal_file_information_read_data(
 	          io_handle,
 	          NULL,
 	          52,
+	          32,
 	          &error );
 
 	AGDB_TEST_ASSERT_EQUAL_INT(
@@ -549,6 +557,7 @@ int agdb_test_internal_file_information_read_data(
 	          io_handle,
 	          agdb_test_file_information_data1,
 	          (size_t) SSIZE_MAX + 1,
+	          32,
 	          &error );
 
 	AGDB_TEST_ASSERT_EQUAL_INT(
@@ -567,6 +576,27 @@ int agdb_test_internal_file_information_read_data(
 	          (libagdb_internal_file_information_t *) file_information,
 	          io_handle,
 	          agdb_test_file_information_data1,
+	          0,
+	          32,
+	          &error );
+
+	AGDB_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	AGDB_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = libagdb_internal_file_information_read_data(
+	          (libagdb_internal_file_information_t *) file_information,
+	          io_handle,
+	          agdb_test_file_information_data1,
+	          52,
 	          0,
 	          &error );
 
@@ -675,6 +705,8 @@ int agdb_test_internal_file_information_read_file_io_handle(
 	 "error",
 	 error );
 
+	io_handle->file_header_signature                 = 0x0000000eUL;
+	io_handle->volume_information_entry_size         = 56;
 	io_handle->file_information_entry_size           = 52;
 	io_handle->file_information_sub_entry_type1_size = 16;
 	io_handle->file_information_sub_entry_type2_size = 20;
@@ -1510,7 +1542,11 @@ int main(
 	 "error",
 	 error );
 
-	io_handle->file_information_entry_size = 52;
+	io_handle->file_header_signature                 = 0x0000000eUL;
+	io_handle->volume_information_entry_size         = 56;
+	io_handle->file_information_entry_size           = 52;
+	io_handle->file_information_sub_entry_type1_size = 16;
+	io_handle->file_information_sub_entry_type2_size = 20;
 
 	result = libagdb_file_information_initialize(
 	          &file_information,
@@ -1534,6 +1570,7 @@ int main(
 	          io_handle,
 	          agdb_test_file_information_data1,
 	          52,
+	          32,
 	          &error );
 
 	AGDB_TEST_ASSERT_EQUAL_INT(

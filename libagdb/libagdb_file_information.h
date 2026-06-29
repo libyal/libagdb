@@ -72,6 +72,7 @@ int libagdb_internal_file_information_read_data(
      libagdb_io_handle_t *io_handle,
      const uint8_t *data,
      size_t data_size,
+     uint8_t number_of_bits,
      libcerror_error_t **error );
 
 int libagdb_internal_file_information_read_path_data(

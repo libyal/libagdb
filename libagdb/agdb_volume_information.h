@@ -29,9 +29,9 @@
 extern "C" {
 #endif
 
-typedef struct agdb_volume_information_56 agdb_volume_information_56_t;
+typedef struct agdb_volume_information_56_32bit agdb_volume_information_56_32bit_t;
 
-struct agdb_volume_information_56
+struct agdb_volume_information_56_32bit
 {
 	/* Unknown
 	 * Consists of 4 bytes
@@ -94,9 +94,89 @@ struct agdb_volume_information_56
 	uint8_t unknown9[ 8 ];
 };
 
-typedef struct agdb_volume_information_72 agdb_volume_information_72_t;
+typedef struct agdb_volume_information_72_32bit agdb_volume_information_72_32bit_t;
 
-struct agdb_volume_information_72
+struct agdb_volume_information_72_32bit
+{
+	/* Unknown
+	 * Consists of 4 bytes
+	 */
+	uint8_t unknown1[ 4 ];
+
+	/* Unknown
+	 * Consists of 4 bytes
+	 */
+	uint8_t unknown2[ 4 ];
+
+	/* The number of files
+	 * Consists of 4 bytes
+	 */
+	uint8_t number_of_files[ 4 ];
+
+	/* Unknown
+	 * Consists of 4 bytes
+	 */
+	uint8_t unknown3[ 4 ];
+
+	/* Unknown
+	 * Consists of 8 bytes
+	 */
+	uint8_t unknown4[ 8 ];
+
+	/* The (volume) creation time
+	 * Consists of 8 bytes
+	 */
+	uint8_t creation_time[ 8 ];
+
+	/* The (volume) serial number
+	 * Consists of 4 bytes
+	 */
+	uint8_t serial_number[ 4 ];
+
+	/* Unknown
+	 * Consists of 4 bytes
+	 */
+	uint8_t unknown5[ 4 ];
+
+	/* Unknown
+	 * Consists of 4 bytes
+	 */
+	uint8_t unknown6[ 4 ];
+
+	/* The (volume) device path number of characters
+	 * Consists of 2 bytes
+	 */
+	uint8_t device_path_number_of_characters[ 2 ];
+
+	/* Unknown
+	 * Consists of 2 bytes
+	 */
+	uint8_t unknown7[ 2 ];
+
+	/* Unknown
+	 * Consists of 8 bytes
+	 */
+	uint8_t unknown9[ 8 ];
+
+	/* Unknown
+	 * Consists of 4 bytes
+	 */
+	uint8_t unknown10[ 4 ];
+
+	/* Unknown
+	 * Consists of 4 bytes
+	 */
+	uint8_t unknown11[ 4 ];
+
+	/* Unknown
+	 * Consists of 8 bytes
+	 */
+	uint8_t unknown12[ 8 ];
+};
+
+typedef struct agdb_volume_information_72_64bit agdb_volume_information_72_64bit_t;
+
+struct agdb_volume_information_72_64bit
 {
 	/* Unknown
 	 * Consists of 8 bytes
@@ -164,9 +244,9 @@ struct agdb_volume_information_72
 	uint8_t unknown9[ 8 ];
 };
 
-typedef struct agdb_volume_information_96 agdb_volume_information_96_t;
+typedef struct agdb_volume_information_96_64bit agdb_volume_information_96_64bit_t;
 
-struct agdb_volume_information_96
+struct agdb_volume_information_96_64bit
 {
 	/* Unknown
 	 * Consists of 8 bytes

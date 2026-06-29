@@ -308,16 +308,14 @@ int libagdb_internal_file_information_read_data(
      libagdb_io_handle_t *io_handle,
      const uint8_t *data,
      size_t data_size,
+     uint8_t number_of_bits,
      libcerror_error_t **error )
 {
 	static char *function = "libagdb_internal_file_information_read_data";
-	uint8_t mode          = 0;
 
 #if defined( HAVE_DEBUG_OUTPUT )
 	uint64_t value_64bit  = 0;
 	uint32_t value_32bit  = 0;
-	uint16_t value_16bit  = 0;
-	uint32_t flags        = 0;
 #endif
 
 	if( internal_file_information == NULL )
@@ -353,25 +351,28 @@ int libagdb_internal_file_information_read_data(
 
 		return( -1 );
 	}
-	if( data_size < io_handle->file_information_entry_size )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_VALUE_TOO_SMALL,
-		 "%s: invalid data size value too small.",
-		 function );
-
-		return( -1 );
-	}
-	if( data_size > (size_t) SSIZE_MAX )
+	if( ( data_size < io_handle->file_information_entry_size )
+	 || ( data_size > (size_t) SSIZE_MAX ) )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_VALUE_EXCEEDS_MAXIMUM,
-		 "%s: invalid data size value exceeds maximum.",
+		 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
+		 "%s: invalid data size value out of bounds.",
 		 function );
+
+		return( -1 );
+	}
+	if( ( number_of_bits != 32 )
+	 && ( number_of_bits != 64 ) )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
+		 "%s: unsupported file information entry size: %" PRIu32 ".",
+		 function,
+		 io_handle->file_information_entry_size );
 
 		return( -1 );
 	}
@@ -387,77 +388,68 @@ int libagdb_internal_file_information_read_data(
 		 0 );
 	}
 #endif
-	if( ( io_handle->file_information_entry_size == 36 )
-	 || ( io_handle->file_information_entry_size == 52 )
-	 || ( io_handle->file_information_entry_size == 56 )
-	 || ( io_handle->file_information_entry_size == 72 ) )
+	switch( io_handle->file_header_signature )
 	{
-		mode = 32;
-	}
-	else if( ( io_handle->file_information_entry_size == 64 )
-	      || ( io_handle->file_information_entry_size == 80 )
-	      || ( io_handle->file_information_entry_size == 88 )
-	      || ( io_handle->file_information_entry_size == 112 ) )
-	{
-		mode = 64;
-	}
-	else
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
-		 "%s: unsupported file information entry size: %" PRIu32 ".",
-		 function,
-		 io_handle->file_information_entry_size );
+		case 0x00000003UL:
+		case 0x0000000fUL:
+			if( number_of_bits == 32 )
+			{
+				byte_stream_copy_to_uint32_little_endian(
+				 ( (agdb_file_information_48_32bit_t *) data )->number_of_entries,
+				 internal_file_information->number_of_entries );
 
-		return( -1 );
-	}
-	if( mode == 32 )
-	{
-		byte_stream_copy_to_uint32_little_endian(
-		 ( (agdb_file_information_36_t *) data )->number_of_entries,
-		 internal_file_information->number_of_entries );
+				byte_stream_copy_to_uint32_little_endian(
+				 ( (agdb_file_information_48_32bit_t *) data )->path_number_of_characters,
+				 internal_file_information->path_size );
+			}
+			else if( number_of_bits == 64 )
+			{
+				byte_stream_copy_to_uint32_little_endian(
+				 ( (agdb_file_information_80_64bit_t *) data )->path_number_of_characters,
+				 internal_file_information->path_size );
 
-#if defined( HAVE_DEBUG_OUTPUT )
-		byte_stream_copy_to_uint32_little_endian(
-		 ( (agdb_file_information_36_t *) data )->flags,
-		 flags );
-#endif
+				byte_stream_copy_to_uint32_little_endian(
+				 ( (agdb_file_information_80_64bit_t *) data )->number_of_entries,
+				 internal_file_information->number_of_entries );
+			}
+			break;
 
-		byte_stream_copy_to_uint32_little_endian(
-		 ( (agdb_file_information_36_t *) data )->path_number_of_characters,
-		 internal_file_information->path_size );
-	}
-	else if( mode == 64 )
-	{
-		byte_stream_copy_to_uint32_little_endian(
-		 ( (agdb_file_information_64_t *) data )->number_of_entries,
-		 internal_file_information->number_of_entries );
+		case 0x0000000eUL:
+			if( number_of_bits == 32 )
+			{
+				byte_stream_copy_to_uint32_little_endian(
+				 ( (agdb_file_information_36_32bit_t *) data )->number_of_entries,
+				 internal_file_information->number_of_entries );
 
-#if defined( HAVE_DEBUG_OUTPUT )
-		byte_stream_copy_to_uint32_little_endian(
-		 ( (agdb_file_information_64_t *) data )->flags,
-		 flags );
-#endif
+				byte_stream_copy_to_uint32_little_endian(
+				 ( (agdb_file_information_36_32bit_t *) data )->path_number_of_characters,
+				 internal_file_information->path_size );
+			}
+			else if( number_of_bits == 64 )
+			{
+				byte_stream_copy_to_uint32_little_endian(
+				 ( (agdb_file_information_64_64bit_t *) data )->number_of_entries,
+				 internal_file_information->number_of_entries );
 
-		byte_stream_copy_to_uint32_little_endian(
-		 ( (agdb_file_information_64_t *) data )->path_number_of_characters,
-		 internal_file_information->path_size );
+				byte_stream_copy_to_uint32_little_endian(
+				 ( (agdb_file_information_64_64bit_t *) data )->path_number_of_characters,
+				 internal_file_information->path_size );
+			}
+			break;
 	}
 #if defined( HAVE_DEBUG_OUTPUT )
 	if( libcnotify_verbose != 0 )
 	{
-		if( mode == 32 )
+		if( number_of_bits == 32 )
 		{
 			byte_stream_copy_to_uint32_little_endian(
-			 ( (agdb_file_information_36_t *) data )->unknown1,
+			 ( (agdb_file_information_36_32bit_t *) data )->unknown1,
 			 value_64bit );
 		}
-		else if( mode == 64 )
+		else if( number_of_bits == 64 )
 		{
 			byte_stream_copy_to_uint64_little_endian(
-			 ( (agdb_file_information_64_t *) data )->unknown1,
+			 ( (agdb_file_information_64_64bit_t *) data )->unknown1,
 			 value_64bit );
 		}
 		libcnotify_printf(
@@ -465,16 +457,16 @@ int libagdb_internal_file_information_read_data(
 		 function,
 		 value_64bit );
 
-		if( mode == 32 )
+		if( number_of_bits == 32 )
 		{
 			byte_stream_copy_to_uint32_little_endian(
-			 ( (agdb_file_information_36_t *) data )->name_hash,
+			 ( (agdb_file_information_36_32bit_t *) data )->name_hash,
 			 value_64bit );
 		}
-		else if( mode == 64 )
+		else if( number_of_bits == 64 )
 		{
 			byte_stream_copy_to_uint64_little_endian(
-			 ( (agdb_file_information_64_t *) data )->name_hash,
+			 ( (agdb_file_information_64_64bit_t *) data )->name_hash,
 			 value_64bit );
 		}
 		libcnotify_printf(
@@ -482,244 +474,273 @@ int libagdb_internal_file_information_read_data(
 		 function,
 		 value_64bit );
 
-		libcnotify_printf(
-		 "%s: number of entries\t\t\t: %" PRIu32 "\n",
-		 function,
-		 internal_file_information->number_of_entries );
+		if( ( io_handle->file_header_signature == 0x00000003UL )
+		 || ( io_handle->file_header_signature == 0x0000000fUL ) )
+		{
+			libcnotify_printf(
+			 "%s: path number of characters\t\t: 0x%08" PRIx32 " (number of characters: %" PRIu32 ", lower bits: 0x%02" PRIx32 ")\n",
+			 function,
+			 internal_file_information->path_size,
+			 internal_file_information->path_size >> 2,
+			 internal_file_information->path_size & 0x00000003UL );
 
-		libcnotify_printf(
-		 "%s: flags\t\t\t\t: 0x%08" PRIx32 "\n",
-		 function,
-		 flags );
+			if( number_of_bits == 32 )
+			{
+				byte_stream_copy_to_uint32_little_endian(
+				 ( (agdb_file_information_48_32bit_t *) data )->unknown2,
+				 value_32bit );
+			}
+			else if( number_of_bits == 64 )
+			{
+				byte_stream_copy_to_uint32_little_endian(
+				 ( (agdb_file_information_80_64bit_t *) data )->unknown2,
+				 value_32bit );
+			}
+			libcnotify_printf(
+			 "%s: unknown2\t\t\t\t: 0x%08" PRIx32 "\n",
+			 function,
+			 value_32bit );
+		}
+		else if( io_handle->file_header_signature == 0x0000000eUL )
+		{
+			libcnotify_printf(
+			 "%s: number of entries\t\t\t: %" PRIu32 "\n",
+			 function,
+			 internal_file_information->number_of_entries );
 
-		if( mode == 32 )
+			if( number_of_bits == 32 )
+			{
+				byte_stream_copy_to_uint32_little_endian(
+				 ( (agdb_file_information_36_32bit_t *) data )->flags,
+				 value_32bit );
+			}
+			else if( number_of_bits == 64 )
+			{
+				byte_stream_copy_to_uint32_little_endian(
+				 ( (agdb_file_information_64_64bit_t *) data )->flags,
+				 value_32bit );
+			}
+			libcnotify_printf(
+			 "%s: flags\t\t\t\t: 0x%08" PRIx32 "\n",
+			 function,
+			 value_32bit );
+		}
+		if( number_of_bits == 32 )
 		{
 			byte_stream_copy_to_uint32_little_endian(
-			 ( (agdb_file_information_36_t *) data )->unknown4a,
+			 ( (agdb_file_information_36_32bit_t *) data )->unknown3,
 			 value_64bit );
 		}
-		else if( mode == 64 )
+		else if( number_of_bits == 64 )
 		{
 			byte_stream_copy_to_uint64_little_endian(
-			 ( (agdb_file_information_64_t *) data )->unknown4a,
+			 ( (agdb_file_information_64_64bit_t *) data )->unknown3,
 			 value_64bit );
 		}
 		libcnotify_printf(
-		 "%s: unknown4a\t\t\t\t: 0x%08" PRIx64 "\n",
+		 "%s: unknown3\t\t\t\t: 0x%08" PRIx64 "\n",
 		 function,
 		 value_64bit );
 
-		if( io_handle->file_information_entry_size == 52 )
-		{
-			byte_stream_copy_to_uint16_little_endian(
-			 ( (agdb_file_information_52_t *) data )->unknown4b,
-			 value_16bit );
-			libcnotify_printf(
-			 "%s: unknown4b\t\t\t\t: 0x%04" PRIx16 "\n",
-			 function,
-			 value_16bit );
-
-			byte_stream_copy_to_uint16_little_endian(
-			 ( (agdb_file_information_52_t *) data )->unknown4c,
-			 value_16bit );
-			libcnotify_printf(
-			 "%s: unknown4c\t\t\t\t: 0x%04" PRIx16 "\n",
-			 function,
-			 value_16bit );
-		}
-		else if( io_handle->file_information_entry_size == 88 )
+		if( ( io_handle->file_information_entry_size == 36 )
+		 || ( io_handle->file_information_entry_size == 48 )
+		 || ( io_handle->file_information_entry_size == 52 )
+		 || ( io_handle->file_information_entry_size == 72 ) )
 		{
 			byte_stream_copy_to_uint32_little_endian(
-			 ( (agdb_file_information_88_t *) data )->unknown4b,
+			 ( (agdb_file_information_36_32bit_t *) data )->unknown4,
 			 value_32bit );
 			libcnotify_printf(
-			 "%s: unknown4b\t\t\t\t: 0x%04" PRIx32 "\n",
+			 "%s: unknown4\t\t\t\t: 0x%08" PRIx32 "\n",
 			 function,
 			 value_32bit );
 
 			byte_stream_copy_to_uint32_little_endian(
-			 ( (agdb_file_information_88_t *) data )->unknown4c,
+			 ( (agdb_file_information_36_32bit_t *) data )->unknown5,
 			 value_32bit );
 			libcnotify_printf(
-			 "%s: unknown4c\t\t\t\t: 0x%04" PRIx32 "\n",
+			 "%s: unknown5\t\t\t\t: 0x%08" PRIx32 "\n",
 			 function,
 			 value_32bit );
-		}
-		else
-		{
-			if( mode == 32 )
-			{
-				byte_stream_copy_to_uint32_little_endian(
-				 ( (agdb_file_information_36_t *) data )->unknown4b,
-				 value_64bit );
-			}
-			else if( mode == 64 )
-			{
-				byte_stream_copy_to_uint64_little_endian(
-				 ( (agdb_file_information_64_t *) data )->unknown4b,
-				 value_64bit );
-			}
-			libcnotify_printf(
-			 "%s: unknown4b\t\t\t\t: 0x%08" PRIx64 "\n",
-			 function,
-			 value_64bit );
-		}
-		if( io_handle->file_information_entry_size == 52 )
-		{
-			byte_stream_copy_to_uint16_little_endian(
-			 ( (agdb_file_information_52_t *) data )->unknown5a,
-			 value_16bit );
-			libcnotify_printf(
-			 "%s: unknown5a\t\t\t\t: 0x%04" PRIx16 "\n",
-			 function,
-			 value_16bit );
-
-			byte_stream_copy_to_uint16_little_endian(
-			 ( (agdb_file_information_52_t *) data )->unknown5b,
-			 value_16bit );
-			libcnotify_printf(
-			 "%s: unknown5b\t\t\t\t: 0x%04" PRIx16 "\n",
-			 function,
-			 value_16bit );
 		}
 		else if( ( io_handle->file_information_entry_size == 64 )
-		      || ( io_handle->file_information_entry_size == 88 ) )
+		      || ( io_handle->file_information_entry_size == 80 )
+		      || ( io_handle->file_information_entry_size == 88 )
+		      || ( io_handle->file_information_entry_size == 112 ) )
 		{
-			byte_stream_copy_to_uint32_little_endian(
-			 ( (agdb_file_information_64_t *) data )->unknown5a,
-			 value_32bit );
+			byte_stream_copy_to_uint64_little_endian(
+			 ( (agdb_file_information_64_64bit_t *) data )->unknown4,
+			 value_64bit );
 			libcnotify_printf(
-			 "%s: unknown5a\t\t\t\t: 0x%04" PRIx32 "\n",
+			 "%s: unknown4\t\t\t\t: 0x%08" PRIx64 "\n",
 			 function,
-			 value_32bit );
+			 value_64bit );
 
-			byte_stream_copy_to_uint32_little_endian(
-			 ( (agdb_file_information_64_t *) data )->unknown5b,
-			 value_32bit );
-			libcnotify_printf(
-			 "%s: unknown5b\t\t\t\t: 0x%04" PRIx32 "\n",
-			 function,
-			 value_32bit );
-		}
-		else
-		{
-			if( mode == 32 )
-			{
-				byte_stream_copy_to_uint32_little_endian(
-				 ( (agdb_file_information_36_t *) data )->unknown5,
-				 value_64bit );
-			}
-			else if( mode == 64 )
-			{
-				byte_stream_copy_to_uint64_little_endian(
-				 ( (agdb_file_information_112_t *) data )->unknown5,
-				 value_64bit );
-			}
+			byte_stream_copy_to_uint64_little_endian(
+			 ( (agdb_file_information_64_64bit_t *) data )->unknown5,
+			 value_64bit );
 			libcnotify_printf(
 			 "%s: unknown5\t\t\t\t: 0x%08" PRIx64 "\n",
 			 function,
 			 value_64bit );
 		}
-		libcnotify_printf(
-		 "%s: path number of characters\t\t: 0x%08" PRIx32 " (number of characters: %" PRIu32 ", lower bits: 0x%02" PRIx32 ")\n",
-		 function,
-		 internal_file_information->path_size,
-		 internal_file_information->path_size >> 2,
-		 internal_file_information->path_size & 0x00000001UL );
-
-		if( mode == 64 )
+		if( ( io_handle->file_header_signature == 0x00000003UL )
+		 || ( io_handle->file_header_signature == 0x0000000fUL ) )
 		{
-			byte_stream_copy_to_uint32_little_endian(
-			 ( (agdb_file_information_64_t *) data )->unknown6,
-			 value_32bit );
+			if( number_of_bits == 32 )
+			{
+				byte_stream_copy_to_uint32_little_endian(
+				 ( (agdb_file_information_48_32bit_t *) data )->unknown6,
+				 value_32bit );
+			}
+			else if( number_of_bits == 64 )
+			{
+				byte_stream_copy_to_uint32_little_endian(
+				 ( (agdb_file_information_80_64bit_t *) data )->unknown6,
+				 value_32bit );
+			}
 			libcnotify_printf(
 			 "%s: unknown6\t\t\t\t: 0x%08" PRIx32 "\n",
 			 function,
 			 value_32bit );
 		}
-		if( io_handle->file_information_entry_size <= 52 )
+		else if( io_handle->file_header_signature == 0x0000000eUL )
+		{
+			libcnotify_printf(
+			 "%s: path number of characters\t\t: 0x%08" PRIx32 " (number of characters: %" PRIu32 ", lower bits: 0x%02" PRIx32 ")\n",
+			 function,
+			 internal_file_information->path_size,
+			 internal_file_information->path_size >> 2,
+			 internal_file_information->path_size & 0x00000003UL );
+		}
+		if( ( io_handle->file_information_entry_size == 36 )
+		 || ( io_handle->file_information_entry_size == 48 )
+		 || ( io_handle->file_information_entry_size == 52 )
+		 || ( io_handle->file_information_entry_size == 72 ) )
 		{
 			byte_stream_copy_to_uint32_little_endian(
-			 ( (agdb_file_information_36_t *) data )->unknown7,
-			 value_32bit );
-			libcnotify_printf(
-			 "%s: unknown7\t\t\t\t: 0x%08" PRIx32 "\n",
-			 function,
+			 ( (agdb_file_information_36_32bit_t *) data )->unknown7,
 			 value_32bit );
 		}
-		else if( io_handle->file_information_entry_size == 72 )
+		else if( ( io_handle->file_information_entry_size == 64 )
+		      || ( io_handle->file_information_entry_size == 80 )
+		      || ( io_handle->file_information_entry_size == 88 )
+		      || ( io_handle->file_information_entry_size == 112 ) )
 		{
 			byte_stream_copy_to_uint32_little_endian(
-			 ( (agdb_file_information_72_t *) data )->unknown7a,
+			 ( (agdb_file_information_64_64bit_t *) data )->unknown7,
+			 value_32bit );
+		}
+		libcnotify_printf(
+		 "%s: unknown7\t\t\t\t: 0x%08" PRIx32 "\n",
+		 function,
+		 value_32bit );
+
+		if( ( io_handle->file_information_entry_size == 48 )
+		 || ( io_handle->file_information_entry_size == 52 )
+		 || ( io_handle->file_information_entry_size == 72 ) )
+		{
+			byte_stream_copy_to_uint32_little_endian(
+			 ( (agdb_file_information_48_32bit_t *) data )->unknown8,
 			 value_32bit );
 			libcnotify_printf(
-			 "%s: unknown7a\t\t\t\t: 0x%08" PRIx32 "\n",
+			 "%s: unknown8\t\t\t\t: 0x%08" PRIx32 "\n",
 			 function,
 			 value_32bit );
 
 			byte_stream_copy_to_uint32_little_endian(
-			 ( (agdb_file_information_72_t *) data )->unknown7b,
+			 ( (agdb_file_information_48_32bit_t *) data )->unknown9,
 			 value_32bit );
 			libcnotify_printf(
-			 "%s: unknown7b\t\t\t\t: 0x%08" PRIx32 "\n",
+			 "%s: unknown9\t\t\t\t: 0x%08" PRIx32 "\n",
 			 function,
 			 value_32bit );
 		}
-		else if( io_handle->file_information_entry_size >= 56 )
+		else if( ( io_handle->file_information_entry_size == 80 )
+		      || ( io_handle->file_information_entry_size == 88 )
+		      || ( io_handle->file_information_entry_size == 112 ) )
 		{
-			if( mode == 32 )
-			{
-				byte_stream_copy_to_uint64_little_endian(
-				 ( (agdb_file_information_56_t *) data )->unknown7,
-				 value_64bit );
-			}
-			else if( mode == 64 )
-			{
-				byte_stream_copy_to_uint64_little_endian(
-				 ( (agdb_file_information_88_t *) data )->unknown7,
-				 value_64bit );
-			}
+			byte_stream_copy_to_uint64_little_endian(
+			 ( (agdb_file_information_80_64bit_t *) data )->unknown8,
+			 value_64bit );
 			libcnotify_printf(
-			 "%s: unknown7\t\t\t\t: 0x%08" PRIx64 "\n",
+			 "%s: unknown8\t\t\t\t: 0x%08" PRIx64 "\n",
+			 function,
+			 value_64bit );
+
+			byte_stream_copy_to_uint64_little_endian(
+			 ( (agdb_file_information_80_64bit_t *) data )->unknown9,
+			 value_64bit );
+			libcnotify_printf(
+			 "%s: unknown9\t\t\t\t: 0x%08" PRIx64 "\n",
 			 function,
 			 value_64bit );
 		}
-		if( io_handle->file_information_entry_size == 52 )
+		if( ( io_handle->file_header_signature == 0x00000003UL )
+		 || ( io_handle->file_header_signature == 0x0000000fUL ) )
 		{
-			byte_stream_copy_to_uint16_little_endian(
-			 ( (agdb_file_information_52_t *) data )->unknown8,
-			 value_16bit );
+			if( io_handle->file_information_entry_size == 80 )
+			{
+				byte_stream_copy_to_uint32_little_endian(
+				 ( (agdb_file_information_80_64bit_t *) data )->unknown10,
+				 value_32bit );
+				libcnotify_printf(
+				 "%s: unknown10\t\t\t\t: 0x%08" PRIx32 "\n",
+				 function,
+				 value_32bit );
+			}
 			libcnotify_printf(
-			 "%s: unknown8\t\t\t\t: 0x%04" PRIx16 "\n",
+			 "%s: number of entries\t\t\t: %" PRIu32 "\n",
 			 function,
-			 value_16bit );
-
-			byte_stream_copy_to_uint16_little_endian(
-			 ( (agdb_file_information_52_t *) data )->unknown9,
-			 value_16bit );
+			 internal_file_information->number_of_entries );
+		}
+		else if( io_handle->file_header_signature == 0x0000000eUL )
+		{
+			if( ( io_handle->file_information_entry_size == 52 )
+			 || ( io_handle->file_information_entry_size == 72 ) )
+			{
+				byte_stream_copy_to_uint32_little_endian(
+				 ( (agdb_file_information_52_32bit_t *) data )->unknown10,
+				 value_64bit );
+			}
+			else if( ( io_handle->file_information_entry_size == 88 )
+			      || ( io_handle->file_information_entry_size == 112 ) )
+			{
+				byte_stream_copy_to_uint64_little_endian(
+				 ( (agdb_file_information_88_64bit_t *) data )->unknown10,
+				 value_64bit );
+			}
 			libcnotify_printf(
-			 "%s: unknown9\t\t\t\t: 0x%04" PRIx16 "\n",
+			 "%s: unknown10\t\t\t\t: 0x%08" PRIx64 "\n",
 			 function,
-			 value_16bit );
-
-			byte_stream_copy_to_uint16_little_endian(
-			 ( (agdb_file_information_52_t *) data )->unknown10,
-			 value_16bit );
-			libcnotify_printf(
-			 "%s: unknown10\t\t\t\t: 0x%04" PRIx16 "\n",
-			 function,
-			 value_16bit );
-
-			byte_stream_copy_to_uint16_little_endian(
-			 ( (agdb_file_information_52_t *) data )->unknown11,
-			 value_16bit );
-			libcnotify_printf(
-			 "%s: unknown11\t\t\t\t: 0x%04" PRIx16 "\n",
-			 function,
-			 value_16bit );
-
+			 value_64bit );
+		}
+		if( ( io_handle->file_information_entry_size == 52 )
+		 || ( io_handle->file_information_entry_size == 72 ) )
+		{
 			byte_stream_copy_to_uint32_little_endian(
-			 ( (agdb_file_information_52_t *) data )->unknown12,
+			 ( (agdb_file_information_52_32bit_t *) data )->unknown11,
+			 value_32bit );
+			libcnotify_printf(
+			 "%s: unknown11\t\t\t\t: 0x%08" PRIx32 "\n",
+			 function,
+			 value_32bit );
+		}
+		else if( ( io_handle->file_information_entry_size == 88 )
+		      || ( io_handle->file_information_entry_size == 112 ) )
+		{
+			byte_stream_copy_to_uint64_little_endian(
+			 ( (agdb_file_information_88_64bit_t *) data )->unknown11,
+			 value_64bit );
+			libcnotify_printf(
+			 "%s: unknown11\t\t\t\t: 0x%08" PRIx64 "\n",
+			 function,
+			 value_64bit );
+		}
+		if( io_handle->file_information_entry_size == 72 )
+		{
+			byte_stream_copy_to_uint32_little_endian(
+			 ( (agdb_file_information_72_32bit_t *) data )->unknown12,
 			 value_32bit );
 			libcnotify_printf(
 			 "%s: unknown12\t\t\t\t: 0x%08" PRIx32 "\n",
@@ -727,187 +748,41 @@ int libagdb_internal_file_information_read_data(
 			 value_32bit );
 
 			byte_stream_copy_to_uint32_little_endian(
-			 ( (agdb_file_information_52_t *) data )->unknown13,
+			 ( (agdb_file_information_72_32bit_t *) data )->unknown13,
 			 value_32bit );
 			libcnotify_printf(
 			 "%s: unknown13\t\t\t\t: 0x%08" PRIx32 "\n",
 			 function,
 			 value_32bit );
-		}
-		else if( io_handle->file_information_entry_size == 88 )
-		{
-			byte_stream_copy_to_uint16_little_endian(
-			 ( (agdb_file_information_88_t *) data )->unknown8a,
-			 value_16bit );
-			libcnotify_printf(
-			 "%s: unknown8a\t\t\t\t: 0x%04" PRIx16 "\n",
-			 function,
-			 value_16bit );
 
-			byte_stream_copy_to_uint16_little_endian(
-			 ( (agdb_file_information_88_t *) data )->unknown8b,
-			 value_16bit );
+			byte_stream_copy_to_uint32_little_endian(
+			 ( (agdb_file_information_72_32bit_t *) data )->unknown14,
+			 value_32bit );
 			libcnotify_printf(
-			 "%s: unknown8b\t\t\t\t: 0x%04" PRIx16 "\n",
-			 function,
-			 value_16bit );
-
-			byte_stream_copy_to_uint16_little_endian(
-			 ( (agdb_file_information_88_t *) data )->unknown8c,
-			 value_16bit );
-			libcnotify_printf(
-			 "%s: unknown8c\t\t\t\t: 0x%04" PRIx16 "\n",
-			 function,
-			 value_16bit );
-
-			byte_stream_copy_to_uint16_little_endian(
-			 ( (agdb_file_information_88_t *) data )->unknown8d,
-			 value_16bit );
-			libcnotify_printf(
-			 "%s: unknown8d\t\t\t\t: 0x%04" PRIx16 "\n",
-			 function,
-			 value_16bit );
-		}
-		else if( ( io_handle->file_information_entry_size == 56 )
-		      || ( io_handle->file_information_entry_size >= 72 ) )
-		{
-			if( mode == 32 )
-			{
-				byte_stream_copy_to_uint32_little_endian(
-				 ( (agdb_file_information_56_t *) data )->unknown8a,
-				 value_32bit );
-			}
-			else if( mode == 64 )
-			{
-				byte_stream_copy_to_uint32_little_endian(
-				 ( (agdb_file_information_72_t *) data )->unknown8a,
-				 value_32bit );
-			}
-			libcnotify_printf(
-			 "%s: unknown8a\t\t\t\t: 0x%08" PRIx32 "\n",
+			 "%s: unknown14\t\t\t\t: 0x%08" PRIx32 "\n",
 			 function,
 			 value_32bit );
 
-			if( mode == 32 )
-			{
-				byte_stream_copy_to_uint32_little_endian(
-				 ( (agdb_file_information_56_t *) data )->unknown8b,
-				 value_32bit );
-			}
-			else if( mode == 64 )
-			{
-				byte_stream_copy_to_uint32_little_endian(
-				 ( (agdb_file_information_72_t *) data )->unknown8b,
-				 value_32bit );
-			}
+			byte_stream_copy_to_uint32_little_endian(
+			 ( (agdb_file_information_72_32bit_t *) data )->unknown15,
+			 value_32bit );
 			libcnotify_printf(
-			 "%s: unknown8b\t\t\t\t: 0x%08" PRIx32 "\n",
+			 "%s: unknown15\t\t\t\t: 0x%08" PRIx32 "\n",
+			 function,
+			 value_32bit );
+
+			byte_stream_copy_to_uint32_little_endian(
+			 ( (agdb_file_information_72_32bit_t *) data )->unknown16,
+			 value_32bit );
+			libcnotify_printf(
+			 "%s: unknown16\t\t\t\t: 0x%08" PRIx32 "\n",
 			 function,
 			 value_32bit );
 		}
-		if( ( io_handle->file_information_entry_size == 56 )
-		 || ( io_handle->file_information_entry_size >= 88 ) )
-		{
-			if( mode == 32 )
-			{
-				byte_stream_copy_to_uint64_little_endian(
-				 ( (agdb_file_information_56_t *) data )->file_reference,
-				 value_64bit );
-			}
-			else if( mode == 64 )
-			{
-				byte_stream_copy_to_uint64_little_endian(
-				 ( (agdb_file_information_88_t *) data )->unknown9,
-				 value_64bit );
-			}
-			if( value_64bit == 0 )
-			{
-				libcnotify_printf(
-				 "%s: file reference\t\t\t: %" PRIu64 "\n",
-				 function,
-				 value_64bit );
-			}
-			else
-			{
-				libcnotify_printf(
-				 "%s: file reference\t\t\t: MFT entry: %" PRIu64 ", sequence: %" PRIu64 "\n",
-				 function,
-				 value_64bit & 0xffffffffffffUL,
-				 value_64bit >> 48 );
-			}
-		}
-		if( io_handle->file_information_entry_size == 72 )
-		{
-			byte_stream_copy_to_uint32_little_endian(
-			 ( (agdb_file_information_72_t *) data )->unknown9a,
-			 value_32bit );
-			libcnotify_printf(
-			 "%s: unknown9a\t\t\t\t: 0x%08" PRIx32 "\n",
-			 function,
-			 value_32bit );
-
-			byte_stream_copy_to_uint32_little_endian(
-			 ( (agdb_file_information_72_t *) data )->unknown9b,
-			 value_32bit );
-			libcnotify_printf(
-			 "%s: unknown9b\t\t\t\t: 0x%08" PRIx32 "\n",
-			 function,
-			 value_32bit );
-
-			byte_stream_copy_to_uint32_little_endian(
-			 ( (agdb_file_information_72_t *) data )->unknown10a,
-			 value_32bit );
-			libcnotify_printf(
-			 "%s: unknown10a\t\t\t\t: 0x%08" PRIx32 "\n",
-			 function,
-			 value_32bit );
-
-			byte_stream_copy_to_uint32_little_endian(
-			 ( (agdb_file_information_72_t *) data )->unknown10b,
-			 value_32bit );
-			libcnotify_printf(
-			 "%s: unknown10b\t\t\t\t: 0x%08" PRIx32 "\n",
-			 function,
-			 value_32bit );
-
-			byte_stream_copy_to_uint32_little_endian(
-			 ( (agdb_file_information_72_t *) data )->unknown11a,
-			 value_32bit );
-			libcnotify_printf(
-			 "%s: unknown11a\t\t\t\t: 0x%08" PRIx32 "\n",
-			 function,
-			 value_32bit );
-
-			byte_stream_copy_to_uint32_little_endian(
-			 ( (agdb_file_information_72_t *) data )->unknown11b,
-			 value_32bit );
-			libcnotify_printf(
-			 "%s: unknown11b\t\t\t\t: 0x%08" PRIx32 "\n",
-			 function,
-			 value_32bit );
-		}
-		else if( io_handle->file_information_entry_size >= 88 )
+		else if( io_handle->file_information_entry_size == 112 )
 		{
 			byte_stream_copy_to_uint64_little_endian(
-			 ( (agdb_file_information_88_t *) data )->unknown10,
-			 value_64bit );
-			libcnotify_printf(
-			 "%s: unknown10\t\t\t\t: 0x%08" PRIx64 "\n",
-			 function,
-			 value_64bit );
-		}
-		if( io_handle->file_information_entry_size == 112 )
-		{
-			byte_stream_copy_to_uint64_little_endian(
-			 ( (agdb_file_information_112_t *) data )->unknown11,
-			 value_64bit );
-			libcnotify_printf(
-			 "%s: unknown11\t\t\t\t: 0x%08" PRIx64 "\n",
-			 function,
-			 value_64bit );
-
-			byte_stream_copy_to_uint64_little_endian(
-			 ( (agdb_file_information_112_t *) data )->unknown12,
+			 ( (agdb_file_information_112_64bit_t *) data )->unknown12,
 			 value_64bit );
 			libcnotify_printf(
 			 "%s: unknown12\t\t\t\t: 0x%08" PRIx64 "\n",
@@ -915,10 +790,18 @@ int libagdb_internal_file_information_read_data(
 			 value_64bit );
 
 			byte_stream_copy_to_uint64_little_endian(
-			 ( (agdb_file_information_112_t *) data )->unknown13,
+			 ( (agdb_file_information_112_64bit_t *) data )->unknown13,
 			 value_64bit );
 			libcnotify_printf(
 			 "%s: unknown13\t\t\t\t: 0x%08" PRIx64 "\n",
+			 function,
+			 value_64bit );
+
+			byte_stream_copy_to_uint64_little_endian(
+			 ( (agdb_file_information_112_64bit_t *) data )->unknown14,
+			 value_64bit );
+			libcnotify_printf(
+			 "%s: unknown14\t\t\t\t: 0x%08" PRIx64 "\n",
 			 function,
 			 value_64bit );
 		}
@@ -960,6 +843,12 @@ ssize_t libagdb_internal_file_information_read_file_io_handle(
 	uint32_t calculated_hash_value = 0;
 	uint32_t entry_index           = 0;
 	uint32_t sub_entry_data_size   = 0;
+	uint8_t number_of_bits         = 0;
+
+#if defined( HAVE_DEBUG_OUTPUT )
+	uint32_t value_32bit           = 0;
+	uint16_t value_16bit           = 0;
+#endif
 
 	if( internal_file_information == NULL )
 	{
@@ -1003,6 +892,63 @@ ssize_t libagdb_internal_file_information_read_file_io_handle(
 		 LIBCERROR_ARGUMENT_ERROR_VALUE_OUT_OF_BOUNDS,
 		 "%s: invalid IO handle - file information entry size value out of bounds.",
 		 function );
+
+		return( -1 );
+	}
+	switch( io_handle->file_header_signature )
+	{
+		case 0x00000003UL:
+			if( ( io_handle->file_information_entry_size == 48 )
+			 || ( io_handle->file_information_entry_size == 72 ) )
+			{
+				number_of_bits = 32;
+			}
+			else if( ( io_handle->file_information_entry_size == 80 )
+			      || ( io_handle->file_information_entry_size == 112 ) )
+			{
+				number_of_bits = 64;
+			}
+			break;
+
+		case 0x0000000eUL:
+			if( ( io_handle->file_information_entry_size == 36 )
+			 || ( io_handle->file_information_entry_size == 52 )
+			 || ( io_handle->file_information_entry_size == 72 ) )
+			{
+				number_of_bits = 32;
+			}
+			else if( ( io_handle->file_information_entry_size == 64 )
+			      || ( io_handle->file_information_entry_size == 88 )
+			      || ( io_handle->file_information_entry_size == 112 ) )
+			{
+				number_of_bits = 64;
+			}
+			break;
+
+		case 0x0000000fUL:
+			if( io_handle->file_information_entry_size == 72 )
+			{
+				number_of_bits = 32;
+			}
+			else if( io_handle->file_information_entry_size == 112 )
+			{
+				number_of_bits = 64;
+			}
+			break;
+
+		default:
+			break;
+
+	}
+	if( number_of_bits == 0 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
+		 "%s: unsupported file information entry size: %" PRIu32 ".",
+		 function,
+		 io_handle->file_information_entry_size );
 
 		return( -1 );
 	}
@@ -1062,6 +1008,7 @@ ssize_t libagdb_internal_file_information_read_file_io_handle(
 	     io_handle,
 	     file_information_data,
 	     (size_t) io_handle->file_information_entry_size,
+	     number_of_bits,
 	     error ) != 1 )
 	{
 		libcerror_error_set(
@@ -1079,36 +1026,6 @@ ssize_t libagdb_internal_file_information_read_file_io_handle(
 
 	file_information_data = NULL;
 
-	if( ( io_handle->file_information_entry_size == 36 )
-	 || ( io_handle->file_information_entry_size == 52 )
-	 || ( io_handle->file_information_entry_size == 56 )
-	 || ( io_handle->file_information_entry_size == 72 )
-	 || ( io_handle->file_information_entry_size == 80 ) )
-	{
-		alignment_size = 4;
-	}
-	else if( ( io_handle->file_information_entry_size == 64 )
-	      || ( io_handle->file_information_entry_size == 88 )
-	      || ( io_handle->file_information_entry_size == 112 ) )
-	{
-		alignment_size = 8;
-	}
-	else
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
-		 "%s: unsupported file information entry size: %" PRIu32 ".",
-		 function,
-		 io_handle->file_information_entry_size );
-
-		goto on_error;
-	}
-	if( io_handle->file_information_entry_size == 80 )
-	{
-		internal_file_information->path_size = 120;
-	}
 	if( internal_file_information->path_size > 0 )
 	{
 		if( internal_file_information->path_size > (size_t) MEMORY_MAXIMUM_ALLOCATION_SIZE )
@@ -1215,7 +1132,16 @@ ssize_t libagdb_internal_file_information_read_file_io_handle(
 			libcnotify_printf(
 			 "\n" );
 		}
-#endif
+#endif /* defined( HAVE_DEBUG_OUTPUT ) */
+
+		if( number_of_bits == 32 )
+		{
+			alignment_size = 4;
+		}
+		else if( number_of_bits == 64 )
+		{
+			alignment_size = 8;
+		}
 		alignment_padding_size = (size_t) ( file_offset % alignment_size );
 
 		if( alignment_padding_size != 0 )
@@ -1299,8 +1225,6 @@ ssize_t libagdb_internal_file_information_read_file_io_handle(
 
 			return( -1 );
 		}
-		sub_entry_data_size = io_handle->file_information_sub_entry_type1_size;
-
 		for( entry_index = 0;
 		     entry_index < internal_file_information->number_of_entries;
 		     entry_index++ )
@@ -1309,11 +1233,11 @@ ssize_t libagdb_internal_file_information_read_file_io_handle(
 				      data_stream,
 				      (intptr_t *) file_io_handle,
 				      sub_entry_data,
-				      (size_t) sub_entry_data_size,
+				      8,
 				      0,
 				      error );
 
-			if( read_count != (ssize_t) sub_entry_data_size )
+			if( read_count != (ssize_t) 8 )
 			{
 				libcerror_error_set(
 				 error,
@@ -1325,9 +1249,34 @@ ssize_t libagdb_internal_file_information_read_file_io_handle(
 
 				goto on_error;
 			}
-			total_read_count += read_count;
-			file_offset      += read_count;
+			if( ( sub_entry_data[ 4 ] & 0x20 ) != 0 )
+			{
+				sub_entry_data_size = io_handle->file_information_sub_entry_type2_size;
+			}
+			else
+			{
+				sub_entry_data_size = io_handle->file_information_sub_entry_type1_size;
+			}
+			read_count = libfdata_stream_read_buffer(
+				      data_stream,
+				      (intptr_t *) file_io_handle,
+				      &( sub_entry_data[ 8 ] ),
+				      (size_t) sub_entry_data_size - 8,
+				      0,
+				      error );
 
+			if( read_count != ( (ssize_t) sub_entry_data_size - 8 ) )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_IO,
+				 LIBCERROR_IO_ERROR_READ_FAILED,
+				 "%s: unable to read sub entry: %" PRIu32 " data.",
+				 function,
+				 entry_index );
+
+					goto on_error;
+			}
 #if defined( HAVE_DEBUG_OUTPUT )
 			if( libcnotify_verbose != 0 )
 			{
@@ -1341,6 +1290,67 @@ ssize_t libagdb_internal_file_information_read_file_io_handle(
 				 0 );
 			}
 #endif
+#if defined( HAVE_DEBUG_OUTPUT )
+			if( libcnotify_verbose != 0 )
+			{
+				if( sub_entry_data_size >= 16 )
+				{
+					byte_stream_copy_to_uint32_little_endian(
+					 sub_entry_data,
+					 value_32bit );
+					libcnotify_printf(
+					 "%s: unknown1\t\t: 0x%08" PRIx32 "\n",
+					 function,
+					 value_32bit );
+
+					byte_stream_copy_to_uint32_little_endian(
+					 &( sub_entry_data[ 4 ] ),
+					 value_32bit );
+					libcnotify_printf(
+					 "%s: unknown2\t\t: 0x%08" PRIx32 "\n",
+					 function,
+					 value_32bit );
+
+					byte_stream_copy_to_uint16_little_endian(
+					 &( sub_entry_data[ 8 ] ),
+					 value_16bit );
+					libcnotify_printf(
+					 "%s: unknown3\t\t: 0x%04" PRIx16 "\n",
+					 function,
+					 value_16bit );
+
+					byte_stream_copy_to_uint16_little_endian(
+					 &( sub_entry_data[ 10 ] ),
+					 value_16bit );
+					libcnotify_printf(
+					 "%s: unknown4\t\t: 0x%04" PRIx16 "\n",
+					 function,
+					 value_16bit );
+
+					byte_stream_copy_to_uint16_little_endian(
+					 &( sub_entry_data[ 12 ] ),
+					 value_16bit );
+					libcnotify_printf(
+					 "%s: unknown5\t\t: 0x%04" PRIx16 "\n",
+					 function,
+					 value_16bit );
+
+					byte_stream_copy_to_uint16_little_endian(
+					 &( sub_entry_data[ 14 ] ),
+					 value_16bit );
+					libcnotify_printf(
+					 "%s: unknown6\t\t: 0x%04" PRIx16 "\n",
+					 function,
+					 value_16bit );
+
+					libcnotify_printf(
+					 "\n" );
+				}
+			}
+#endif /* defined( HAVE_DEBUG_OUTPUT ) */
+
+			total_read_count += sub_entry_data_size;
+			file_offset      += sub_entry_data_size;
 		}
 	}
 	return( total_read_count );

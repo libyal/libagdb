@@ -21,6 +21,7 @@ AM_CPPFLAGS = \
 lib_LTLIBRARIES = libagdb.la
 
 libagdb_la_SOURCES = \
+	agdb_database_header.h \
 	agdb_file_header.h \
 	agdb_file_information.h \
 	agdb_source_information.h \
@@ -31,6 +32,7 @@ libagdb_la_SOURCES = \
 	libagdb_compressed_blocks_stream.c libagdb_compressed_blocks_stream.h \
 	libagdb_compressed_blocks_stream_data_handle.c libagdb_compressed_blocks_stream_data_handle.h \
 	libagdb_compressed_file_header.c libagdb_compressed_file_header.h \
+	libagdb_database_header.c libagdb_database_header.h \
 	libagdb_debug.c libagdb_debug.h \
 	libagdb_definitions.h \
 	libagdb_error.c libagdb_error.h \

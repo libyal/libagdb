@@ -190,6 +190,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\libagdb\libagdb_database_header.c"
+				>
+			</File>
+			<File
 				RelativePath="..\..\libagdb\libagdb_debug.c"
 				>
 			</File>
@@ -240,6 +244,10 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
+				RelativePath="..\..\libagdb\agdb_database_header.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\libagdb\agdb_file_header.h"
 				>
 			</File>
@@ -273,6 +281,10 @@
 			</File>
 			<File
 				RelativePath="..\..\libagdb\libagdb_compressed_file_header.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libagdb\libagdb_database_header.h"
 				>
 			</File>
 			<File

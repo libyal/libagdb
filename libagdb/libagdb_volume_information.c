@@ -217,6 +217,7 @@ int libagdb_internal_volume_information_read_data(
      libcerror_error_t **error )
 {
 	static char *function  = "libagdb_internal_volume_information_read_data";
+	uint8_t number_of_bits = 0;
 
 #if defined( HAVE_DEBUG_OUTPUT )
 	uint8_t *filetime_data = NULL;
@@ -270,6 +271,47 @@ int libagdb_internal_volume_information_read_data(
 
 		return( -1 );
 	}
+	switch( io_handle->file_header_signature )
+	{
+		case 0x00000003UL:
+			if( io_handle->volume_information_entry_size == 72 )
+			{
+				number_of_bits = 32;
+			}
+			else if( io_handle->volume_information_entry_size == 96 )
+			{
+				number_of_bits = 64;
+			}
+			break;
+
+		case 0x0000000eUL:
+		case 0x0000000fUL:
+			if( io_handle->volume_information_entry_size == 56 )
+			{
+				number_of_bits = 32;
+			}
+			else if( io_handle->volume_information_entry_size == 72 )
+			{
+				number_of_bits = 64;
+			}
+			break;
+
+		default:
+			break;
+
+	}
+	if( number_of_bits == 0 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
+		 "%s: unsupported volume information entry size: %" PRIu32 ".",
+		 function,
+		 io_handle->volume_information_entry_size );
+
+		return( -1 );
+	}
 #if defined( HAVE_DEBUG_OUTPUT )
 	if( libcnotify_verbose != 0 )
 	{
@@ -282,57 +324,55 @@ int libagdb_internal_volume_information_read_data(
 		 0 );
 	}
 #endif
-	if( io_handle->volume_information_entry_size == 56 )
+	if( number_of_bits == 32 )
 	{
 		byte_stream_copy_to_uint32_little_endian(
-		 ( (agdb_volume_information_56_t *) data )->number_of_files,
+		 ( (agdb_volume_information_56_32bit_t *) data )->number_of_files,
 		 internal_volume_information->number_of_files );
 
 		byte_stream_copy_to_uint64_little_endian(
-		 ( (agdb_volume_information_56_t *) data )->creation_time,
+		 ( (agdb_volume_information_56_32bit_t *) data )->creation_time,
 		 internal_volume_information->creation_time );
 
 		byte_stream_copy_to_uint32_little_endian(
-		 ( (agdb_volume_information_56_t *) data )->serial_number,
+		 ( (agdb_volume_information_56_32bit_t *) data )->serial_number,
 		 internal_volume_information->serial_number );
 
 		byte_stream_copy_to_uint16_little_endian(
-		 ( (agdb_volume_information_56_t *) data )->device_path_number_of_characters,
+		 ( (agdb_volume_information_56_32bit_t *) data )->device_path_number_of_characters,
 		 internal_volume_information->device_path_size );
 	}
-	else if( ( io_handle->volume_information_entry_size == 72 )
-	      || ( io_handle->volume_information_entry_size == 96 ) )
+	else if( number_of_bits == 64 )
 	{
 		byte_stream_copy_to_uint32_little_endian(
-		 ( (agdb_volume_information_72_t *) data )->number_of_files,
+		 ( (agdb_volume_information_72_64bit_t *) data )->number_of_files,
 		 internal_volume_information->number_of_files );
 
 		byte_stream_copy_to_uint64_little_endian(
-		 ( (agdb_volume_information_72_t *) data )->creation_time,
+		 ( (agdb_volume_information_72_64bit_t *) data )->creation_time,
 		 internal_volume_information->creation_time );
 
 		byte_stream_copy_to_uint32_little_endian(
-		 ( (agdb_volume_information_72_t *) data )->serial_number,
+		 ( (agdb_volume_information_72_64bit_t *) data )->serial_number,
 		 internal_volume_information->serial_number );
 
 		byte_stream_copy_to_uint16_little_endian(
-		 ( (agdb_volume_information_72_t *) data )->device_path_number_of_characters,
+		 ( (agdb_volume_information_72_64bit_t *) data )->device_path_number_of_characters,
 		 internal_volume_information->device_path_size );
 	}
 #if defined( HAVE_DEBUG_OUTPUT )
 	if( libcnotify_verbose != 0 )
 	{
-		if( io_handle->volume_information_entry_size == 56 )
+		if( number_of_bits == 32 )
 		{
 			byte_stream_copy_to_uint32_little_endian(
-			 ( (agdb_volume_information_56_t *) data )->unknown1,
+			 ( (agdb_volume_information_56_32bit_t *) data )->unknown1,
 			 value_64bit );
 		}
-		else if( ( io_handle->volume_information_entry_size == 72 )
-		      || ( io_handle->volume_information_entry_size == 96 ) )
+		else if( number_of_bits == 64 )
 		{
 			byte_stream_copy_to_uint64_little_endian(
-			 ( (agdb_volume_information_72_t *) data )->unknown1,
+			 ( (agdb_volume_information_72_64bit_t *) data )->unknown1,
 			 value_64bit );
 		}
 		libcnotify_printf(
@@ -340,17 +380,16 @@ int libagdb_internal_volume_information_read_data(
 		 function,
 		 value_64bit );
 
-		if( io_handle->volume_information_entry_size == 56 )
+		if( number_of_bits == 32 )
 		{
 			byte_stream_copy_to_uint32_little_endian(
-			 ( (agdb_volume_information_56_t *) data )->unknown2,
+			 ( (agdb_volume_information_56_32bit_t *) data )->unknown2,
 			 value_64bit );
 		}
-		else if( ( io_handle->volume_information_entry_size == 72 )
-		      || ( io_handle->volume_information_entry_size == 96 ) )
+		else if( number_of_bits == 64 )
 		{
 			byte_stream_copy_to_uint64_little_endian(
-			 ( (agdb_volume_information_72_t *) data )->unknown2,
+			 ( (agdb_volume_information_72_64bit_t *) data )->unknown2,
 			 value_64bit );
 		}
 		libcnotify_printf(
@@ -363,17 +402,16 @@ int libagdb_internal_volume_information_read_data(
 		 function,
 		 internal_volume_information->number_of_files );
 
-		if( io_handle->volume_information_entry_size == 56 )
+		if( number_of_bits == 32 )
 		{
 			byte_stream_copy_to_uint32_little_endian(
-			 ( (agdb_volume_information_56_t *) data )->unknown3,
+			 ( (agdb_volume_information_56_32bit_t *) data )->unknown3,
 			 value_32bit );
 		}
-		else if( ( io_handle->volume_information_entry_size == 72 )
-		      || ( io_handle->volume_information_entry_size == 96 ) )
+		else if( number_of_bits == 64 )
 		{
 			byte_stream_copy_to_uint32_little_endian(
-			 ( (agdb_volume_information_72_t *) data )->unknown3,
+			 ( (agdb_volume_information_72_64bit_t *) data )->unknown3,
 			 value_32bit );
 		}
 		libcnotify_printf(
@@ -381,17 +419,16 @@ int libagdb_internal_volume_information_read_data(
 		 function,
 		 value_32bit );
 
-		if( io_handle->volume_information_entry_size == 56 )
+		if( number_of_bits == 32 )
 		{
 			byte_stream_copy_to_uint64_little_endian(
-			 ( (agdb_volume_information_56_t *) data )->unknown4,
+			 ( (agdb_volume_information_56_32bit_t *) data )->unknown4,
 			 value_64bit );
 		}
-		else if( ( io_handle->volume_information_entry_size == 72 )
-		      || ( io_handle->volume_information_entry_size == 96 ) )
+		else if( number_of_bits == 64 )
 		{
 			byte_stream_copy_to_uint64_little_endian(
-			 ( (agdb_volume_information_72_t *) data )->unknown4,
+			 ( (agdb_volume_information_72_64bit_t *) data )->unknown4,
 			 value_64bit );
 		}
 		libcnotify_printf(
@@ -399,14 +436,13 @@ int libagdb_internal_volume_information_read_data(
 		 function,
 		 value_64bit );
 
-		if( io_handle->volume_information_entry_size == 56 )
+		if( number_of_bits == 32 )
 		{
-			filetime_data = ( (agdb_volume_information_56_t *) data )->creation_time;
+			filetime_data = ( (agdb_volume_information_56_32bit_t *) data )->creation_time;
 		}
-		else if( ( io_handle->volume_information_entry_size == 72 )
-		      || ( io_handle->volume_information_entry_size == 96 ) )
+		else if( number_of_bits == 64 )
 		{
-			filetime_data = ( (agdb_volume_information_72_t *) data )->creation_time;
+			filetime_data = ( (agdb_volume_information_72_64bit_t *) data )->creation_time;
 		}
 		if( libagdb_debug_print_filetime_value(
 		     function,
@@ -431,17 +467,16 @@ int libagdb_internal_volume_information_read_data(
 		 function,
 		 internal_volume_information->serial_number );
 
-		if( io_handle->volume_information_entry_size == 56 )
+		if( number_of_bits == 32 )
 		{
 			byte_stream_copy_to_uint32_little_endian(
-			 ( (agdb_volume_information_56_t *) data )->unknown5,
+			 ( (agdb_volume_information_56_32bit_t *) data )->unknown5,
 			 value_32bit );
 		}
-		else if( ( io_handle->volume_information_entry_size == 72 )
-		      || ( io_handle->volume_information_entry_size == 96 ) )
+		else if( number_of_bits == 64 )
 		{
 			byte_stream_copy_to_uint32_little_endian(
-			 ( (agdb_volume_information_72_t *) data )->unknown5,
+			 ( (agdb_volume_information_72_64bit_t *) data )->unknown5,
 			 value_32bit );
 		}
 		libcnotify_printf(
@@ -449,17 +484,16 @@ int libagdb_internal_volume_information_read_data(
 		 function,
 		 value_32bit );
 
-		if( io_handle->volume_information_entry_size == 56 )
+		if( number_of_bits == 32 )
 		{
 			byte_stream_copy_to_uint32_little_endian(
-			 ( (agdb_volume_information_56_t *) data )->unknown6,
+			 ( (agdb_volume_information_56_32bit_t *) data )->unknown6,
 			 value_64bit );
 		}
-		else if( ( io_handle->volume_information_entry_size == 72 )
-		      || ( io_handle->volume_information_entry_size == 96 ) )
+		else if( number_of_bits == 64 )
 		{
 			byte_stream_copy_to_uint64_little_endian(
-			 ( (agdb_volume_information_72_t *) data )->unknown6,
+			 ( (agdb_volume_information_72_64bit_t *) data )->unknown6,
 			 value_64bit );
 		}
 		libcnotify_printf(
@@ -472,17 +506,16 @@ int libagdb_internal_volume_information_read_data(
 		 function,
 		 internal_volume_information->device_path_size );
 
-		if( io_handle->volume_information_entry_size == 56 )
+		if( number_of_bits == 32 )
 		{
 			byte_stream_copy_to_uint16_little_endian(
-			 ( (agdb_volume_information_56_t *) data )->unknown7,
+			 ( (agdb_volume_information_56_32bit_t *) data )->unknown7,
 			 value_16bit );
 		}
-		else if( ( io_handle->volume_information_entry_size == 72 )
-		      || ( io_handle->volume_information_entry_size == 96 ) )
+		else if( number_of_bits == 64 )
 		{
 			byte_stream_copy_to_uint16_little_endian(
-			 ( (agdb_volume_information_72_t *) data )->unknown7,
+			 ( (agdb_volume_information_72_64bit_t *) data )->unknown7,
 			 value_16bit );
 		}
 		libcnotify_printf(
@@ -490,28 +523,26 @@ int libagdb_internal_volume_information_read_data(
 		 function,
 		 value_16bit );
 
-		if( ( io_handle->volume_information_entry_size == 72 )
-		 || ( io_handle->volume_information_entry_size == 96 ) )
+		if( number_of_bits == 64 )
 		{
 			byte_stream_copy_to_uint32_little_endian(
-			 ( (agdb_volume_information_72_t *) data )->unknown8,
+			 ( (agdb_volume_information_72_64bit_t *) data )->unknown8,
 			 value_32bit );
 			libcnotify_printf(
 			 "%s: unknown8\t\t\t\t: 0x%08" PRIx32 "\n",
 			 function,
 			 value_32bit );
 		}
-		if( io_handle->volume_information_entry_size == 56 )
+		if( number_of_bits == 32 )
 		{
 			byte_stream_copy_to_uint64_little_endian(
-			 ( (agdb_volume_information_56_t *) data )->unknown9,
+			 ( (agdb_volume_information_56_32bit_t *) data )->unknown9,
 			 value_64bit );
 		}
-		else if( ( io_handle->volume_information_entry_size == 72 )
-		      || ( io_handle->volume_information_entry_size == 96 ) )
+		else if( number_of_bits == 64 )
 		{
 			byte_stream_copy_to_uint64_little_endian(
-			 ( (agdb_volume_information_72_t *) data )->unknown9,
+			 ( (agdb_volume_information_72_64bit_t *) data )->unknown9,
 			 value_64bit );
 		}
 		libcnotify_printf(
@@ -519,10 +550,38 @@ int libagdb_internal_volume_information_read_data(
 		 function,
 		 value_64bit );
 
-		if( io_handle->volume_information_entry_size == 96 )
+		if( ( number_of_bits == 32 )
+		 && ( io_handle->volume_information_entry_size == 72 ) )
+		{
+			byte_stream_copy_to_uint32_little_endian(
+			 ( (agdb_volume_information_72_32bit_t *) data )->unknown10,
+			 value_32bit );
+			libcnotify_printf(
+			 "%s: unknown10\t\t\t: 0x%08" PRIx32 "\n",
+			 function,
+			 value_32bit );
+
+			byte_stream_copy_to_uint32_little_endian(
+			 ( (agdb_volume_information_72_32bit_t *) data )->unknown11,
+			 value_32bit );
+			libcnotify_printf(
+			 "%s: unknown11\t\t\t: 0x%08" PRIx32 "\n",
+			 function,
+			 value_32bit );
+
+			byte_stream_copy_to_uint64_little_endian(
+			 ( (agdb_volume_information_72_32bit_t *) data )->unknown12,
+			 value_64bit );
+			libcnotify_printf(
+			 "%s: unknown12\t\t\t: 0x%08" PRIx64 "\n",
+			 function,
+			 value_64bit );
+		}
+		else if( ( number_of_bits == 64 )
+		      && ( io_handle->volume_information_entry_size == 96 ) )
 		{
 			byte_stream_copy_to_uint64_little_endian(
-			 ( (agdb_volume_information_96_t *) data )->unknown10,
+			 ( (agdb_volume_information_96_64bit_t *) data )->unknown10,
 			 value_64bit );
 			libcnotify_printf(
 			 "%s: unknown10\t\t\t: 0x%08" PRIx64 "\n",
@@ -530,7 +589,7 @@ int libagdb_internal_volume_information_read_data(
 			 value_64bit );
 
 			byte_stream_copy_to_uint64_little_endian(
-			 ( (agdb_volume_information_96_t *) data )->unknown11,
+			 ( (agdb_volume_information_96_64bit_t *) data )->unknown11,
 			 value_64bit );
 			libcnotify_printf(
 			 "%s: unknown11\t\t\t: 0x%08" PRIx64 "\n",
@@ -538,7 +597,7 @@ int libagdb_internal_volume_information_read_data(
 			 value_64bit );
 
 			byte_stream_copy_to_uint64_little_endian(
-			 ( (agdb_volume_information_96_t *) data )->unknown12,
+			 ( (agdb_volume_information_96_64bit_t *) data )->unknown12,
 			 value_64bit );
 			libcnotify_printf(
 			 "%s: unknown12\t\t\t: 0x%08" PRIx64 "\n",

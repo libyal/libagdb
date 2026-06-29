@@ -454,7 +454,11 @@ int agdb_test_internal_volume_information_read_data(
 	 "error",
 	 error );
 
-	io_handle->volume_information_entry_size = 56;
+	io_handle->file_header_signature                 = 0x0000000eUL;
+	io_handle->volume_information_entry_size         = 56;
+	io_handle->file_information_entry_size           = 52;
+	io_handle->file_information_sub_entry_type1_size = 16;
+	io_handle->file_information_sub_entry_type2_size = 20;
 
 	result = libagdb_volume_information_initialize(
 	          &volume_information,
@@ -681,6 +685,7 @@ int agdb_test_internal_volume_information_read_file_io_handle(
 	 "error",
 	 error );
 
+	io_handle->file_header_signature                 = 0x0000000eUL;
 	io_handle->volume_information_entry_size         = 56;
 	io_handle->file_information_entry_size           = 52;
 	io_handle->file_information_sub_entry_type1_size = 16;
@@ -1751,7 +1756,11 @@ int main(
 	 "error",
 	 error );
 
-	io_handle->volume_information_entry_size = 56;
+	io_handle->file_header_signature                 = 0x0000000eUL;
+	io_handle->volume_information_entry_size         = 56;
+	io_handle->file_information_entry_size           = 52;
+	io_handle->file_information_sub_entry_type1_size = 16;
+	io_handle->file_information_sub_entry_type2_size = 20;
 
 	result = libagdb_volume_information_initialize(
 	          &volume_information,

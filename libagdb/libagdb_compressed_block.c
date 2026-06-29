@@ -254,16 +254,9 @@ int libagdb_compressed_block_read(
 		          &( compressed_block->data_size ),
 		          error );
 	}
-	else if( io_handle->file_type == LIBAGDB_FILE_TYPE_COMPRESSED_WINDOWS7 )
-	{
-		result = libfwnt_lzxpress_huffman_decompress(
-		          compressed_data,
-		          (size_t) compressed_block_size,
-		          compressed_block->data,
-		          &( compressed_block->data_size ),
-		          error );
-	}
-	else if( io_handle->file_type == LIBAGDB_FILE_TYPE_COMPRESSED_WINDOWS8 )
+	else if( ( io_handle->file_type == LIBAGDB_FILE_TYPE_COMPRESSED_WINDOWS7 )
+	      || ( io_handle->file_type == LIBAGDB_FILE_TYPE_COMPRESSED_WINDOWS8_0 )
+	      || ( io_handle->file_type == LIBAGDB_FILE_TYPE_COMPRESSED_WINDOWS8_1 ) )
 	{
 		result = libfwnt_lzxpress_huffman_decompress(
 		          compressed_data,
@@ -336,7 +329,8 @@ int libagdb_compressed_block_read_element_data(
 	}
 	if( ( io_handle->file_type != LIBAGDB_FILE_TYPE_COMPRESSED_VISTA )
 	 && ( io_handle->file_type != LIBAGDB_FILE_TYPE_COMPRESSED_WINDOWS7 )
-	 && ( io_handle->file_type != LIBAGDB_FILE_TYPE_COMPRESSED_WINDOWS8 ) )
+	 && ( io_handle->file_type != LIBAGDB_FILE_TYPE_COMPRESSED_WINDOWS8_0 )
+	 && ( io_handle->file_type != LIBAGDB_FILE_TYPE_COMPRESSED_WINDOWS8_1 ) )
 	{
 		libcerror_error_set(
 		 error,
@@ -383,16 +377,21 @@ int libagdb_compressed_block_read_element_data(
 
 		goto on_error;
 	}
-	if( uncompressed_size > (size64_t) io_handle->uncompressed_block_size )
+	if( ( io_handle->file_type == LIBAGDB_FILE_TYPE_COMPRESSED_VISTA )
+	 || ( io_handle->file_type == LIBAGDB_FILE_TYPE_COMPRESSED_WINDOWS7 )
+	 || ( io_handle->file_type == LIBAGDB_FILE_TYPE_COMPRESSED_WINDOWS8_0 ) )
 	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_VALUE_OUT_OF_BOUNDS,
-		 "%s: invalid uncompressed size value out of bounds.",
-		 function );
+		if( uncompressed_size > (size64_t) io_handle->uncompressed_block_size )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+			 LIBCERROR_ARGUMENT_ERROR_VALUE_OUT_OF_BOUNDS,
+			 "%s: invalid uncompressed size value out of bounds.",
+			 function );
 
-		return( -1 );
+			return( -1 );
+		}
 	}
 	if( libagdb_compressed_block_initialize(
 	     &compressed_block,

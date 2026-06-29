@@ -34,9 +34,10 @@
 #include "libagdb_libfdata.h"
 #include "libagdb_unused.h"
 
-const char *agdb_mem_file_signature_vista = "MEMO";
-const char *agdb_mem_file_signature_win7  = "MEM0";
-const char *agdb_mam_file_signature_win8  = "MAM\x84";
+const char *agdb_mem_file_signature_vista  = "MEMO";
+const char *agdb_mem_file_signature_win7   = "MEM0";
+const char *agdb_mem_file_signature_win8_0 = "MEM\xb0";
+const char *agdb_mam_file_signature_win8_1 = "MAM\x84";
 
 /* Creates an IO handle
  * Make sure the value io_handle is referencing, is set to NULL
@@ -212,7 +213,8 @@ int libagdb_io_handle_read_compressed_blocks(
 	}
 	if( ( io_handle->file_type != LIBAGDB_FILE_TYPE_COMPRESSED_VISTA )
 	 && ( io_handle->file_type != LIBAGDB_FILE_TYPE_COMPRESSED_WINDOWS7 )
-	 && ( io_handle->file_type != LIBAGDB_FILE_TYPE_COMPRESSED_WINDOWS8 ) )
+	 && ( io_handle->file_type != LIBAGDB_FILE_TYPE_COMPRESSED_WINDOWS8_0 )
+	 && ( io_handle->file_type != LIBAGDB_FILE_TYPE_COMPRESSED_WINDOWS8_1 ) )
 	{
 		libcerror_error_set(
 		 error,
@@ -233,7 +235,12 @@ int libagdb_io_handle_read_compressed_blocks(
 		file_offset = 8;
 		read_size   = 4;
 	}
-	else if( io_handle->file_type == LIBAGDB_FILE_TYPE_COMPRESSED_WINDOWS8 )
+	else if( io_handle->file_type == LIBAGDB_FILE_TYPE_COMPRESSED_WINDOWS8_0 )
+	{
+		file_offset = 12;
+		read_size   = 4;
+	}
+	else if( io_handle->file_type == LIBAGDB_FILE_TYPE_COMPRESSED_WINDOWS8_1 )
 	{
 		file_offset = 12;
 		read_size   = 4;
@@ -292,16 +299,21 @@ int libagdb_io_handle_read_compressed_blocks(
 				return( -1 );
 			}
 			compressed_block_size += 3;
+
+			uncompressed_block_size = io_handle->uncompressed_block_size;
 		}
-		else if( io_handle->file_type == LIBAGDB_FILE_TYPE_COMPRESSED_WINDOWS7 )
+		else if( ( io_handle->file_type == LIBAGDB_FILE_TYPE_COMPRESSED_WINDOWS7 )
+		      || ( io_handle->file_type == LIBAGDB_FILE_TYPE_COMPRESSED_WINDOWS8_0 ) )
 		{
 			byte_stream_copy_to_uint32_little_endian(
 			 compressed_block_data,
 			 compressed_block_size );
 
 			file_offset += 4;
+
+			uncompressed_block_size = io_handle->uncompressed_block_size;
 		}
-		else if( io_handle->file_type == LIBAGDB_FILE_TYPE_COMPRESSED_WINDOWS8 )
+		else if( io_handle->file_type == LIBAGDB_FILE_TYPE_COMPRESSED_WINDOWS8_1 )
 		{
 			if( io_handle->file_size > (size64_t) UINT32_MAX )
 			{
@@ -315,14 +327,22 @@ int libagdb_io_handle_read_compressed_blocks(
 				return( -1 );
 			}
 			compressed_block_size = (uint32_t) io_handle->file_size - 12;
+
+			if( ( uncompressed_data_size % io_handle->uncompressed_block_size ) != 0 )
+			{
+				uncompressed_data_size /= io_handle->uncompressed_block_size;
+				uncompressed_data_size += 1;
+				uncompressed_data_size *= io_handle->uncompressed_block_size;
+			}
+			uncompressed_block_size = uncompressed_data_size;
 		}
-		if( uncompressed_data_size < io_handle->uncompressed_block_size )
+		if( uncompressed_data_size < uncompressed_block_size )
 		{
 			uncompressed_block_size = uncompressed_data_size;
 		}
 		else
 		{
-			uncompressed_block_size = io_handle->uncompressed_block_size;
+			uncompressed_block_size = uncompressed_block_size;
 		}
 #if defined( HAVE_DEBUG_OUTPUT )
 		if( libcnotify_verbose != 0 )

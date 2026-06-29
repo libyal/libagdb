@@ -1,5 +1,5 @@
 /*
- * File header functions
+ * Database header functions
  *
  * Copyright (C) 2014-2026, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -19,8 +19,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#if !defined( _LIBAGDB_FILE_HEADER_H )
-#define _LIBAGDB_FILE_HEADER_H
+#if !defined( _LIBAGDB_DATABASE_HEADER_H )
+#define _LIBAGDB_DATABASE_HEADER_H
 
 #include <common.h>
 #include <types.h>
@@ -34,18 +34,10 @@
 extern "C" {
 #endif
 
-typedef struct libagdb_file_header libagdb_file_header_t;
+typedef struct libagdb_database_header libagdb_database_header_t;
 
-struct libagdb_file_header
+struct libagdb_database_header
 {
-	/* The signature
-	 */
-	uint32_t signature;
-
-	/* The size
-	 */
-	uint32_t size;
-
 	/* The number of volumes
 	 */
 	uint32_t number_of_volumes;
@@ -55,24 +47,25 @@ struct libagdb_file_header
 	uint32_t number_of_sources;
 };
 
-int libagdb_file_header_initialize(
-     libagdb_file_header_t **file_header,
+int libagdb_database_header_initialize(
+     libagdb_database_header_t **database_header,
      libcerror_error_t **error );
 
-int libagdb_file_header_free(
-     libagdb_file_header_t **file_header,
+int libagdb_database_header_free(
+     libagdb_database_header_t **database_header,
      libcerror_error_t **error );
 
-int libagdb_file_header_read_stream(
-     libagdb_file_header_t *file_header,
+int libagdb_database_header_read_stream(
+     libagdb_database_header_t *database_header,
      libagdb_io_handle_t *io_handle,
      libfdata_stream_t *uncompressed_data_stream,
      libbfio_handle_t *file_io_handle,
+     size_t data_size,
      libcerror_error_t **error );
 
 #if defined( __cplusplus )
 }
 #endif
 
-#endif /* !defined( _LIBAGDB_FILE_HEADER_H ) */
+#endif /* !defined( _LIBAGDB_DATABASE_HEADER_H ) */
 

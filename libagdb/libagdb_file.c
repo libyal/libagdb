@@ -1181,6 +1181,8 @@ int libagdb_file_open_read(
 
 		goto on_error;
 	}
+	internal_file->io_handle->file_header_signature = file_header->signature;
+
 	file_offset = (off64_t) file_header->size;
 
 	for( volume_index = 0;

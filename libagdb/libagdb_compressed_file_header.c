@@ -31,7 +31,7 @@
 #include "libagdb_libcerror.h"
 #include "libagdb_libcnotify.h"
 
-/* Creates compressed file header
+/* Creates a compressed file header
  * Make sure the value compressed_file_header is referencing, is set to NULL
  * Returns 1 if successful or -1 on error
  */
@@ -104,7 +104,7 @@ on_error:
 	return( -1 );
 }
 
-/* Frees compressed file header
+/* Frees a compressed file header
  * Returns 1 if successful or -1 on error
  */
 int libagdb_compressed_file_header_free(
@@ -147,6 +147,10 @@ int libagdb_compressed_file_header_read_data(
 	uint32_t uncompressed_data_size = 0;
 	uint32_t value_32bit            = 0;
 
+#if defined( HAVE_DEBUG_OUTPUT )
+	size_t file_header_size         = 0;
+#endif
+
 	if( compressed_file_header == NULL )
 	{
 		libcerror_error_set(
@@ -181,18 +185,6 @@ int libagdb_compressed_file_header_read_data(
 
 		return( -1 );
 	}
-#if defined( HAVE_DEBUG_OUTPUT )
-	if( libcnotify_verbose != 0 )
-	{
-		libcnotify_printf(
-		 "%s: compressed file header data:\n",
-		 function );
-		libcnotify_print_data(
-		 data,
-		 8,
-		 0 );
-	}
-#endif
 	if( memory_compare(
 	     data,
 	     agdb_mem_file_signature_vista,
@@ -200,6 +192,10 @@ int libagdb_compressed_file_header_read_data(
 	{
 		compressed_file_header->file_type               = LIBAGDB_FILE_TYPE_COMPRESSED_VISTA;
 		compressed_file_header->uncompressed_block_size = 4096;
+
+#if defined( HAVE_DEBUG_OUTPUT )
+		file_header_size = 8;
+#endif
 	}
 	else if( memory_compare(
 	          data,
@@ -208,19 +204,55 @@ int libagdb_compressed_file_header_read_data(
 	{
 		compressed_file_header->file_type               = LIBAGDB_FILE_TYPE_COMPRESSED_WINDOWS7;
 		compressed_file_header->uncompressed_block_size = 65536;
+
+#if defined( HAVE_DEBUG_OUTPUT )
+		file_header_size = 8;
+#endif
 	}
 	else if( memory_compare(
 	          data,
-	          agdb_mam_file_signature_win8,
+	          agdb_mem_file_signature_win8_0,
 	          4 ) == 0 )
 	{
-		compressed_file_header->file_type               = LIBAGDB_FILE_TYPE_COMPRESSED_WINDOWS8;
+		compressed_file_header->file_type               = LIBAGDB_FILE_TYPE_COMPRESSED_WINDOWS8_0;
 		compressed_file_header->uncompressed_block_size = 65536;
+
+#if defined( HAVE_DEBUG_OUTPUT )
+		file_header_size = 12;
+#endif
+	}
+	else if( memory_compare(
+	          data,
+	          agdb_mam_file_signature_win8_1,
+	          4 ) == 0 )
+	{
+		compressed_file_header->file_type               = LIBAGDB_FILE_TYPE_COMPRESSED_WINDOWS8_1;
+		compressed_file_header->uncompressed_block_size = 65536;
+
+#if defined( HAVE_DEBUG_OUTPUT )
+		file_header_size = 12;
+#endif
 	}
 	else
 	{
 		compressed_file_header->file_type = LIBAGDB_FILE_TYPE_UNCOMPRESSED;
+
+#if defined( HAVE_DEBUG_OUTPUT )
+		file_header_size = 12;
+#endif
 	}
+#if defined( HAVE_DEBUG_OUTPUT )
+	if( libcnotify_verbose != 0 )
+	{
+		libcnotify_printf(
+		 "%s: compressed file header data:\n",
+		 function );
+		libcnotify_print_data(
+		 data,
+		 file_header_size,
+		 0 );
+	}
+#endif
 #if defined( HAVE_DEBUG_OUTPUT )
 	if( libcnotify_verbose != 0 )
 	{
@@ -235,7 +267,17 @@ int libagdb_compressed_file_header_read_data(
 			 data[ 2 ],
 			 data[ 3 ] );
 		}
-		else if( compressed_file_header->file_type == LIBAGDB_FILE_TYPE_COMPRESSED_WINDOWS8 )
+		else if( compressed_file_header->file_type == LIBAGDB_FILE_TYPE_COMPRESSED_WINDOWS8_0 )
+		{
+			libcnotify_printf(
+			 "%s: signature\t\t\t: %c%c%c\\x%02x\n",
+			 function,
+			 data[ 0 ],
+			 data[ 1 ],
+			 data[ 2 ],
+			 data[ 3 ] );
+		}
+		else if( compressed_file_header->file_type == LIBAGDB_FILE_TYPE_COMPRESSED_WINDOWS8_1 )
 		{
 			libcnotify_printf(
 			 "%s: signature\t\t\t: %c%c%c\\x%02x\n",
@@ -287,7 +329,8 @@ int libagdb_compressed_file_header_read_data(
 		 compressed_file_header->uncompressed_data_size );
 	}
 #endif
-	if( compressed_file_header->file_type == LIBAGDB_FILE_TYPE_COMPRESSED_WINDOWS8 )
+	if( ( compressed_file_header->file_type == LIBAGDB_FILE_TYPE_COMPRESSED_WINDOWS8_0 )
+	 || ( compressed_file_header->file_type == LIBAGDB_FILE_TYPE_COMPRESSED_WINDOWS8_1 ) )
 	{
 		if( data_size < 12 )
 		{
