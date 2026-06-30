@@ -227,7 +227,7 @@ int libagdb_compressed_file_header_read_data(
 	          4 ) == 0 )
 	{
 		compressed_file_header->file_type               = LIBAGDB_FILE_TYPE_COMPRESSED_WINDOWS8_1;
-		compressed_file_header->uncompressed_block_size = 65536;
+		compressed_file_header->uncompressed_block_size = 1441792;
 
 #if defined( HAVE_DEBUG_OUTPUT )
 		file_header_size = 12;

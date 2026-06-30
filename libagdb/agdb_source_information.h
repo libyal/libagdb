@@ -29,9 +29,9 @@
 extern "C" {
 #endif
 
-typedef struct agdb_source_information_60 agdb_source_information_60_t;
+typedef struct agdb_source_information_60_32bit agdb_source_information_60_32bit_t;
 
-struct agdb_source_information_60
+struct agdb_source_information_60_32bit
 {
 	/* Unknown
 	 * Consists of 4 bytes
@@ -46,12 +46,12 @@ struct agdb_source_information_60
 	/* Unknown
 	 * Consists of 4 bytes
 	 */
-	uint8_t unknown3[ 4 ];
+	uint8_t unknown2[ 4 ];
 
 	/* Unknown
 	 * Consists of 4 bytes
 	 */
-	uint8_t unknown4[ 4 ];
+	uint8_t unknown3[ 4 ];
 
 	/* Unknown
 	 * Consists of 4 bytes
@@ -89,9 +89,9 @@ struct agdb_source_information_60
 	uint8_t unknown11[ 16 ];
 };
 
-typedef struct agdb_source_information_88 agdb_source_information_88_t;
+typedef struct agdb_source_information_80_64bit agdb_source_information_80_64bit_t;
 
-struct agdb_source_information_88
+struct agdb_source_information_80_64bit
 {
 	/* Unknown
 	 * Consists of 8 bytes
@@ -106,12 +106,92 @@ struct agdb_source_information_88
 	/* Unknown
 	 * Consists of 4 bytes
 	 */
-	uint8_t unknown3[ 4 ];
+	uint8_t unknown2[ 4 ];
 
 	/* Unknown
 	 * Consists of 4 bytes
 	 */
-	uint8_t unknown4[ 4 ];
+	uint8_t unknown3[ 4 ];
+
+	/* Unknown
+	 * Consists of 8 bytes
+	 */
+	uint8_t unknown5a[ 8 ];
+
+	/* Unknown
+	 * Consists of 8 bytes
+	 */
+	uint8_t unknown5b[ 8 ];
+
+	/* Unknown
+	 * Consists of 4 bytes
+	 */
+	uint8_t unknown6[ 4 ];
+
+	/* Unknown
+	 * Consists of 4 bytes
+	 */
+	uint8_t unknown7[ 4 ];
+
+	/* Unknown
+	 * Consists of 8 bytes
+	 */
+	uint8_t unknown8[ 8 ];
+
+	/* Unknown
+	 * Consists of 4 bytes
+	 */
+	uint8_t unknown9a[ 4 ];
+
+	/* Unknown
+	 * Consists of 4 bytes
+	 */
+	uint8_t unknown9b[ 4 ];
+
+	/* Unknown
+	 * Consists of 4 bytes
+	 */
+	uint8_t unknown10a[ 4 ];
+
+	/* Unknown
+	 * Consists of 4 bytes
+	 */
+	uint8_t unknown10b[ 4 ];
+
+	/* Unknown
+	 * Consists of 4 bytes
+	 */
+	uint8_t unknown10c[ 4 ];
+
+	/* Unknown
+	 * Consists of 4 bytes
+	 */
+	uint8_t unknown10d[ 4 ];
+};
+
+typedef struct agdb_source_information_88_64bit agdb_source_information_88_64bit_t;
+
+struct agdb_source_information_88_64bit
+{
+	/* Unknown
+	 * Consists of 8 bytes
+	 */
+	uint8_t unknown1[ 8 ];
+
+	/* The name hash
+	 * Consists of 8 bytes
+	 */
+	uint8_t name_hash[ 8 ];
+
+	/* Unknown
+	 * Consists of 4 bytes
+	 */
+	uint8_t unknown2[ 4 ];
+
+	/* Unknown
+	 * Consists of 4 bytes
+	 */
+	uint8_t unknown3[ 4 ];
 
 	/* Unknown
 	 * Consists of 8 bytes
@@ -149,9 +229,9 @@ struct agdb_source_information_88
 	uint8_t unknown11[ 16 ];
 };
 
-typedef struct agdb_source_information_100 agdb_source_information_100_t;
+typedef struct agdb_source_information_100_32bit agdb_source_information_100_32bit_t;
 
-struct agdb_source_information_100
+struct agdb_source_information_100_32bit
 {
 	/* Unknown
 	 * Consists of 4 bytes
@@ -166,17 +246,27 @@ struct agdb_source_information_100
 	/* Unknown
 	 * Consists of 4 bytes
 	 */
+	uint8_t unknown2[ 4 ];
+
+	/* Unknown
+	 * Consists of 4 bytes
+	 */
 	uint8_t unknown3[ 4 ];
 
 	/* Unknown
 	 * Consists of 4 bytes
 	 */
-	uint8_t unknown4[ 4 ];
+	uint8_t unknown5a[ 4 ];
 
 	/* Unknown
-	 * Consists of 12 bytes
+	 * Consists of 4 bytes
 	 */
-	uint8_t unknown5[ 12 ];
+	uint8_t unknown5b[ 4 ];
+
+	/* Unknown
+	 * Consists of 4 bytes
+	 */
+	uint8_t unknown5c[ 4 ];
 
 	/* Unknown
 	 * Consists of 4 bytes
@@ -188,20 +278,35 @@ struct agdb_source_information_100
 	 */
 	uint8_t unknown7[ 4 ];
 
-	/* The prefetch hash
+	/* Unknown
 	 * Consists of 4 bytes
 	 */
-	uint8_t prefetch_hash[ 4 ];
+	uint8_t unknown8[ 4 ];
 
 	/* Unknown
 	 * Consists of 4 bytes
 	 */
-	uint8_t unknown9[ 4 ];
+	uint8_t unknown9a[ 4 ];
 
-	/* The executable filename
-	 * Consists of 16 bytes
+	/* Unknown
+	 * Consists of 4 bytes
 	 */
-	uint8_t executable_filename[ 16 ];
+	uint8_t unknown9b[ 4 ];
+
+	/* Unknown
+	 * Consists of 4 bytes
+	 */
+	uint8_t unknown10b[ 4 ];
+
+	/* Unknown
+	 * Consists of 4 bytes
+	 */
+	uint8_t unknown10c[ 4 ];
+
+	/* Unknown
+	 * Consists of 4 bytes
+	 */
+	uint8_t unknown10d[ 4 ];
 
 	/* Unknown
 	 * Consists of 4 bytes
@@ -254,9 +359,9 @@ struct agdb_source_information_100
 	uint8_t unknown20[ 4 ];
 };
 
-typedef struct agdb_source_information_144 agdb_source_information_144_t;
+typedef struct agdb_source_information_144_64bit agdb_source_information_144_64bit_t;
 
-struct agdb_source_information_144
+struct agdb_source_information_144_64bit
 {
 	/* Unknown
 	 * Consists of 8 bytes
@@ -271,17 +376,27 @@ struct agdb_source_information_144
 	/* Unknown
 	 * Consists of 4 bytes
 	 */
-	uint8_t unknown3[ 4 ];
+	uint8_t unknown2[ 4 ];
 
 	/* Unknown
 	 * Consists of 4 bytes
 	 */
-	uint8_t unknown4[ 4 ];
+	uint8_t unknown3[ 4 ];
 
 	/* Unknown
-	 * Consists of 24 bytes
+	 * Consists of 8 bytes
 	 */
-	uint8_t unknown5[ 24 ];
+	uint8_t unknown5a[ 8 ];
+
+	/* Unknown
+	 * Consists of 8 bytes
+	 */
+	uint8_t unknown5b[ 8 ];
+
+	/* Unknown
+	 * Consists of 8 bytes
+	 */
+	uint8_t unknown5c[ 8 ];
 
 	/* Unknown
 	 * Consists of 4 bytes
@@ -293,20 +408,40 @@ struct agdb_source_information_144
 	 */
 	uint8_t unknown7[ 4 ];
 
-	/* The prefetch hash
-	 * Consists of 8 bytes
-	 */
-	uint8_t prefetch_hash[ 8 ];
-
 	/* Unknown
 	 * Consists of 8 bytes
 	 */
-	uint8_t unknown9[ 8 ];
+	uint8_t unknown8[ 8 ];
 
-	/* The executable filename
-	 * Consists of 16 bytes
+	/* Unknown
+	 * Consists of 4 bytes
 	 */
-	uint8_t executable_filename[ 16 ];
+	uint8_t unknown9a[ 4 ];
+
+	/* Unknown
+	 * Consists of 4 bytes
+	 */
+	uint8_t unknown9b[ 4 ];
+
+	/* Unknown
+	 * Consists of 4 bytes
+	 */
+	uint8_t unknown10a[ 4 ];
+
+	/* Unknown
+	 * Consists of 4 bytes
+	 */
+	uint8_t unknown10b[ 4 ];
+
+	/* Unknown
+	 * Consists of 4 bytes
+	 */
+	uint8_t unknown10c[ 4 ];
+
+	/* Unknown
+	 * Consists of 4 bytes
+	 */
+	uint8_t unknown10d[ 4 ];
 
 	/* Unknown
 	 * Consists of 8 bytes

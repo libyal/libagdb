@@ -214,6 +214,61 @@ struct agdb_file_information_52_32bit
 	uint8_t unknown11[ 4 ];
 };
 
+typedef struct agdb_file_information_56_64bit agdb_file_information_56_64bit_t;
+
+struct agdb_file_information_56_64bit
+{
+	/* Unknown
+	 * Consists of 8 bytes
+	 */
+	uint8_t unknown1[ 8 ];
+
+	/* The name hash
+	 * Consists of 8 bytes
+	 */
+	uint8_t name_hash[ 8 ];
+
+	/* The (file) path number of characters
+	 * Consists of 4 bytes
+	 */
+	uint8_t path_number_of_characters[ 4 ];
+
+	/* Unknown
+	 * Consists of 4 bytes
+	 */
+	uint8_t unknown2[ 4 ];
+
+	/* Unknown
+	 * Consists of 8 bytes
+	 */
+	uint8_t unknown3[ 8 ];
+
+	/* The number of entries
+	 * Consists of 4 bytes
+	 */
+	uint8_t number_of_entries[ 4 ];
+
+	/* Unknown
+	 * Consists of 4 bytes
+	 */
+	uint8_t unknown4[ 4 ];
+
+	/* Unknown
+	 * Consists of 8 bytes
+	 */
+	uint8_t unknown5[ 8 ];
+
+	/* Unknown
+	 * Consists of 4 bytes
+	 */
+	uint8_t unknown6[ 4 ];
+
+	/* Unknown
+	 * Consists of 4 bytes
+	 */
+	uint8_t unknown7[ 4 ];
+};
+
 typedef struct agdb_file_information_64_64bit agdb_file_information_64_64bit_t;
 
 struct agdb_file_information_64_64bit

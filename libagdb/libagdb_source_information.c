@@ -33,6 +33,7 @@
 #include "libagdb_libcnotify.h"
 #include "libagdb_libfcache.h"
 #include "libagdb_libfdata.h"
+#include "libagdb_libfdatetime.h"
 #include "libagdb_libuna.h"
 #include "libagdb_source_information.h"
 
@@ -384,7 +385,9 @@ int libagdb_source_information_read_data(
 {
 	static char *function           = "libagdb_source_information_read_data";
 	int string_index                = 0;
+	size_t name_offset              = 0;
 	uint32_t safe_number_of_entries = 0;
+	uint8_t number_of_bits          = 0;
 
 #if defined( HAVE_DEBUG_OUTPUT )
 	uint64_t value_64bit            = 0;
@@ -469,290 +472,118 @@ int libagdb_source_information_read_data(
 		 0 );
 	}
 #endif
-	if( io_handle->source_information_entry_size == 60 )
+	switch( io_handle->file_header_signature )
 	{
-		byte_stream_copy_to_uint32_little_endian(
-		 ( (agdb_source_information_60_t *) data )->unknown3,
-		 safe_number_of_entries );
+		case 0x00000003UL:
+			if( io_handle->source_information_entry_size == 60 )
+			{
+				number_of_bits = 32;
+			}
+			else if( ( io_handle->source_information_entry_size == 80 )
+			      || ( io_handle->source_information_entry_size == 88 ) )
+			{
+				number_of_bits = 64;
+			}
+			break;
+
+		case 0x0000000eUL:
+			if( ( io_handle->source_information_entry_size == 60 )
+			 || ( io_handle->source_information_entry_size == 100 ) )
+			{
+				number_of_bits = 32;
+			}
+			else if( ( io_handle->source_information_entry_size == 88 )
+			      || ( io_handle->source_information_entry_size == 144 ) )
+			{
+				number_of_bits = 64;
+			}
+			break;
+
+		case 0x0000000fUL:
+			if( io_handle->source_information_entry_size == 100 )
+			{
+				number_of_bits = 32;
+			}
+			else if( io_handle->source_information_entry_size == 144 )
+			{
+				number_of_bits = 64;
+			}
+			break;
+
+		default:
+			break;
+
 	}
-	else if( io_handle->source_information_entry_size == 88 )
+	if( number_of_bits == 0 )
 	{
-		byte_stream_copy_to_uint32_little_endian(
-		 ( (agdb_source_information_88_t *) data )->unknown3,
-		 safe_number_of_entries );
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
+		 "%s: unsupported source information entry size: %" PRIu32 ".",
+		 function,
+		 io_handle->source_information_entry_size );
+
+		return( -1 );
 	}
-#if defined( HAVE_DEBUG_OUTPUT )
-	if( libcnotify_verbose != 0 )
+	if( io_handle->file_header_signature == 0x00000003UL )
 	{
-		if( ( io_handle->source_information_entry_size == 60 )
-		 || ( io_handle->source_information_entry_size == 100 ) )
+		if( io_handle->source_information_entry_size == 80 )
 		{
 			byte_stream_copy_to_uint32_little_endian(
-			 ( (agdb_source_information_60_t *) data )->unknown1,
-			 value_64bit );
-		}
-		else if( ( io_handle->source_information_entry_size == 88 )
-		      || ( io_handle->source_information_entry_size == 144 ) )
-		{
-			byte_stream_copy_to_uint64_little_endian(
-			 ( (agdb_source_information_88_t *) data )->unknown1,
-			 value_64bit );
-		}
-		libcnotify_printf(
-		 "%s: unknown1\t\t\t\t: 0x%08" PRIx64 "\n",
-		 function,
-		 value_64bit );
-
-		if( ( io_handle->source_information_entry_size == 60 )
-		 || ( io_handle->source_information_entry_size == 100 ) )
-		{
-			byte_stream_copy_to_uint32_little_endian(
-			 ( (agdb_source_information_60_t *) data )->name_hash,
-			 value_64bit );
-		}
-		else if( ( io_handle->source_information_entry_size == 88 )
-		      || ( io_handle->source_information_entry_size == 144 ) )
-		{
-			byte_stream_copy_to_uint64_little_endian(
-			 ( (agdb_source_information_88_t *) data )->name_hash,
-			 value_64bit );
-		}
-		libcnotify_printf(
-		 "%s: name hash\t\t\t\t: 0x%08" PRIx64 "\n",
-		 function,
-		 value_64bit );
-
-		if( ( io_handle->source_information_entry_size == 60 )
-		 || ( io_handle->source_information_entry_size == 80 ) )
-		{
-			libcnotify_printf(
-			 "%s: number of entries\t\t\t: %" PRIu32 "\n",
-			 function,
+			 &( data[ 56 ] ),
 			 safe_number_of_entries );
 		}
-		else if( io_handle->source_information_entry_size == 100 )
+	}
+	else if( io_handle->file_header_signature == 0x0000000eUL )
+	{
+		if( number_of_bits == 32 )
 		{
 			byte_stream_copy_to_uint32_little_endian(
-			 ( (agdb_source_information_60_t *) data )->unknown3,
-			 value_64bit );
-			libcnotify_printf(
-			 "%s: unknown3\t\t\t\t: 0x%08" PRIx32 "\n",
-			 function,
-			 value_32bit );
+			 ( (agdb_source_information_60_32bit_t *) data )->unknown2,
+			 safe_number_of_entries );
+		}
+		else if( number_of_bits == 64 )
+		{
+			byte_stream_copy_to_uint32_little_endian(
+			 ( (agdb_source_information_88_64bit_t *) data )->unknown2,
+			 safe_number_of_entries );
+		}
+		if( io_handle->source_information_entry_size == 100 )
+		{
+			name_offset = 44;
 		}
 		else if( io_handle->source_information_entry_size == 144 )
 		{
-			byte_stream_copy_to_uint64_little_endian(
-			 ( (agdb_source_information_88_t *) data )->unknown3,
-			 value_64bit );
-			libcnotify_printf(
-			 "%s: unknown3\t\t\t\t: 0x%08" PRIx64 "\n",
-			 function,
-			 value_64bit );
+			name_offset = 72;
 		}
-		if( ( io_handle->source_information_entry_size == 60 )
-		 || ( io_handle->source_information_entry_size == 100 ) )
-		{
-			byte_stream_copy_to_uint32_little_endian(
-			 ( (agdb_source_information_60_t *) data )->unknown4,
-			 value_32bit );
-		}
-		else if( ( io_handle->source_information_entry_size == 88 )
-		      || ( io_handle->source_information_entry_size == 144 ) )
-		{
-			byte_stream_copy_to_uint32_little_endian(
-			 ( (agdb_source_information_88_t *) data )->unknown4,
-			 value_32bit );
-		}
-		libcnotify_printf(
-		 "%s: unknown4\t\t\t\t: 0x%08" PRIx32 "\n",
-		 function,
-		 value_32bit );
 	}
-#endif /* defined( HAVE_DEBUG_OUTPUT ) */
-
-	if( ( io_handle->source_information_entry_size == 60 )
-	 || ( io_handle->source_information_entry_size == 88 ) )
+	else if( io_handle->file_header_signature == 0x0000000fUL )
 	{
-#if defined( HAVE_DEBUG_OUTPUT )
-		if( libcnotify_verbose != 0 )
+		if( io_handle->source_information_entry_size == 100 )
 		{
-			if( ( io_handle->source_information_entry_size == 60 )
-			 || ( io_handle->source_information_entry_size == 100 ) )
-			{
-				byte_stream_copy_to_uint32_little_endian(
-				 ( (agdb_source_information_60_t *) data )->unknown5,
-				 value_64bit );
-			}
-			else if( ( io_handle->source_information_entry_size == 88 )
-			      || ( io_handle->source_information_entry_size == 144 ) )
-			{
-				byte_stream_copy_to_uint64_little_endian(
-				 ( (agdb_source_information_88_t *) data )->unknown5,
-				 value_64bit );
-			}
-			libcnotify_printf(
-			 "%s: unknown5\t\t\t\t: 0x%08" PRIx64 "\n",
-			 function,
-			 value_64bit );
-
-			libcnotify_printf(
-			 "%s: unknown6:\n",
+			name_offset = 24;
+		}
+		else if( io_handle->source_information_entry_size == 144 )
+		{
+			name_offset = 40;
+		}
+	}
+	if( name_offset > 0 )
+	{
+		if( memory_copy(
+		     internal_source_information->executable_filename,
+		     &( data[ name_offset ] ),
+		     (size_t) 16 ) == NULL )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_MEMORY,
+			 LIBCERROR_MEMORY_ERROR_COPY_FAILED,
+			 "%s: unable to copy executable filename.",
 			 function );
 
-			if( ( io_handle->source_information_entry_size == 60 )
-			 || ( io_handle->source_information_entry_size == 100 ) )
-			{
-				libcnotify_print_data(
-				 ( (agdb_source_information_60_t *) data )->unknown6,
-				 8,
-				 0 );
-			}
-			else if( ( io_handle->source_information_entry_size == 88 )
-			      || ( io_handle->source_information_entry_size == 144 ) )
-			{
-				libcnotify_print_data(
-				 ( (agdb_source_information_88_t *) data )->unknown6,
-				 16,
-				 0 );
-			}
-			if( ( io_handle->source_information_entry_size == 60 )
-			 || ( io_handle->source_information_entry_size == 100 ) )
-			{
-				byte_stream_copy_to_uint32_little_endian(
-				 ( (agdb_source_information_60_t *) data )->unknown7,
-				 value_32bit );
-			}
-			else if( ( io_handle->source_information_entry_size == 88 )
-			      || ( io_handle->source_information_entry_size == 144 ) )
-			{
-				byte_stream_copy_to_uint32_little_endian(
-				 ( (agdb_source_information_88_t *) data )->unknown7,
-				 value_32bit );
-			}
-			libcnotify_printf(
-			 "%s: unknown7\t\t\t\t: 0x%08" PRIx32 "\n",
-			 function,
-			 value_32bit );
-
-			if( ( io_handle->source_information_entry_size == 60 )
-			 || ( io_handle->source_information_entry_size == 100 ) )
-			{
-				byte_stream_copy_to_uint32_little_endian(
-				 ( (agdb_source_information_60_t *) data )->unknown8,
-				 value_32bit );
-			}
-			else if( ( io_handle->source_information_entry_size == 88 )
-			      || ( io_handle->source_information_entry_size == 144 ) )
-			{
-				byte_stream_copy_to_uint32_little_endian(
-				 ( (agdb_source_information_88_t *) data )->unknown8,
-				 value_32bit );
-			}
-			libcnotify_printf(
-			 "%s: unknown8\t\t\t\t: 0x%08" PRIx32 "\n",
-			 function,
-			 value_32bit );
-
-			if( ( io_handle->source_information_entry_size == 60 )
-			 || ( io_handle->source_information_entry_size == 100 ) )
-			{
-				byte_stream_copy_to_uint32_little_endian(
-				 ( (agdb_source_information_60_t *) data )->unknown9,
-				 value_64bit );
-			}
-			else if( ( io_handle->source_information_entry_size == 88 )
-			      || ( io_handle->source_information_entry_size == 144 ) )
-			{
-				byte_stream_copy_to_uint64_little_endian(
-				 ( (agdb_source_information_88_t *) data )->unknown9,
-				 value_64bit );
-			}
-			libcnotify_printf(
-			 "%s: unknown9\t\t\t\t: 0x%08" PRIx64 "\n",
-			 function,
-			 value_64bit );
-
-			if( ( io_handle->source_information_entry_size == 60 )
-			 || ( io_handle->source_information_entry_size == 100 ) )
-			{
-				byte_stream_copy_to_uint32_little_endian(
-				 ( (agdb_source_information_60_t *) data )->unknown10,
-				 value_64bit );
-			}
-			else if( ( io_handle->source_information_entry_size == 88 )
-			      || ( io_handle->source_information_entry_size == 144 ) )
-			{
-				byte_stream_copy_to_uint64_little_endian(
-				 ( (agdb_source_information_88_t *) data )->unknown10,
-				 value_64bit );
-			}
-			libcnotify_printf(
-			 "%s: unknown10\t\t\t\t: 0x%08" PRIx64 "\n",
-			 function,
-			 value_64bit );
-
-			if( io_handle->source_information_entry_size == 60 )
-			{
-				libcnotify_printf(
-				 "%s: unknown11:\n",
-				 function );
-				libcnotify_print_data(
-				 ( (agdb_source_information_60_t *) data )->unknown11,
-				 16,
-				 0 );
-			}
-			else if( io_handle->source_information_entry_size == 88 )
-			{
-				libcnotify_printf(
-				 "%s: unknown11:\n",
-				 function );
-				libcnotify_print_data(
-				 ( (agdb_source_information_88_t *) data )->unknown11,
-				 16,
-				 0 );
-			}
-		}
-#endif /* defined( HAVE_DEBUG_OUTPUT ) */
-	}
-	else if( ( io_handle->source_information_entry_size == 100 )
-	      || ( io_handle->source_information_entry_size == 144 ) )
-	{
-		if( ( io_handle->source_information_entry_size == 60 )
-		 || ( io_handle->source_information_entry_size == 100 ) )
-		{
-			if( memory_copy(
-			     internal_source_information->executable_filename,
-			     ( (agdb_source_information_100_t *) data )->executable_filename,
-			     (size_t) 16 ) == NULL )
-			{
-				libcerror_error_set(
-				 error,
-				 LIBCERROR_ERROR_DOMAIN_MEMORY,
-				 LIBCERROR_MEMORY_ERROR_COPY_FAILED,
-				 "%s: unable to copy executable filename.",
-				 function );
-
-				return( -1 );
-			}
-		}
-		else if( ( io_handle->source_information_entry_size == 88 )
-		      || ( io_handle->source_information_entry_size == 144 ) )
-		{
-			if( memory_copy(
-			     internal_source_information->executable_filename,
-			     ( (agdb_source_information_144_t *) data )->executable_filename,
-			     (size_t) 16 ) == NULL )
-			{
-				libcerror_error_set(
-				 error,
-				 LIBCERROR_ERROR_DOMAIN_MEMORY,
-				 LIBCERROR_MEMORY_ERROR_COPY_FAILED,
-				 "%s: unable to copy executable filename.",
-				 function );
-
-				return( -1 );
-			}
+			return( -1 );
 		}
 		for( string_index = 0;
 		     string_index < 16;
@@ -764,139 +595,567 @@ int libagdb_source_information_read_data(
 			}
 		}
 		internal_source_information->executable_filename_size = string_index + 1;
-
+	}
 #if defined( HAVE_DEBUG_OUTPUT )
-		if( libcnotify_verbose != 0 )
+	if( libcnotify_verbose != 0 )
+	{
+		if( number_of_bits == 32 )
+		{
+			byte_stream_copy_to_uint32_little_endian(
+			 ( (agdb_source_information_60_32bit_t *) data )->unknown1,
+			 value_64bit );
+		}
+		else if( number_of_bits == 64 )
+		{
+			byte_stream_copy_to_uint64_little_endian(
+			 ( (agdb_source_information_80_64bit_t *) data )->unknown1,
+			 value_64bit );
+		}
+		libcnotify_printf(
+		 "%s: unknown1\t\t\t\t: 0x%08" PRIx64 "\n",
+		 function,
+		 value_64bit );
+
+		if( number_of_bits == 32 )
+		{
+			byte_stream_copy_to_uint32_little_endian(
+			 ( (agdb_source_information_60_32bit_t *) data )->name_hash,
+			 value_64bit );
+		}
+		else if( number_of_bits == 64 )
+		{
+			byte_stream_copy_to_uint64_little_endian(
+			 ( (agdb_source_information_80_64bit_t *) data )->name_hash,
+			 value_64bit );
+		}
+		libcnotify_printf(
+		 "%s: name hash\t\t\t\t: 0x%08" PRIx64 "\n",
+		 function,
+		 value_64bit );
+
+		if( ( io_handle->file_header_signature == 0x00000003UL )
+		 || ( io_handle->file_header_signature == 0x0000000fUL ) )
+		{
+			if( number_of_bits == 32 )
+			{
+				byte_stream_copy_to_uint32_little_endian(
+				 ( (agdb_source_information_60_32bit_t *) data )->unknown2,
+				 value_32bit );
+			}
+			else if( number_of_bits == 64 )
+			{
+				byte_stream_copy_to_uint32_little_endian(
+				 ( (agdb_source_information_80_64bit_t *) data )->unknown2,
+				 value_32bit );
+			}
+			libcnotify_printf(
+			 "%s: unknown2\t\t\t\t: 0x%08" PRIx32 "\n",
+			 function,
+			 value_32bit );
+
+			if( number_of_bits == 32 )
+			{
+				byte_stream_copy_to_uint32_little_endian(
+				 ( (agdb_source_information_60_32bit_t *) data )->unknown3,
+				 value_32bit );
+			}
+			else if( number_of_bits == 64 )
+			{
+				byte_stream_copy_to_uint32_little_endian(
+				 ( (agdb_source_information_80_64bit_t *) data )->unknown3,
+				 value_32bit );
+			}
+			libcnotify_printf(
+			 "%s: unknown3\t\t\t\t: 0x%08" PRIx32 "\n",
+			 function,
+			 value_32bit );
+		}
+		else if( io_handle->file_header_signature == 0x0000000eUL )
 		{
 			libcnotify_printf(
-			 "%s: unknown5:\n",
-			 function );
+			 "%s: number of entries\t\t\t: %" PRIu32 "\n",
+			 function,
+			 safe_number_of_entries );
 
-			if( ( io_handle->source_information_entry_size == 60 )
-			 || ( io_handle->source_information_entry_size == 100 ) )
-			{
-				libcnotify_print_data(
-				 ( (agdb_source_information_100_t *) data )->unknown5,
-				 12,
-				 0 );
-			}
-			else if( ( io_handle->source_information_entry_size == 88 )
-			      || ( io_handle->source_information_entry_size == 144 ) )
-			{
-				libcnotify_print_data(
-				 ( (agdb_source_information_144_t *) data )->unknown5,
-				 24,
-				 0 );
-			}
-			if( ( io_handle->source_information_entry_size == 60 )
-			 || ( io_handle->source_information_entry_size == 100 ) )
+			if( number_of_bits == 32 )
 			{
 				byte_stream_copy_to_uint32_little_endian(
-				 ( (agdb_source_information_100_t *) data )->unknown6,
+				 ( (agdb_source_information_60_32bit_t *) data )->unknown3,
 				 value_32bit );
 			}
-			else if( ( io_handle->source_information_entry_size == 88 )
-			      || ( io_handle->source_information_entry_size == 144 ) )
+			else if( number_of_bits == 64 )
 			{
 				byte_stream_copy_to_uint32_little_endian(
-				 ( (agdb_source_information_144_t *) data )->unknown6,
+				 ( (agdb_source_information_88_64bit_t *) data )->unknown3,
 				 value_32bit );
 			}
 			libcnotify_printf(
-			 "%s: unknown6\t\t\t\t: 0x%08" PRIx32 "\n",
+			 "%s: flags\t\t\t\t: 0x%08" PRIx32 "\n",
 			 function,
 			 value_32bit );
-
+		}
+		if( io_handle->file_header_signature == 0x0000000eUL )
+		{
 			if( ( io_handle->source_information_entry_size == 60 )
-			 || ( io_handle->source_information_entry_size == 100 ) )
+			 || ( io_handle->source_information_entry_size == 88 ) )
 			{
-				byte_stream_copy_to_uint32_little_endian(
-				 ( (agdb_source_information_100_t *) data )->unknown7,
-				 value_32bit );
-			}
-			else if( ( io_handle->source_information_entry_size == 88 )
-			      || ( io_handle->source_information_entry_size == 144 ) )
-			{
-				byte_stream_copy_to_uint32_little_endian(
-				 ( (agdb_source_information_144_t *) data )->unknown7,
-				 value_32bit );
-			}
-			libcnotify_printf(
-			 "%s: unknown7\t\t\t\t: 0x%08" PRIx32 "\n",
-			 function,
-			 value_32bit );
+				if( number_of_bits == 32 )
+				{
+					byte_stream_copy_to_uint32_little_endian(
+					 ( (agdb_source_information_60_32bit_t *) data )->unknown5,
+					 value_64bit );
+				}
+				else if( number_of_bits == 64 )
+				{
+					byte_stream_copy_to_uint64_little_endian(
+					 ( (agdb_source_information_88_64bit_t *) data )->unknown5,
+					 value_64bit );
+				}
+				libcnotify_printf(
+				 "%s: unknown5\t\t\t\t: 0x%08" PRIx64 "\n",
+				 function,
+				 value_64bit );
 
-			if( ( io_handle->source_information_entry_size == 60 )
-			 || ( io_handle->source_information_entry_size == 100 ) )
-			{
-				byte_stream_copy_to_uint32_little_endian(
-				 ( (agdb_source_information_100_t *) data )->prefetch_hash,
-				 value_64bit );
-			}
-			else if( ( io_handle->source_information_entry_size == 88 )
-			      || ( io_handle->source_information_entry_size == 144 ) )
-			{
-				byte_stream_copy_to_uint64_little_endian(
-				 ( (agdb_source_information_144_t *) data )->prefetch_hash,
-				 value_64bit );
-			}
-			libcnotify_printf(
-			 "%s: prefetch hash\t\t\t: 0x%08" PRIx64 "\n",
-			 function,
-			 value_64bit );
-
-			if( ( io_handle->source_information_entry_size == 60 )
-			 || ( io_handle->source_information_entry_size == 100 ) )
-			{
-				byte_stream_copy_to_uint32_little_endian(
-				 ( (agdb_source_information_100_t *) data )->unknown9,
-				 value_64bit );
-			}
-			else if( ( io_handle->source_information_entry_size == 88 )
-			      || ( io_handle->source_information_entry_size == 144 ) )
-			{
-				byte_stream_copy_to_uint64_little_endian(
-				 ( (agdb_source_information_144_t *) data )->unknown9,
-				 value_64bit );
-			}
-			libcnotify_printf(
-			 "%s: unknown9\t\t\t\t: 0x%08" PRIx64 "\n",
-			 function,
-			 value_64bit );
-
-/* TODO allow to set codepage */
-			if( libagdb_debug_print_string_value(
-			     function,
-			     "executable filename\t\t",
-			     internal_source_information->executable_filename,
-			     internal_source_information->executable_filename_size,
-			     LIBUNA_CODEPAGE_ASCII,
-			     error ) != 1 )
-			{
-				libcerror_error_set(
-				 error,
-				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBCERROR_RUNTIME_ERROR_PRINT_FAILED,
-				 "%s: unable to print string value.",
+				libcnotify_printf(
+				 "%s: unknown6:\n",
 				 function );
 
-				return( -1 );
-			}
-			libcnotify_printf(
-			 "\n" );
+				if( number_of_bits == 32 )
+				{
+					libcnotify_print_data(
+					 ( (agdb_source_information_60_32bit_t *) data )->unknown6,
+					 8,
+					 0 );
+				}
+				else if( number_of_bits == 64 )
+				{
+					libcnotify_print_data(
+					 ( (agdb_source_information_88_64bit_t *) data )->unknown6,
+					 16,
+					 0 );
+				}
+				if( number_of_bits == 32 )
+				{
+					byte_stream_copy_to_uint32_little_endian(
+					 ( (agdb_source_information_60_32bit_t *) data )->unknown7,
+					 value_32bit );
+				}
+				else if( number_of_bits == 64 )
+				{
+					byte_stream_copy_to_uint32_little_endian(
+					 ( (agdb_source_information_88_64bit_t *) data )->unknown7,
+					 value_32bit );
+				}
+				libcnotify_printf(
+				 "%s: unknown7\t\t\t\t: 0x%08" PRIx32 "\n",
+				 function,
+				 value_32bit );
 
-			if( ( io_handle->source_information_entry_size == 60 )
-			 || ( io_handle->source_information_entry_size == 100 ) )
+				if( number_of_bits == 32 )
+				{
+					byte_stream_copy_to_uint32_little_endian(
+					 ( (agdb_source_information_60_32bit_t *) data )->unknown8,
+					 value_32bit );
+				}
+				else if( number_of_bits == 64 )
+				{
+					byte_stream_copy_to_uint32_little_endian(
+					 ( (agdb_source_information_88_64bit_t *) data )->unknown8,
+					 value_32bit );
+				}
+				libcnotify_printf(
+				 "%s: unknown8\t\t\t\t: 0x%08" PRIx32 "\n",
+				 function,
+				 value_32bit );
+
+				if( number_of_bits == 32 )
+				{
+					byte_stream_copy_to_uint32_little_endian(
+					 ( (agdb_source_information_60_32bit_t *) data )->unknown9,
+					 value_64bit );
+				}
+				else if( number_of_bits == 64 )
+				{
+					byte_stream_copy_to_uint64_little_endian(
+					 ( (agdb_source_information_88_64bit_t *) data )->unknown9,
+					 value_64bit );
+				}
+				libcnotify_printf(
+				 "%s: unknown9\t\t\t\t: 0x%08" PRIx64 "\n",
+				 function,
+				 value_64bit );
+
+				if( number_of_bits == 32 )
+				{
+					byte_stream_copy_to_uint32_little_endian(
+					 ( (agdb_source_information_60_32bit_t *) data )->unknown10,
+					 value_64bit );
+				}
+				else if( number_of_bits == 64 )
+				{
+					byte_stream_copy_to_uint64_little_endian(
+					 ( (agdb_source_information_88_64bit_t *) data )->unknown10,
+					 value_64bit );
+				}
+				libcnotify_printf(
+				 "%s: unknown10\t\t\t\t: 0x%08" PRIx64 "\n",
+				 function,
+				 value_64bit );
+
+				if( number_of_bits == 32 )
+				{
+					libcnotify_printf(
+					 "%s: unknown11:\n",
+					 function );
+					libcnotify_print_data(
+					 ( (agdb_source_information_60_32bit_t *) data )->unknown11,
+					 16,
+					 0 );
+				}
+				else if( number_of_bits == 64 )
+				{
+					libcnotify_printf(
+					 "%s: unknown11:\n",
+					 function );
+					libcnotify_print_data(
+					 ( (agdb_source_information_88_64bit_t *) data )->unknown11,
+					 16,
+					 0 );
+				}
+			}
+		}
+		if( ( io_handle->source_information_entry_size == 80 )
+		 || ( io_handle->source_information_entry_size == 100 )
+		 || ( io_handle->source_information_entry_size == 144 ) )
+		{
+			if( ( io_handle->file_header_signature == 0x00000003UL )
+			 || ( io_handle->file_header_signature == 0x0000000fUL ) )
+			{
+				if( number_of_bits == 32 )
+				{
+					byte_stream_copy_to_uint32_little_endian(
+					 ( (agdb_source_information_100_32bit_t *) data )->unknown5a,
+					 value_64bit );
+				}
+				else if( number_of_bits == 64 )
+				{
+					byte_stream_copy_to_uint64_little_endian(
+					 ( (agdb_source_information_80_64bit_t *) data )->unknown5a,
+					 value_64bit );
+				}
+				libcnotify_printf(
+				 "%s: prefetch hash\t\t\t: 0x%08" PRIx64 "\n",
+				 function,
+				 value_64bit );
+
+				if( number_of_bits == 32 )
+				{
+					byte_stream_copy_to_uint32_little_endian(
+					 ( (agdb_source_information_100_32bit_t *) data )->unknown5b,
+					 value_32bit );
+					libcnotify_printf(
+					 "%s: unknown5b\t\t\t\t: 0x%08" PRIx32 "\n",
+					 function,
+					 value_32bit );
+				}
+				else if( number_of_bits == 64 )
+				{
+					if( libagdb_debug_print_filetime_value(
+					     function,
+					     "unknown5b\t\t\t\t",
+					     ( (agdb_source_information_80_64bit_t *) data )->unknown5b,
+					     8,
+					     LIBFDATETIME_ENDIAN_LITTLE,
+					     LIBFDATETIME_STRING_FORMAT_TYPE_CTIME | LIBFDATETIME_STRING_FORMAT_FLAG_DATE_TIME_NANO_SECONDS,
+					     error ) != 1 )
+					{
+						libcerror_error_set(
+						 error,
+						 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+						 LIBCERROR_RUNTIME_ERROR_PRINT_FAILED,
+						 "%s: unable to print filetime value.",
+						 function );
+
+						return( -1 );
+					}
+				}
+/* TODO allow to set codepage */
+				if( libagdb_debug_print_string_value(
+				     function,
+				     "executable filename\t\t",
+				     internal_source_information->executable_filename,
+				     internal_source_information->executable_filename_size,
+				     LIBUNA_CODEPAGE_ASCII,
+				     error ) != 1 )
+				{
+					libcerror_error_set(
+					 error,
+					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+					 LIBCERROR_RUNTIME_ERROR_PRINT_FAILED,
+					 "%s: unable to print string value.",
+					 function );
+
+					return( -1 );
+				}
+				if( number_of_bits == 32 )
+				{
+					byte_stream_copy_to_uint32_little_endian(
+					 ( (agdb_source_information_100_32bit_t *) data )->unknown9a,
+					 value_32bit );
+				}
+				else if( number_of_bits == 64 )
+				{
+					byte_stream_copy_to_uint32_little_endian(
+					 ( (agdb_source_information_80_64bit_t *) data )->unknown9a,
+					 value_32bit );
+				}
+				libcnotify_printf(
+				 "%s: number of entries\t\t\t: %" PRIu32 "\n",
+				 function,
+				 value_32bit );
+
+				if( number_of_bits == 32 )
+				{
+					byte_stream_copy_to_uint32_little_endian(
+					 ( (agdb_source_information_100_32bit_t *) data )->unknown9b,
+					 value_32bit );
+				}
+				else if( number_of_bits == 64 )
+				{
+					byte_stream_copy_to_uint32_little_endian(
+					 ( (agdb_source_information_80_64bit_t *) data )->unknown9b,
+					 value_32bit );
+				}
+				libcnotify_printf(
+				 "%s: flags\t\t\t\t: 0x%08" PRIx32 "\n",
+				 function,
+				 value_32bit );
+
+				if( number_of_bits == 64 )
+				{
+					byte_stream_copy_to_uint32_little_endian(
+					 ( (agdb_source_information_80_64bit_t *) data )->unknown10a,
+					 value_32bit );
+					libcnotify_printf(
+					 "%s: unknown10a\t\t\t: 0x%08" PRIx32 "\n",
+					 function,
+					 value_32bit );
+				}
+				if( number_of_bits == 32 )
+				{
+					byte_stream_copy_to_uint32_little_endian(
+					 ( (agdb_source_information_100_32bit_t *) data )->unknown10b,
+					 value_32bit );
+				}
+				else if( number_of_bits == 64 )
+				{
+					byte_stream_copy_to_uint32_little_endian(
+					 ( (agdb_source_information_80_64bit_t *) data )->unknown10b,
+					 value_32bit );
+				}
+				libcnotify_printf(
+				 "%s: unknown10b\t\t\t: 0x%08" PRIx32 "\n",
+				 function,
+				 value_32bit );
+
+				if( number_of_bits == 32 )
+				{
+					byte_stream_copy_to_uint32_little_endian(
+					 ( (agdb_source_information_100_32bit_t *) data )->unknown10c,
+					 value_32bit );
+				}
+				else if( number_of_bits == 64 )
+				{
+					byte_stream_copy_to_uint32_little_endian(
+					 ( (agdb_source_information_80_64bit_t *) data )->unknown10c,
+					 value_32bit );
+				}
+				libcnotify_printf(
+				 "%s: unknown10c\t\t\t: 0x%08" PRIx32 "\n",
+				 function,
+				 value_32bit );
+
+				if( number_of_bits == 32 )
+				{
+					byte_stream_copy_to_uint32_little_endian(
+					 ( (agdb_source_information_100_32bit_t *) data )->unknown10d,
+					 value_32bit );
+				}
+				else if( number_of_bits == 64 )
+				{
+					byte_stream_copy_to_uint32_little_endian(
+					 ( (agdb_source_information_80_64bit_t *) data )->unknown10d,
+					 value_32bit );
+				}
+				libcnotify_printf(
+				 "%s: unknown10d\t\t\t: 0x%08" PRIx32 "\n",
+				 function,
+				 value_32bit );
+			}
+			else if( io_handle->file_header_signature == 0x0000000eUL )
+			{
+				if( number_of_bits == 32 )
+				{
+					byte_stream_copy_to_uint32_little_endian(
+					 ( (agdb_source_information_100_32bit_t *) data )->unknown5a,
+					 value_64bit );
+				}
+				else if( number_of_bits == 64 )
+				{
+					byte_stream_copy_to_uint64_little_endian(
+					 ( (agdb_source_information_144_64bit_t *) data )->unknown5a,
+					 value_64bit );
+				}
+				libcnotify_printf(
+				 "%s: unknown5a\t\t\t\t: 0x%08" PRIx64 "\n",
+				 function,
+				 value_64bit );
+
+				if( number_of_bits == 32 )
+				{
+					byte_stream_copy_to_uint32_little_endian(
+					 ( (agdb_source_information_100_32bit_t *) data )->unknown5b,
+					 value_64bit );
+				}
+				else if( number_of_bits == 64 )
+				{
+					byte_stream_copy_to_uint64_little_endian(
+					 ( (agdb_source_information_144_64bit_t *) data )->unknown5b,
+					 value_64bit );
+				}
+				libcnotify_printf(
+				 "%s: unknown5b\t\t\t\t: 0x%08" PRIx64 "\n",
+				 function,
+				 value_64bit );
+
+				if( number_of_bits == 32 )
+				{
+					byte_stream_copy_to_uint32_little_endian(
+					 ( (agdb_source_information_100_32bit_t *) data )->unknown5c,
+					 value_64bit );
+				}
+				else if( number_of_bits == 64 )
+				{
+					byte_stream_copy_to_uint64_little_endian(
+					 ( (agdb_source_information_144_64bit_t *) data )->unknown5c,
+					 value_64bit );
+				}
+				libcnotify_printf(
+				 "%s: unknown5c\t\t\t\t: 0x%08" PRIx64 "\n",
+				 function,
+				 value_64bit );
+
+				if( number_of_bits == 32 )
+				{
+					byte_stream_copy_to_uint32_little_endian(
+					 ( (agdb_source_information_100_32bit_t *) data )->unknown6,
+					 value_32bit );
+				}
+				else if( number_of_bits == 64 )
+				{
+					byte_stream_copy_to_uint32_little_endian(
+					 ( (agdb_source_information_144_64bit_t *) data )->unknown6,
+					 value_32bit );
+				}
+				libcnotify_printf(
+				 "%s: unknown6\t\t\t\t: 0x%08" PRIx32 "\n",
+				 function,
+				 value_32bit );
+
+				if( number_of_bits == 32 )
+				{
+					byte_stream_copy_to_uint32_little_endian(
+					 ( (agdb_source_information_100_32bit_t *) data )->unknown7,
+					 value_32bit );
+				}
+				else if( number_of_bits == 64 )
+				{
+					byte_stream_copy_to_uint32_little_endian(
+					 ( (agdb_source_information_144_64bit_t *) data )->unknown7,
+					 value_32bit );
+				}
+				libcnotify_printf(
+				 "%s: unknown7\t\t\t\t: 0x%08" PRIx32 "\n",
+				 function,
+				 value_32bit );
+
+				if( number_of_bits == 32 )
+				{
+					byte_stream_copy_to_uint32_little_endian(
+					 ( (agdb_source_information_100_32bit_t *) data )->unknown8,
+					 value_64bit );
+				}
+				else if( number_of_bits == 64 )
+				{
+					byte_stream_copy_to_uint64_little_endian(
+					 ( (agdb_source_information_144_64bit_t *) data )->unknown8,
+					 value_64bit );
+				}
+				libcnotify_printf(
+				 "%s: prefetch hash\t\t\t: 0x%08" PRIx64 "\n",
+				 function,
+				 value_64bit );
+
+				if( number_of_bits == 32 )
+				{
+					byte_stream_copy_to_uint32_little_endian(
+					 ( (agdb_source_information_100_32bit_t *) data )->unknown9a,
+					 value_32bit );
+				}
+				else if( number_of_bits == 64 )
+				{
+					byte_stream_copy_to_uint32_little_endian(
+					 ( (agdb_source_information_144_64bit_t *) data )->unknown9a,
+					 value_32bit );
+				}
+				libcnotify_printf(
+				 "%s: unknown9a\t\t\t\t: 0x%08" PRIx32 "\n",
+				 function,
+				 value_32bit );
+
+				if( number_of_bits == 64 )
+				{
+					byte_stream_copy_to_uint32_little_endian(
+					 ( (agdb_source_information_144_64bit_t *) data )->unknown9b,
+					 value_32bit );
+					libcnotify_printf(
+					 "%s: unknown9b\t\t\t\t: 0x%08" PRIx32 "\n",
+					 function,
+					 value_32bit );
+				}
+/* TODO allow to set codepage */
+				if( libagdb_debug_print_string_value(
+				     function,
+				     "executable filename\t\t",
+				     internal_source_information->executable_filename,
+				     internal_source_information->executable_filename_size,
+				     LIBUNA_CODEPAGE_ASCII,
+				     error ) != 1 )
+				{
+					libcerror_error_set(
+					 error,
+					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+					 LIBCERROR_RUNTIME_ERROR_PRINT_FAILED,
+					 "%s: unable to print string value.",
+					 function );
+
+					return( -1 );
+				}
+			}
+		}
+		if( ( io_handle->source_information_entry_size == 100 )
+		 || ( io_handle->source_information_entry_size == 144 ) )
+		{
+			if( number_of_bits == 32 )
 			{
 				byte_stream_copy_to_uint32_little_endian(
-				 ( (agdb_source_information_100_t *) data )->unknown11,
+				 ( (agdb_source_information_100_32bit_t *) data )->unknown11,
 				 value_64bit );
 			}
-			else if( ( io_handle->source_information_entry_size == 88 )
-			      || ( io_handle->source_information_entry_size == 144 ) )
+			else if( number_of_bits == 64 )
 			{
 				byte_stream_copy_to_uint64_little_endian(
-				 ( (agdb_source_information_144_t *) data )->unknown11,
+				 ( (agdb_source_information_144_64bit_t *) data )->unknown11,
 				 value_64bit );
 			}
 			libcnotify_printf(
@@ -904,18 +1163,16 @@ int libagdb_source_information_read_data(
 			 function,
 			 value_64bit );
 
-			if( ( io_handle->source_information_entry_size == 60 )
-			 || ( io_handle->source_information_entry_size == 100 ) )
+			if( number_of_bits == 32 )
 			{
 				byte_stream_copy_to_uint32_little_endian(
-				 ( (agdb_source_information_100_t *) data )->unknown12,
+				 ( (agdb_source_information_100_32bit_t *) data )->unknown12,
 				 value_64bit );
 			}
-			else if( ( io_handle->source_information_entry_size == 88 )
-			      || ( io_handle->source_information_entry_size == 144 ) )
+			else if( number_of_bits == 64 )
 			{
 				byte_stream_copy_to_uint64_little_endian(
-				 ( (agdb_source_information_144_t *) data )->unknown12,
+				 ( (agdb_source_information_144_64bit_t *) data )->unknown12,
 				 value_64bit );
 			}
 			libcnotify_printf(
@@ -923,18 +1180,16 @@ int libagdb_source_information_read_data(
 			 function,
 			 value_64bit );
 
-			if( ( io_handle->source_information_entry_size == 60 )
-			 || ( io_handle->source_information_entry_size == 100 ) )
+			if( number_of_bits == 32 )
 			{
 				byte_stream_copy_to_uint32_little_endian(
-				 ( (agdb_source_information_100_t *) data )->unknown13,
+				 ( (agdb_source_information_100_32bit_t *) data )->unknown13,
 				 value_32bit );
 			}
-			else if( ( io_handle->source_information_entry_size == 88 )
-			      || ( io_handle->source_information_entry_size == 144 ) )
+			else if( number_of_bits == 64 )
 			{
 				byte_stream_copy_to_uint32_little_endian(
-				 ( (agdb_source_information_144_t *) data )->unknown13,
+				 ( (agdb_source_information_144_64bit_t *) data )->unknown13,
 				 value_32bit );
 			}
 			libcnotify_printf(
@@ -942,18 +1197,16 @@ int libagdb_source_information_read_data(
 			 function,
 			 value_32bit );
 
-			if( ( io_handle->source_information_entry_size == 60 )
-			 || ( io_handle->source_information_entry_size == 100 ) )
+			if( number_of_bits == 32 )
 			{
 				byte_stream_copy_to_uint32_little_endian(
-				 ( (agdb_source_information_100_t *) data )->unknown14,
+				 ( (agdb_source_information_100_32bit_t *) data )->unknown14,
 				 value_32bit );
 			}
-			else if( ( io_handle->source_information_entry_size == 88 )
-			      || ( io_handle->source_information_entry_size == 144 ) )
+			else if( number_of_bits == 64 )
 			{
 				byte_stream_copy_to_uint32_little_endian(
-				 ( (agdb_source_information_144_t *) data )->unknown14,
+				 ( (agdb_source_information_144_64bit_t *) data )->unknown14,
 				 value_32bit );
 			}
 			libcnotify_printf(
@@ -961,18 +1214,16 @@ int libagdb_source_information_read_data(
 			 function,
 			 value_32bit );
 
-			if( ( io_handle->source_information_entry_size == 60 )
-			 || ( io_handle->source_information_entry_size == 100 ) )
+			if( number_of_bits == 32 )
 			{
 				byte_stream_copy_to_uint32_little_endian(
-				 ( (agdb_source_information_100_t *) data )->unknown15,
+				 ( (agdb_source_information_100_32bit_t *) data )->unknown15,
 				 value_32bit );
 			}
-			else if( ( io_handle->source_information_entry_size == 88 )
-			      || ( io_handle->source_information_entry_size == 144 ) )
+			else if( number_of_bits == 64 )
 			{
 				byte_stream_copy_to_uint32_little_endian(
-				 ( (agdb_source_information_144_t *) data )->unknown15,
+				 ( (agdb_source_information_144_64bit_t *) data )->unknown15,
 				 value_32bit );
 			}
 			libcnotify_printf(
@@ -980,18 +1231,16 @@ int libagdb_source_information_read_data(
 			 function,
 			 value_32bit );
 
-			if( ( io_handle->source_information_entry_size == 60 )
-			 || ( io_handle->source_information_entry_size == 100 ) )
+			if( number_of_bits == 32 )
 			{
 				byte_stream_copy_to_uint32_little_endian(
-				 ( (agdb_source_information_100_t *) data )->unknown16,
+				 ( (agdb_source_information_100_32bit_t *) data )->unknown16,
 				 value_32bit );
 			}
-			else if( ( io_handle->source_information_entry_size == 88 )
-			      || ( io_handle->source_information_entry_size == 144 ) )
+			else if( number_of_bits == 64 )
 			{
 				byte_stream_copy_to_uint32_little_endian(
-				 ( (agdb_source_information_144_t *) data )->unknown16,
+				 ( (agdb_source_information_144_64bit_t *) data )->unknown16,
 				 value_32bit );
 			}
 			libcnotify_printf(
@@ -999,18 +1248,16 @@ int libagdb_source_information_read_data(
 			 function,
 			 value_32bit );
 
-			if( ( io_handle->source_information_entry_size == 60 )
-			 || ( io_handle->source_information_entry_size == 100 ) )
+			if( number_of_bits == 32 )
 			{
 				byte_stream_copy_to_uint32_little_endian(
-				 ( (agdb_source_information_100_t *) data )->unknown17,
+				 ( (agdb_source_information_100_32bit_t *) data )->unknown17,
 				 value_32bit );
 			}
-			else if( ( io_handle->source_information_entry_size == 88 )
-			      || ( io_handle->source_information_entry_size == 144 ) )
+			else if( number_of_bits == 64 )
 			{
 				byte_stream_copy_to_uint32_little_endian(
-				 ( (agdb_source_information_144_t *) data )->unknown17,
+				 ( (agdb_source_information_144_64bit_t *) data )->unknown17,
 				 value_32bit );
 			}
 			libcnotify_printf(
@@ -1018,18 +1265,16 @@ int libagdb_source_information_read_data(
 			 function,
 			 value_32bit );
 
-			if( ( io_handle->source_information_entry_size == 60 )
-			 || ( io_handle->source_information_entry_size == 100 ) )
+			if( number_of_bits == 32 )
 			{
 				byte_stream_copy_to_uint32_little_endian(
-				 ( (agdb_source_information_100_t *) data )->unknown18,
+				 ( (agdb_source_information_100_32bit_t *) data )->unknown18,
 				 value_32bit );
 			}
-			else if( ( io_handle->source_information_entry_size == 88 )
-			      || ( io_handle->source_information_entry_size == 144 ) )
+			else if( number_of_bits == 64 )
 			{
 				byte_stream_copy_to_uint32_little_endian(
-				 ( (agdb_source_information_144_t *) data )->unknown18,
+				 ( (agdb_source_information_144_64bit_t *) data )->unknown18,
 				 value_32bit );
 			}
 			libcnotify_printf(
@@ -1037,18 +1282,16 @@ int libagdb_source_information_read_data(
 			 function,
 			 value_32bit );
 
-			if( ( io_handle->source_information_entry_size == 60 )
-			 || ( io_handle->source_information_entry_size == 100 ) )
+			if( number_of_bits == 32 )
 			{
 				byte_stream_copy_to_uint32_little_endian(
-				 ( (agdb_source_information_100_t *) data )->unknown19,
+				 ( (agdb_source_information_100_32bit_t *) data )->unknown19,
 				 value_64bit );
 			}
-			else if( ( io_handle->source_information_entry_size == 88 )
-			      || ( io_handle->source_information_entry_size == 144 ) )
+			else if( number_of_bits == 64 )
 			{
 				byte_stream_copy_to_uint64_little_endian(
-				 ( (agdb_source_information_144_t *) data )->unknown19,
+				 ( (agdb_source_information_144_64bit_t *) data )->unknown19,
 				 value_64bit );
 			}
 			libcnotify_printf(
@@ -1056,18 +1299,16 @@ int libagdb_source_information_read_data(
 			 function,
 			 value_64bit );
 
-			if( ( io_handle->source_information_entry_size == 60 )
-			 || ( io_handle->source_information_entry_size == 100 ) )
+			if( number_of_bits == 32 )
 			{
 				byte_stream_copy_to_uint32_little_endian(
-				 ( (agdb_source_information_100_t *) data )->unknown20,
+				 ( (agdb_source_information_100_32bit_t *) data )->unknown20,
 				 value_64bit );
 			}
-			else if( ( io_handle->source_information_entry_size == 88 )
-			      || ( io_handle->source_information_entry_size == 144 ) )
+			else if( number_of_bits == 64 )
 			{
 				byte_stream_copy_to_uint64_little_endian(
-				 ( (agdb_source_information_144_t *) data )->unknown20,
+				 ( (agdb_source_information_144_64bit_t *) data )->unknown20,
 				 value_64bit );
 			}
 			libcnotify_printf(
@@ -1078,9 +1319,10 @@ int libagdb_source_information_read_data(
 			libcnotify_printf(
 			 "\n" );
 		}
-#endif /* defined( HAVE_DEBUG_OUTPUT ) */
 	}
-	 *number_of_entries = safe_number_of_entries;
+#endif /* defined( HAVE_DEBUG_OUTPUT ) */
+
+	*number_of_entries = safe_number_of_entries;
 
 	return( 1 );
 }

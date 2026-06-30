@@ -201,7 +201,7 @@ int libagdb_file_header_read_stream(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_IO,
 		 LIBCERROR_IO_ERROR_READ_FAILED,
-		 "%s: unable to read file header data offset: %" PRIi64 " (0x%08" PRIx64 ").",
+		 "%s: unable to read file header data offset: 0 (0x00000000).",
 		 function );
 
 		goto on_error;
