@@ -2,7 +2,7 @@ AC_PREREQ([2.71])
 
 AC_INIT(
   [libagdb],
-  [20260717],
+  [20260914],
   [https://github.com/libyal/libagdb/issues])
 
 AC_CONFIG_SRCDIR(
