@@ -195,6 +195,7 @@ int libagdb_io_handle_read_compressed_blocks(
 	size_t read_size                 = 0;
 	ssize_t read_count               = 0;
 	uint32_t compressed_block_size   = 0;
+	uint32_t minimum_block_size      = 0;
 	uint32_t uncompressed_data_size  = 0;
 	uint32_t uncompressed_block_size = 0;
 	int compressed_block_index       = 0;
@@ -247,6 +248,37 @@ int libagdb_io_handle_read_compressed_blocks(
 	}
 	uncompressed_data_size = io_handle->uncompressed_data_size;
 
+	/* The number of compressed blocks is determined by the uncompressed data size
+	 * A compressed block requires at minimum its size header and one data byte on disk
+	 * Verify the file size is sufficient for the number of compressed blocks
+	 * to prevent an invalid uncompressed data size from
+	 * causing an excessive number of compressed blocks to be read
+	 */
+	if( io_handle->file_type == LIBAGDB_FILE_TYPE_COMPRESSED_VISTA )
+	{
+		minimum_block_size = 3;
+	}
+	else if( io_handle->file_type == LIBAGDB_FILE_TYPE_COMPRESSED_WINDOWS8_1 )
+	{
+		minimum_block_size = 1;
+	}
+	else
+	{
+		minimum_block_size = 5;
+	}
+	if( ( size64_t ) ( uncompressed_data_size / io_handle->uncompressed_block_size ) > ( io_handle->file_size - file_offset ) / minimum_block_size )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
+		 "%s: invalid uncompressed data size: %" PRIu32 ", file size: %" PRIi64 ".",
+		 function,
+		 uncompressed_data_size,
+		 io_handle->file_size );
+
+		return( -1 );
+	}
 	while( (size64_t) file_offset < io_handle->file_size )
 	{
 #if defined( HAVE_DEBUG_OUTPUT )
